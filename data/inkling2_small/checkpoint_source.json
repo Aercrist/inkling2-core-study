@@ -1,0 +1,186 @@
+{
+ "repo": "thinkingmachines/Inkling-2-Small",
+ "revision": "8361e7a31ae7e9966a49a91d3994fde618936c2b",
+ "hub_url": "https://huggingface.co/thinkingmachines/Inkling-2-Small/tree/8361e7a31ae7e9966a49a91d3994fde618936c2b",
+ "n_weight_files": 25,
+ "n_tensors": 1854,
+ "tensor_bytes": 393479869088,
+ "file_bytes": 393480084520,
+ "files": [
+  {
+   "path": "model-00001-of-00024.safetensors",
+   "size": 16210440824,
+   "header_bytes": 17504,
+   "tensor_bytes": 16210423312,
+   "n_tensors": 164
+  },
+  {
+   "path": "model-00002-of-00024.safetensors",
+   "size": 18746427716,
+   "header_bytes": 6952,
+   "tensor_bytes": 18746420756,
+   "n_tensors": 60
+  },
+  {
+   "path": "model-00003-of-00024.safetensors",
+   "size": 16652544868,
+   "header_bytes": 8520,
+   "tensor_bytes": 16652536340,
+   "n_tensors": 74
+  },
+  {
+   "path": "model-00004-of-00024.safetensors",
+   "size": 18746409068,
+   "header_bytes": 6736,
+   "tensor_bytes": 18746402324,
+   "n_tensors": 58
+  },
+  {
+   "path": "model-00005-of-00024.safetensors",
+   "size": 16652563500,
+   "header_bytes": 8720,
+   "tensor_bytes": 16652554772,
+   "n_tensors": 76
+  },
+  {
+   "path": "model-00006-of-00024.safetensors",
+   "size": 18745818988,
+   "header_bytes": 6480,
+   "tensor_bytes": 18745812500,
+   "n_tensors": 56
+  },
+  {
+   "path": "model-00007-of-00024.safetensors",
+   "size": 16653153588,
+   "header_bytes": 8984,
+   "tensor_bytes": 16653144596,
+   "n_tensors": 78
+  },
+  {
+   "path": "model-00008-of-00024.safetensors",
+   "size": 18745819004,
+   "header_bytes": 6496,
+   "tensor_bytes": 18745812500,
+   "n_tensors": 56
+  },
+  {
+   "path": "model-00009-of-00024.safetensors",
+   "size": 16653134932,
+   "header_bytes": 8760,
+   "tensor_bytes": 16653126164,
+   "n_tensors": 76
+  },
+  {
+   "path": "model-00010-of-00024.safetensors",
+   "size": 18745837620,
+   "header_bytes": 6680,
+   "tensor_bytes": 18745830932,
+   "n_tensors": 58
+  },
+  {
+   "path": "model-00011-of-00024.safetensors",
+   "size": 16652544868,
+   "header_bytes": 8520,
+   "tensor_bytes": 16652536340,
+   "n_tensors": 74
+  },
+  {
+   "path": "model-00012-of-00024.safetensors",
+   "size": 18746409068,
+   "header_bytes": 6736,
+   "tensor_bytes": 18746402324,
+   "n_tensors": 58
+  },
+  {
+   "path": "model-00013-of-00024.safetensors",
+   "size": 16652563516,
+   "header_bytes": 8736,
+   "tensor_bytes": 16652554772,
+   "n_tensors": 76
+  },
+  {
+   "path": "model-00014-of-00024.safetensors",
+   "size": 18745818980,
+   "header_bytes": 6472,
+   "tensor_bytes": 18745812500,
+   "n_tensors": 56
+  },
+  {
+   "path": "model-00015-of-00024.safetensors",
+   "size": 15306547892,
+   "header_bytes": 5288,
+   "tensor_bytes": 15306542596,
+   "n_tensors": 46
+  },
+  {
+   "path": "model-00016-of-00024.safetensors",
+   "size": 12812777160,
+   "header_bytes": 2752,
+   "tensor_bytes": 12812774400,
+   "n_tensors": 24
+  },
+  {
+   "path": "model-00017-of-00024.safetensors",
+   "size": 12812758520,
+   "header_bytes": 2544,
+   "tensor_bytes": 12812755968,
+   "n_tensors": 22
+  },
+  {
+   "path": "model-00018-of-00024.safetensors",
+   "size": 12812758520,
+   "header_bytes": 2544,
+   "tensor_bytes": 12812755968,
+   "n_tensors": 22
+  },
+  {
+   "path": "model-00019-of-00024.safetensors",
+   "size": 12812758520,
+   "header_bytes": 2544,
+   "tensor_bytes": 12812755968,
+   "n_tensors": 22
+  },
+  {
+   "path": "model-00020-of-00024.safetensors",
+   "size": 12812758520,
+   "header_bytes": 2544,
+   "tensor_bytes": 12812755968,
+   "n_tensors": 22
+  },
+  {
+   "path": "model-00021-of-00024.safetensors",
+   "size": 12813348576,
+   "header_bytes": 2776,
+   "tensor_bytes": 12813345792,
+   "n_tensors": 24
+  },
+  {
+   "path": "model-00022-of-00024.safetensors",
+   "size": 19893058608,
+   "header_bytes": 6176,
+   "tensor_bytes": 19893052424,
+   "n_tensors": 54
+  },
+  {
+   "path": "model-00023-of-00024.safetensors",
+   "size": 18745818948,
+   "header_bytes": 6440,
+   "tensor_bytes": 18745812500,
+   "n_tensors": 56
+  },
+  {
+   "path": "model-00024-of-00024.safetensors",
+   "size": 11884582916,
+   "header_bytes": 56304,
+   "tensor_bytes": 11884526604,
+   "n_tensors": 458
+  },
+  {
+   "path": "mtp.safetensors",
+   "size": 3423429800,
+   "header_bytes": 9024,
+   "tensor_bytes": 3423420768,
+   "n_tensors": 84
+  }
+ ]
+}

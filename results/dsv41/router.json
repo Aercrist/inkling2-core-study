@@ -1,0 +1,9 @@
+{
+ "match": "256/256",
+ "latency_cycles": 98,
+ "latency_ns_at_1p5ghz": 65.3,
+ "tool": "Icarus Verilog (iverilog -g2012)",
+ "experts": 384,
+ "top_k": 6,
+ "lanes": 8
+}

@@ -1,0 +1,37 @@
+# NVIDIA B300 (Blackwell Ultra, HGX), per GPU. Same constants as the DeepSeek-V4.1 study's
+# configs/hw/dsv41/b300_base.yaml; every one cites a key in docs/sources.md. `calibrated`
+# values are overwritten by the fit to published Inkling 2 Small speeds (sim/calibrate_gpu.py);
+# the numbers here are the priors carried over from the DeepSeek study.
+name: B300
+kind: gpu
+n_chips: 4
+hbm_bw: 7.7e12            # src: lenovo-b300
+hbm_cap: 288.0e9          # src: nv-bw-ultra
+hbm_eff: 0.8375           # calibrated. Prior: the DeepSeek study's fit (src: dsv41-calibration)
+peak:                     # dense tensor-core FLOP/s; src: lenovo-b300, nv-hgx
+  fp4: 13.5e15
+  fp8: 4.5e15
+  bf16: 2.25e15
+  fp32: 0.075e15          # assumption (non-tensor FP32; matters only at high batch)
+mm_eff: 0.7               # assumption: achievable fraction of peak when compute-bound
+attn_eff: 0.7             # calibrated: relative-bias attention kernels
+topk_rate: 2.0e12         # assumption
+link_bw: 900.0e9          # NVLink 5, per direction; src: nv-bw-ultra
+coll_latency: 2.37e-6     # best measured 4-GPU small all-reduce; src: ar-latency
+prefetch: false
+kernel_overhead: 4.21e-6  # calibrated. Prior: the DeepSeek study's fit
+serial_round_latency: 1.0e-6
+step_overhead: 0.0
+engram_in_hbm: true
+tdp_w: 1100               # src: lenovo-b300
+power:
+  model: tdp
+  load_fraction: 0.6      # overwritten per batch from the two anchors below
+  load_fraction_b1: 0.43    # measured on H100 serving LLMs at one request: 43% of TDP; src: gpu-power-batch
+  load_fraction_b128: 0.86  # measured at 128 requests: 86% of TDP. Carried over to B300 as an assumption (swept 0.4-1.0)
+cost:
+  rental_usd_per_gpu_hour: 9.50    # src: gpu-rental
+  purchase_usd_per_gpu: 60000      # reseller ballpark $56-76K per GPU with networking for an 8-GPU node; src: b300-price (swept 45-76K)
+  lifetime_years: 4
+  pue: 1.25               # src: pue-blackwell
+  usd_per_kwh: 0.0862     # src: electricity

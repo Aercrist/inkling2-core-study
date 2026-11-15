@@ -1,0 +1,6 @@
+# Projection: the same 4 x GB300 running a barrier-synchronized persistent kernel. Each former
+# kernel stage still ends in a device-wide barrier (">1 us" per barrier, src: ar-latency);
+# collectives, expert layout and everything else as in today's engine. Software projection.
+extends: gb300_tp4.yaml
+name: 4x GB300, barrier-synced persistent kernel (projected)
+kernel_overhead: 1.0e-6

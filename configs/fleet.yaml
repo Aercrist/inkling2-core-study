@@ -1,0 +1,7 @@
+# Token demand the fleet of each chip is sized for. Design cost (NRE) is spread over the systems that
+# demand needs, so every chip (A, S, F) is costed for the same demand rather than for a number of dies.
+# 5 trillion tokens a day is about what the DeepSeek-V4.1 study's volume for MDA-1 (20,000 packages)
+# would serve. It is an assumption, and a large one: experiments sweep 0.5 to 20 trillion a day and
+# report the demand at which each chip breaks even with GPUs.
+demand_tokens_per_day: 5.0e12
+capacity_point: {batch: 128, context: 32768}   # a system's capacity is its throughput here; S and F use the number of sessions they are built for

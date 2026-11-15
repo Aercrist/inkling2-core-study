@@ -1,0 +1,17 @@
+{
+ "source": "https://huggingface.co/api/models/thinkingmachines/Inkling-2-Small",
+ "retrieved": "2026-11-14",
+ "sha": "8361e7a31ae7e9966a49a91d3994fde618936c2b",
+ "lastModified": "2026-11-13T21:12:23.000Z",
+ "createdAt": "2026-11-04T19:51:05.000Z",
+ "license": "apache-2.0",
+ "usedStorage_bytes": 393509649692,
+ "safetensors_parameters_by_dtype": {
+  "F32": 565328,
+  "BF16": 6981765120,
+  "U8": 489223618560,
+  "F8_E4M3": 97844723712
+ },
+ "safetensors_total": 594050672720,
+ "note": "Hub-reported parameter counts. The Hub counts packed NVFP4 (U8) weights as two parameters per byte and leaves out block-scale tensors and mtp.safetensors; experiments/phase0_workload.py reproduces this total from the headers."
+}

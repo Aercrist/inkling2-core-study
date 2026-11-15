@@ -1,0 +1,26 @@
+{
+ "s/g0_x4": {
+  "speed_batch1": 5.35138,
+  "tokens_per_joule_batch1": 2.98783,
+  "tokens_per_joule_best": 3.45543,
+  "cost_best": 1.68153
+ },
+ "a_x4/g0_x4": {
+  "speed_batch1": 1.42631,
+  "tokens_per_joule_batch1": 1.60008,
+  "tokens_per_joule_best": 2.18029,
+  "cost_best": 2.36357
+ },
+ "f/g0_x4": {
+  "speed_batch1": 22.7211,
+  "tokens_per_joule_batch1": 17.7322,
+  "tokens_per_joule_best": 4.31666,
+  "cost_best": 2.97549
+ },
+ "g1_x4/g0_x4": {
+  "speed_batch1": 1.68132,
+  "tokens_per_joule_batch1": 1.68132,
+  "tokens_per_joule_best": 1.48174,
+  "cost_best": 1.51233
+ }
+}

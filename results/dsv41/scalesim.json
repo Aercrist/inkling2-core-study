@@ -1,0 +1,138 @@
+{
+ "rows": [
+  {
+   "array": "128x128 WS",
+   "shape": "decode routed expert w13 (1 row/expert)",
+   "M": 1,
+   "N": 1152,
+   "K": 5120,
+   "cycles": 137880,
+   "scalesim_util": 0.002611,
+   "scalesim_mapping_util": 0.001961,
+   "model_util": null
+  },
+  {
+   "array": "128x128 WS",
+   "shape": "decode wq_b shard (6 rows)",
+   "M": 6,
+   "N": 8192,
+   "K": 1280,
+   "cycles": 248320,
+   "scalesim_util": 0.015464,
+   "scalesim_mapping_util": 0.01165,
+   "model_util": null
+  },
+  {
+   "array": "128x128 WS",
+   "shape": "decode batch-64 expert w13 (6 rows/expert)",
+   "M": 6,
+   "N": 1152,
+   "K": 5120,
+   "cycles": 139680,
+   "scalesim_util": 0.015464,
+   "scalesim_mapping_util": 0.01165,
+   "model_util": null
+  },
+  {
+   "array": "128x128 WS",
+   "shape": "prefill expert w13 (8K chunk, 128 rows/expert)",
+   "M": 128,
+   "N": 1152,
+   "K": 5120,
+   "cycles": 183600,
+   "scalesim_util": 0.25098,
+   "scalesim_mapping_util": 0.200942,
+   "model_util": null
+  },
+  {
+   "array": "128x128 OS",
+   "shape": "decode routed expert w13 (1 row/expert)",
+   "M": 1,
+   "N": 1152,
+   "K": 5120,
+   "cycles": 48366,
+   "scalesim_util": 0.007443,
+   "scalesim_mapping_util": 0.007443,
+   "model_util": null
+  },
+  {
+   "array": "128x128 OS",
+   "shape": "decode wq_b shard (6 rows)",
+   "M": 6,
+   "N": 8192,
+   "K": 1280,
+   "cycles": 98176,
+   "scalesim_util": 0.039113,
+   "scalesim_mapping_util": 0.039113,
+   "model_util": null
+  },
+  {
+   "array": "128x128 OS",
+   "shape": "decode batch-64 expert w13 (6 rows/expert)",
+   "M": 6,
+   "N": 1152,
+   "K": 5120,
+   "cycles": 48366,
+   "scalesim_util": 0.044659,
+   "scalesim_mapping_util": 0.044659,
+   "model_util": null
+  },
+  {
+   "array": "128x128 OS",
+   "shape": "prefill expert w13 (8K chunk, 128 rows/expert)",
+   "M": 128,
+   "N": 1152,
+   "K": 5120,
+   "cycles": 48366,
+   "scalesim_util": 0.952735,
+   "scalesim_mapping_util": 0.952735,
+   "model_util": null
+  },
+  {
+   "array": "16x1024 OS (MDA-1)",
+   "shape": "decode routed expert w13 (1 row/expert)",
+   "M": 1,
+   "N": 1152,
+   "K": 5120,
+   "cycles": 12316,
+   "scalesim_util": 0.02923,
+   "scalesim_mapping_util": 0.02923,
+   "model_util": 0.03125
+  },
+  {
+   "array": "16x1024 OS (MDA-1)",
+   "shape": "decode wq_b shard (6 rows)",
+   "M": 6,
+   "N": 8192,
+   "K": 1280,
+   "cycles": 18544,
+   "scalesim_util": 0.207075,
+   "scalesim_mapping_util": 0.207075,
+   "model_util": 0.1875
+  },
+  {
+   "array": "16x1024 OS (MDA-1)",
+   "shape": "decode batch-64 expert w13 (6 rows/expert)",
+   "M": 6,
+   "N": 1152,
+   "K": 5120,
+   "cycles": 12316,
+   "scalesim_util": 0.175382,
+   "scalesim_mapping_util": 0.175382,
+   "model_util": 0.1875
+  },
+  {
+   "array": "16x1024 OS (MDA-1)",
+   "shape": "prefill expert w13 (8K chunk, 128 rows/expert)",
+   "M": 128,
+   "N": 1152,
+   "K": 5120,
+   "cycles": 98528,
+   "scalesim_util": 0.467684,
+   "scalesim_mapping_util": 0.467684,
+   "model_util": 0.5
+  }
+ ],
+ "tool": "SCALE-Sim v3.0.0 (pip scalesim), compute stage only",
+ "note": "util = ideal MACs / (array MACs x cycles), including fill/drain. model_util is the simulator's assumption for MDA-1's 16-row engine: mm_eff x M / (ceil(M/16) x 16). mm_eff was 0.8 before this cross-check and was lowered to 0.5 because SCALE-Sim showed the 0.8 model 1.5-1.7x optimistic."
+}

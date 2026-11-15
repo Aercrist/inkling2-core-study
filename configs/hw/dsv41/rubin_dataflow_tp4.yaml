@@ -1,0 +1,9 @@
+# Projection: 4 x Rubin with the dataflow-style software of gpu_dataflow_tp4.yaml.
+extends: rubin_tp4.yaml
+name: 4x Rubin, dataflow-style software (projected)
+prefetch: true
+stage_bytes: 64.0e6
+op_overhead: 0.5e-6
+router_latency: 0.5e-6
+hbm_latency: 0.5e-6
+coll_latency: 2.37e-6

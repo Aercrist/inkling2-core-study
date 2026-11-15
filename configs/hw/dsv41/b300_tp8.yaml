@@ -1,0 +1,4 @@
+# 8 x B300 (HGX B300), TP8: the deepseek-ultrafast TP8 configuration.
+extends: b300_base.yaml
+name: 8x B300 (TP8)
+n_chips: 8

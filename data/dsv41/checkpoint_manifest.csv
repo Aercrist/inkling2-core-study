@@ -1,0 +1,117 @@
+tensor,dtype,shape,count,total_bytes,layers
+aligner.w1.bias,BF16,5120,1,10240,
+aligner.w1.weight,BF16,5120x9216,1,94371840,
+aligner.w2.bias,BF16,5120,1,10240,
+aligner.w2.weight,BF16,5120x5120,1,52428800,
+embed.weight,BF16,129280x5120,1,1323827200,
+head.weight,BF16,129280x5120,1,1323827200,
+image_end,BF16,5120,1,10240,
+image_newline,BF16,5120,1,10240,
+image_start,BF16,5120,1,10240,
+layers.*.attn.attn_sink,F32,64,40,10240,all
+layers.*.attn.kv_norm.weight,BF16,512,40,40960,all
+layers.*.attn.q_norm.weight,BF16,1280,40,102400,all
+layers.*.attn.wkv.scale,F8_E8M0,16x160,40,102400,all
+layers.*.attn.wkv.weight,F8_E4M3,512x5120,40,104857600,all
+layers.*.attn.wo_a.scale,F8_E8M0,256x128,40,1310720,all
+layers.*.attn.wo_a.weight,F8_E4M3,8192x4096,40,1342177280,all
+layers.*.attn.wo_b.scale,F8_E8M0,160x256,40,1638400,all
+layers.*.attn.wo_b.weight,F8_E4M3,5120x8192,40,1677721600,all
+layers.*.attn.wq_a.scale,F8_E8M0,40x160,40,256000,all
+layers.*.attn.wq_a.weight,F8_E4M3,1280x5120,40,262144000,all
+layers.*.attn.wq_b.scale,F8_E8M0,1024x40,40,1638400,all
+layers.*.attn.wq_b.weight,F8_E4M3,32768x1280,40,1677721600,all
+layers.*.attn_norm.weight,BF16,5120,40,409600,all
+layers.*.ffn.experts.*.w1.scale,F8_E8M0,2304x160,15360,5662310400,all
+layers.*.ffn.experts.*.w1.weight,I8,2304x2560,15360,90596966400,all
+layers.*.ffn.experts.*.w2.scale,F8_E8M0,5120x72,15360,5662310400,all
+layers.*.ffn.experts.*.w2.weight,I8,5120x1152,15360,90596966400,all
+layers.*.ffn.experts.*.w3.scale,F8_E8M0,2304x160,15360,5662310400,all
+layers.*.ffn.experts.*.w3.weight,I8,2304x2560,15360,90596966400,all
+layers.*.ffn.gate.bias,F32,384,40,61440,all
+layers.*.ffn.gate.bias_vl,F32,384,40,61440,all
+layers.*.ffn.gate.weight,BF16,384x5120,40,157286400,all
+layers.*.ffn.shared_experts.w1.scale,F8_E8M0,72x160,40,460800,all
+layers.*.ffn.shared_experts.w1.weight,F8_E4M3,2304x5120,40,471859200,all
+layers.*.ffn.shared_experts.w2.scale,F8_E8M0,160x72,40,460800,all
+layers.*.ffn.shared_experts.w2.weight,F8_E4M3,5120x2304,40,471859200,all
+layers.*.ffn.shared_experts.w3.scale,F8_E8M0,72x160,40,460800,all
+layers.*.ffn.shared_experts.w3.weight,F8_E4M3,2304x5120,40,471859200,all
+layers.*.ffn_norm.weight,BF16,5120,40,409600,all
+layers.*.hc_attn_base,F32,24,40,3840,all
+layers.*.hc_attn_fn,F32,24x20480,40,78643200,all
+layers.*.hc_attn_scale,F32,3,40,480,all
+layers.*.hc_ffn_base,F32,24,40,3840,all
+layers.*.hc_ffn_fn,F32,24x20480,40,78643200,all
+layers.*.hc_ffn_scale,F32,3,40,480,all
+layers.*.engram.embed.scale,F8_E8M0,384006168x8,1,3072049344,1
+layers.*.engram.embed.weight,F8_E4M3,384006168x256,1,98305579008,1
+layers.*.engram.k_weight,BF16,4x5120,2,81920,1 14
+layers.*.engram.q_weight,BF16,4x5120,2,81920,1 14
+layers.*.engram.wkv.scale,F8_E8M0,800x192,2,307200,1 14
+layers.*.engram.wkv.weight,F8_E4M3,25600x6144,2,314572800,1 14
+layers.*.attn.compressor.norm.weight,BF16,512,4,4096,2 8 14 20
+layers.*.attn.compressor.wgate.weight,BF16,512x5120,3,15728640,2 8 14
+layers.*.attn.compressor.wkv.weight,BF16,512x5120,4,20971520,2 8 14 20
+layers.*.attn.indexer.k_norm.weight,BF16,128,4,1024,2 8 14 20
+layers.*.attn.indexer.weights_proj.weight,BF16,32x5120,8,2621440,2 8 14 20 24 28 32 36
+layers.*.attn.indexer.wk.weight,BF16,128x512,4,524288,2 8 14 20
+layers.*.attn.indexer.wq_b.scale,F8_E8M0,128x40,8,40960,2 8 14 20 24 28 32 36
+layers.*.attn.indexer.wq_b.weight,F8_E4M3,4096x1280,8,41943040,2 8 14 20 24 28 32 36
+layers.*.engram.embed.scale,F8_E8M0,384016682x8,1,3072133456,14
+layers.*.engram.embed.weight,F8_E4M3,384016682x256,1,98308270592,14
+mtp.*.attn.attn_sink,F32,64,3,768,
+mtp.*.attn.kv_norm.weight,BF16,512,3,3072,
+mtp.*.attn.q_norm.weight,BF16,1280,3,7680,
+mtp.*.attn.wkv.scale,F8_E8M0,16x160,3,7680,
+mtp.*.attn.wkv.weight,F8_E4M3,512x5120,3,7864320,
+mtp.*.attn.wo_a.scale,F8_E8M0,256x128,3,98304,
+mtp.*.attn.wo_a.weight,F8_E4M3,8192x4096,3,100663296,
+mtp.*.attn.wo_b.scale,F8_E8M0,160x256,3,122880,
+mtp.*.attn.wo_b.weight,F8_E4M3,5120x8192,3,125829120,
+mtp.*.attn.wq_a.scale,F8_E8M0,40x160,3,19200,
+mtp.*.attn.wq_a.weight,F8_E4M3,1280x5120,3,19660800,
+mtp.*.attn.wq_b.scale,F8_E8M0,1024x40,3,122880,
+mtp.*.attn.wq_b.weight,F8_E4M3,32768x1280,3,125829120,
+mtp.*.attn_norm.weight,BF16,5120,3,30720,
+mtp.*.ffn.experts.*.w1.scale,F8_E8M0,2304x160,384,141557760,
+mtp.*.ffn.experts.*.w1.weight,I8,2304x2560,384,2264924160,
+mtp.*.ffn.experts.*.w2.scale,F8_E8M0,5120x72,384,141557760,
+mtp.*.ffn.experts.*.w2.weight,I8,5120x1152,384,2264924160,
+mtp.*.ffn.experts.*.w3.scale,F8_E8M0,2304x160,384,141557760,
+mtp.*.ffn.experts.*.w3.weight,I8,2304x2560,384,2264924160,
+mtp.*.ffn.gate.bias,F32,128,3,1536,
+mtp.*.ffn.gate.bias_vl,F32,128,3,1536,
+mtp.*.ffn.gate.weight,BF16,128x5120,3,3932160,
+mtp.*.ffn.shared_experts.w1.scale,F8_E8M0,72x160,3,34560,
+mtp.*.ffn.shared_experts.w1.weight,F8_E4M3,2304x5120,3,35389440,
+mtp.*.ffn.shared_experts.w2.scale,F8_E8M0,160x72,3,34560,
+mtp.*.ffn.shared_experts.w2.weight,F8_E4M3,5120x2304,3,35389440,
+mtp.*.ffn.shared_experts.w3.scale,F8_E8M0,72x160,3,34560,
+mtp.*.ffn.shared_experts.w3.weight,F8_E4M3,2304x5120,3,35389440,
+mtp.*.ffn_norm.weight,BF16,5120,3,30720,
+mtp.*.hc_attn_base,F32,24,3,288,
+mtp.*.hc_attn_fn,F32,24x20480,3,5898240,
+mtp.*.hc_attn_scale,F32,3,3,36,
+mtp.*.hc_ffn_base,F32,24,3,288,
+mtp.*.hc_ffn_fn,F32,24x20480,3,5898240,
+mtp.*.hc_ffn_scale,F32,3,3,36,
+mtp.*.main_norm.weight,BF16,5120,1,10240,
+mtp.*.main_proj.scale,F8_E8M0,160x480,1,76800,
+mtp.*.main_proj.weight,F8_E4M3,5120x15360,1,78643200,
+mtp.*.confidence_head.proj.weight,BF16,1x5376,1,10752,
+mtp.*.markov_head.embed.weight,BF16,129280x256,1,66191360,
+mtp.*.markov_head.head.weight,BF16,129280x256,1,66191360,
+mtp.*.norm.weight,BF16,5120,1,10240,
+norm.weight,BF16,5120,1,10240,
+vision.blocks.*.attn.wo.bias,BF16,1024,32,65536,
+vision.blocks.*.attn.wo.weight,BF16,1024x1024,32,67108864,
+vision.blocks.*.attn.wqkv.bias,BF16,3072,32,196608,
+vision.blocks.*.attn.wqkv.weight,BF16,3072x1024,32,201326592,
+vision.blocks.*.mlp.w1.weight,BF16,5632x1024,32,369098752,
+vision.blocks.*.mlp.w2.weight,BF16,1024x2816,32,184549376,
+vision.blocks.*.norm1.weight,BF16,1024,32,65536,
+vision.blocks.*.norm2.weight,BF16,1024,32,65536,
+vision.norm.weight,BF16,1024,1,2048,
+vision.patch_embed.proj.bias,BF16,1024,1,2048,
+vision.patch_embed.proj.weight,BF16,1024x588,1,1204224,

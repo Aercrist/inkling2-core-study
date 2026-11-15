@@ -1,0 +1,38 @@
+# NVIDIA Blackwell Ultra GPU as used by deepseek-ultrafast. Per-GPU values; every constant
+# cites a key in docs/sources.md. `calibrated` values are overwritten by sim/calibrate.py and
+# the number here is only the leave-one-out prior.
+name: B300
+kind: gpu
+n_chips: 8
+hbm_bw: 7.7e12            # HGX B300 SXM: 7.7 TB/s; src: lenovo-b300
+hbm_cap: 288.0e9          # src: nv-bw-ultra
+hbm_eff: 0.935            # LOO prior = B200 STREAM triad 7.48/8.0 TB/s at 128 GB (v3 of the same
+                          # preprint: ~52% at 4-16 GB); src: stream-b200. calibrated
+peak:                     # dense tensor-core FLOP/s (HGX B300); src: lenovo-b300, nv-hgx
+  fp4: 13.5e15
+  fp8: 4.5e15
+  bf16: 2.25e15
+  fp32: 0.075e15          # non-tensor FP32 for vector ops (assumption; only matters at batch >> 1)
+mm_eff: 0.7               # achievable fraction when compute-bound (assumption; decode is not)
+topk_rate: 2.0e12         # top-k elements/s (assumption; only matters at long context)
+link_bw: 900.0e9          # NVLink 5: 1.8 TB/s bidirectional per GPU; src: nv-bw-ultra
+coll_latency: 2.37e-6     # engine uses one-shot NVLS/Lamport all-reduce fused into producers; best published
+                          # 4-GPU small all-reduce is 2.37 us (typical ~5 us). Not separable from kernel
+                          # overhead by the fit (see docs/04). src: ar-latency
+prefetch: false
+kernel_overhead: 2.0e-6   # calibrated: exposed latency per dependent kernel stage (with PDL, not launch
+                          # gaps but grid-wide completion, ramp and tail); src: launch-overhead, ar-latency
+serial_round_latency: 1.0e-6
+step_overhead: 0.0
+engram_in_hbm: true       # deepseek-ultrafast shards the Engram tables across GPU HBM (weights.rs)
+tdp_w: 1100               # HGX B300 TDP; src: lenovo-b300
+power:
+  model: tdp
+  load_fraction: 0.6      # assumption (swept 0.4-1.0): batch-1 decode leaves HBM ~60% idle
+cost:
+  rental_usd_per_gpu_hour: 9.50    # B300 market median on-demand, 2026-11-14; src: gpu-rental
+  purchase_usd_per_gpu: 45000      # all-in per GPU incl. server/network share. ASSUMPTION (no public
+                                   # B300 price; swept 25-65K). Epoch's B200 BOM is ~$6.4K (src: epoch-b200)
+  lifetime_years: 4
+  pue: 1.44               # src: pue
+  usd_per_kwh: 0.0862     # src: electricity

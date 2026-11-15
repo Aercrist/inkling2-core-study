@@ -1,0 +1,14 @@
+# Projection: the same 4 x GB300 running the *execution model* MDA-1 uses, in software: one
+# persistent program with flag (not barrier) hand-offs, cross-layer weight prefetch into L2
+# via TMA bulk prefetch, an unpadded expert layout, in-kernel routing and speed-of-light
+# collectives. Constants that are the same physics as MDA-1 are set equal to MDA-1's
+# (DRAM first-byte latency, collective latency, HBM efficiency). Only the hand-off and router
+# latencies differ, by mechanism. Not demonstrated for this model.
+extends: gb300_tp4.yaml
+name: 4x GB300, dataflow-style software (projected)
+prefetch: true
+stage_bytes: 64.0e6       # assumption: a staging slice of L2 (>= the 32 MB knee; L2 size not sourced)
+op_overhead: 0.5e-6       # producer->consumer flag hand-off through L2 (RTT 0.306 us measured) + SM tail; src: ar-latency
+router_latency: 0.5e-6    # top-6 of 384 inside one CTA + expert issue (assumption)
+hbm_latency: 0.5e-6       # same DRAM as MDA-1
+coll_latency: 2.37e-6     # best *measured* 4-GPU small all-reduce (same value as today's baseline); src: ar-latency

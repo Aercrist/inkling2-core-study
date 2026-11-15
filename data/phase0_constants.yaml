@@ -1,0 +1,30 @@
+# Constants used by the workload arithmetic before any simulation (experiments/phase0_workload.py). Nothing here is fitted.
+# Every value carries a `src` key that resolves in docs/sources.md, or is marked `assumption`.
+# The simulator uses configs/hw/*.yaml instead.
+
+gpu:
+  b300:
+    hbm_bw: 7.7e+12          # bytes/s per GPU, peak. src: lenovo-b300
+    hbm_cap: 288.0e+9        # src: nv-bw-ultra
+    tdp_w: 1100             # src: lenovo-b300
+  gb200:
+    hbm_bw: 8.0e+12          # bytes/s per GPU, peak. src: stream-b200
+    hbm_cap: 192.0e+9        # src: sglang-recipe
+  hbm_eff: 0.837504         # achieved / peak HBM bandwidth, as calibrated in the DeepSeek study. src: dsv41-calibration
+  load_fraction: 0.6        # assumption (DeepSeek study; swept 0.4-1.0): GPU power as a share of TDP in batch-1 decode
+
+speculation:
+  verify_rows: 8            # DSpark: 7 drafted tokens + 1 per request per step. src: sglang-recipe, vllm-recipe
+  acceptance_published: [3.3, 3.5]   # accepted tokens per step, published range. src: vllm-blog
+  acceptance_napkin: 3.5    # src: vllm-blog (single user, TP4)
+
+kv_cache:
+  mxfp8_block: 32           # one power-of-two scale per 32 values. src: tokenspeed-recipe
+  nvfp4_block: 16           # src: nvfp4-blog
+  draft_full_history_layers: 5   # the draft adds five attention layers to the full-history group, kept in BF16. src: tokenspeed-blog, tokenspeed-recipe
+
+sram_sizing:
+  mm2_per_mib: 0.5          # N5-class HD SRAM: ~32 Mib/mm2 array (0.25 mm2/MiB), x2 for macro periphery and routing. src: sram-density (x2 is the DeepSeek study's assumption)
+  mm2_per_mib_array_only: 0.25   # array only: a lower bound on area, not a design point. src: sram-density
+  die_mm2: 800.0            # assumption: near the 26 x 33 mm reticle limit
+  sram_fraction: 0.75       # assumption: share of the die that is weight SRAM

@@ -1,0 +1,40 @@
+# Napkin checks
+
+One page of hand arithmetic per headline, from a few inputs, set beside the simulator. If a napkin
+and the simulator disagree by more than about 20%, one of them is wrong or the reason is stated.
+The arithmetic is done by `experiments/napkin.py` so that no figure here is typed by hand.
+
+| headline | napkin | simulator | gap |
+|---|---|---|---|
+| GPUs at batch 1 | {{ n(NK.gpu_batch1.napkin, -1) }} tok/s | {{ n(NK.gpu_batch1.simulator, -1) }} tok/s | {{ "%+.0f" | format(100 * NK.gpu_batch1.gap) }}% |
+| S at batch 1 | {{ n(NK.s_batch1.napkin, -1) }} tok/s | {{ n(NK.s_batch1.simulator, -1) }} tok/s | {{ "%+.0f" | format(100 * NK.s_batch1.gap) }}% |
+| speed, S over GPUs | {{ x(NK.speed_ratio.napkin) }} | {{ x(NK.speed_ratio.simulator) }} | {{ "%+.0f" | format(100 * NK.speed_ratio.gap) }}% |
+| tokens/J at the best point, S over GPUs | {{ x(NK.energy_best.napkin) }} | {{ x(NK.energy_best.simulator) }} | {{ "%+.0f" | format(100 * NK.energy_best.gap) }}% |
+| cost per token at the best point, GPUs over S | {{ x(NK.cost_best.napkin) }} | {{ x(NK.cost_best.simulator) }} | {{ "%+.0f" | format(100 * NK.cost_best.gap) }}% |
+| dies, reloadable over fixed | {{ x(NK.dies.napkin) }} | {{ x(NK.dies.simulator) }} | {{ "%+.0f" | format(100 * NK.dies.gap) }}% |
+
+{% for k in ["gpu_batch1", "s_batch1", "energy_best", "cost_best", "dies"] %}
+{% set v = NK[k] %}
+## {{ loop.index }} · {{ v.title }}
+
+{% for line in v.steps %}
+{{ loop.index }}. {{ line }}
+{% endfor %}
+
+**Napkin {{ sig(v.napkin) }}{{ "x" if v.unit == "x" else " " + v.unit }}; simulator {{ sig(v.simulator) }}{{ "x" if v.unit == "x" else " " + v.unit }} ({{ "%+.0f" | format(100 * v.gap) }}%).**
+{% if v.published %}Published: {{ v.published }}.{% endif %}
+{% if v.gap_reason %}
+
+Why they differ: {{ v.gap_reason }}
+{% endif %}
+
+{% endfor %}
+## What the napkins show
+
+- The GPU's batch-1 step is two terms of about equal size: streaming weights and waiting on launches.
+  Neither is arithmetic.
+- S's batch-1 step is the number of operations in series times a time per operation taken from a
+  published machine. S's own bank pass is {{ pct(I.designs.s.t_scan_us * 1e-6 / NK.s_op_time) }} of that time.
+- At the best interactive point the GPUs stream the whole checkpoint every step and S does not. S's
+  throughput is set by its attention tile, and its cost by how many systems share the design cost.
+- The die ratio is the ratio of two storage densities, plus the multiplier lanes and the window cache both designs carry.

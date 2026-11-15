@@ -1,0 +1,33 @@
+# Published per-user decode speeds for Llama 3.1 8B on four memory architectures, with what each
+# source says about how it was measured. Pages read 2026-11-15; keys resolve in docs/sources.md.
+# `who` distinguishes a vendor's own measurement, an independent benchmark, and one relayed by a
+# third party.
+
+architectures:
+  h200:
+    label: NVIDIA H200, one GPU (HBM)
+    memory: "141 GB HBM3e at 4.8 TB/s"
+    points:
+      - {id: nim_fp8, value: 234.95, conditions: "NVIDIA NIM, FP8 weights, 1 request, 1,000 in / 1,000 out, inter-token latency 4.24 ms", who: vendor, src: nim-bench, reference: true}
+      - {id: nim_bf16, value: 140.14, conditions: "same, BF16 weights, inter-token latency 7.11 ms", who: vendor, src: nim-bench}
+      - {id: chart, value: 230, conditions: "as charted by a fixed-weight chip vendor, attributed to NVIDIA, 1k/1k", who: relayed, src: taalas-chart}
+  groq:
+    label: Groq LPU (SRAM, many chips)
+    memory: "230 MB SRAM per chip at up to 80 TB/s; 14 nm; chips per model not published for this model"
+    points:
+      - {id: aa_chart, value: 594, conditions: "Artificial Analysis as charted on 19 Feb 2026, about 1k input tokens", who: relayed, src: taalas-chart, reference: true}
+      - {id: aa_live, value: 630.1, conditions: "Artificial Analysis live page, 1k-input workload, includes time to first token", who: independent, src: aa-llama}
+      - {id: own, value: 560, conditions: "Groq documentation, no workload stated", who: vendor, src: groq-docs}
+  cerebras:
+    label: Cerebras WSE-3 (SRAM, one wafer)
+    memory: "44 GB SRAM at 21 PB/s on one 46,225 mm2 wafer; 5 nm; 16-bit weights"
+    points:
+      - {id: aa_chart, value: 1981, conditions: "Artificial Analysis as charted on 19 Feb 2026, about 1k input tokens", who: relayed, src: taalas-chart, reference: true}
+      - {id: own, value: 1800, conditions: "Cerebras launch claim, August 2024, 16-bit weights", who: vendor, src: cerebras-launch}
+  hc1:
+    label: Taalas HC1 (fixed weights, one die)
+    memory: "8B parameters of 3 and 6 bits in mask-programmed storage on one 815 mm2 N6 die"
+    points:
+      - {id: claim, value: 16960, conditions: "vendor's labs, batch 1, 1k in / 1k out", who: vendor, src: taalas-chart, reference: true}
+      - {id: probe, value: 14150, conditions: "black-box probe of the public demo, generations above 100 tokens (14,000-14,300)", who: independent, src: hc1-probe}
+      - {id: analyst, value: 14357, conditions: "one query on the public demo by an analyst whose firm has the vendor as a client", who: independent, src: hc1-analyst}

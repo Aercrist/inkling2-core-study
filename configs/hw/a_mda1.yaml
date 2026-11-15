@@ -1,0 +1,10 @@
+# A: MDA-1, the HBM decode chip of the DeepSeek-V4.1 study, re-targeted to Inkling 2 Small.
+# One "chip" = one package: 2 dies, 8 HBM3E stacks at 8 TB/s. Every constant is MDA-1's
+# (configs/hw/dsv41/asic_mda1.yaml) except the stack height: 12-high stacks (36 GB) so that two
+# packages hold the 394 GB checkpoint plus KV cache, as two B300s do.
+extends: dsv41/asic_mda1.yaml
+name: MDA-1 for Inkling 2 (proposed)
+hbm_cap: 288.0e9          # 8 x 36 GB 12-high stacks; src: hbm3e
+attn_eff: 0.5             # a dedicated attention datapath at the matrix engine's efficiency (assumption)
+cost:
+  pue: 1.25               # same facility as every other platform; src: pue-blackwell
