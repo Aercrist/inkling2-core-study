@@ -1,0 +1,144 @@
+# How each published Inkling 2 Small speed (data/public_measurements.yaml) enters the GPU fit.
+# `fit: true` points are fitted; the others are held out as checks because their conditions are
+# only partly published. Every assumption made to turn a published figure into a model input is
+# listed under `assumed` and varied in the fit-sensitivity table.
+
+points:
+  - id: tokenspeed_b300_c1_target_only
+    fit: true
+    hw: configs/hw/gpu_b300.yaml
+    n_gpus: 4
+    batch: 1
+    context: 94000          # published mean prompt length
+    speculation: false
+    kv_format: mxfp8
+    target: 272
+    assumed: ["decode context = mean prompt length"]
+  - id: tokenspeed_b300_c1_dspark
+    fit: true
+    hw: configs/hw/gpu_b300.yaml
+    n_gpus: 4
+    batch: 1
+    context: 94000
+    speculation: true
+    accept_len: 3.5
+    kv_format: mxfp8
+    target: 476
+    assumed: ["acceptance length 3.5 (TokenSpeed does not publish it; vLLM reports 3.3-3.5)"]
+  - id: vllm_gb200_tp4_single_user
+    fit: true
+    hw: configs/hw/gpu_gb200.yaml
+    n_gpus: 4
+    batch: 1
+    context: 8192
+    speculation: true
+    accept_len: 3.5
+    kv_format: bf16
+    target: 630
+    assumed: ["context 8K (not published for this figure)"]
+  - id: vllm_gb200_tp8_32k
+    fit: true
+    hw: configs/hw/gpu_gb200.yaml
+    n_gpus: 8
+    batch: 84
+    context: 32768
+    speculation: true
+    accept_len: 3.3
+    kv_format: bf16
+    target: 100
+    turn_new_tokens: 3000     # "about 3K new tokens per turn" (vllm-blog)
+    turn_output_tokens: 1024  # "1,024 generated" (vllm-blog)
+    assumed: ["all sessions decode in the same step", "each session's new prompt tokens are one prefill forward on the same GPUs, once per turn"]
+  - id: vllm_gb200_tp8_64k
+    fit: true
+    hw: configs/hw/gpu_gb200.yaml
+    n_gpus: 8
+    batch: 72
+    context: 65536
+    speculation: true
+    accept_len: 3.4
+    kv_format: bf16
+    target: 100
+    turn_new_tokens: 3000     # "about 3K new tokens per turn" (vllm-blog)
+    turn_output_tokens: 1024  # "1,024 generated" (vllm-blog)
+    assumed: ["all sessions decode in the same step", "each session's new prompt tokens are one prefill forward on the same GPUs, once per turn"]
+  - id: vllm_gb200_tp8_128k
+    fit: true
+    hw: configs/hw/gpu_gb200.yaml
+    n_gpus: 8
+    batch: 55
+    context: 131072
+    speculation: true
+    accept_len: 3.5
+    kv_format: bf16
+    target: 100
+    turn_new_tokens: 3000     # "about 3K new tokens per turn" (vllm-blog)
+    turn_output_tokens: 1024  # "1,024 generated" (vllm-blog)
+    assumed: ["all sessions decode in the same step", "each session's new prompt tokens are one prefill forward on the same GPUs, once per turn"]
+  - id: vllm_gb200_tp8_256k
+    fit: true
+    hw: configs/hw/gpu_gb200.yaml
+    n_gpus: 8
+    batch: 37
+    context: 262144
+    speculation: true
+    accept_len: 3.5
+    kv_format: bf16
+    target: 100
+    turn_new_tokens: 3000     # "about 3K new tokens per turn" (vllm-blog)
+    turn_output_tokens: 1024  # "1,024 generated" (vllm-blog)
+    assumed: ["all sessions decode in the same step", "each session's new prompt tokens are one prefill forward on the same GPUs, once per turn"]
+  - id: tokenspeed_b300_prefill_2k
+    fit: true
+    hw: configs/hw/gpu_b300.yaml
+    n_gpus: 4
+    batch: 1
+    context: 1024           # tokens of the chunk attend one another: half the chunk on average
+    prefill_tokens: 2048
+    speculation: false
+    kv_format: mxfp8
+    target_ms: 44.0
+    target: 0
+    assumed: ["no cached prefix", "2K means 2,048 tokens"]
+  - id: tokenspeed_b300_prefill_3k
+    fit: true
+    hw: configs/hw/gpu_b300.yaml
+    n_gpus: 4
+    batch: 1
+    context: 1536
+    prefill_tokens: 3072
+    speculation: false
+    kv_format: mxfp8
+    target_ms: 57.7
+    target: 0
+    assumed: ["no cached prefix", "3K means 3,072 tokens"]
+
+# Held out: published figures whose in-flight batch or conditions are not published.
+checks:
+  - id: tokenspeed_b300_c8_dspark
+    hw: configs/hw/gpu_b300.yaml
+    n_gpus: 4
+    batch_range: [1, 8]     # "concurrency counts active sessions, not requests in flight"
+    context: 94000
+    speculation: true
+    accept_len: 3.5
+    kv_format: mxfp8
+    target: 325
+  - id: tokenspeed_b300_c8_target_only
+    hw: configs/hw/gpu_b300.yaml
+    n_gpus: 4
+    batch_range: [1, 8]
+    context: 94000
+    speculation: false
+    kv_format: mxfp8
+    target: 195
+
+# Held out: a kernel-level timing from the engine's source. The model's attention op for one
+# full-attention layer (one launch plus the longer of arithmetic and KV streaming) should land near it.
+kernel_checks:
+  - id: tokenspeed_b300_attn_kernel
+    hw: configs/hw/gpu_b300.yaml
+    n_gpus: 4
+    contexts: [8192, 32768, 131072]
+    target_us: [10.3, 14.6, 36.7]
+    kv_format: mxfp8

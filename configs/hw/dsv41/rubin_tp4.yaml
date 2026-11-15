@@ -1,0 +1,12 @@
+# Projection: 4 x Rubin with today's deepseek-ultrafast software overheads (calibrated kernel
+# overhead and collective latency carried over unchanged). Not a measured system.
+extends: gb300_tp4.yaml
+name: 4x Rubin, today's software (projected)
+hbm_bw: 19.2e12           # Vera Rubin NVL72 page (the HGX page says 22 TB/s); src: nv-rubin
+peak:
+  fp4: 35.0e15            # dense; src: nv-rubin
+  fp8: 17.5e15
+  bf16: 4.0e15
+  fp32: 0.15e15
+link_bw: 1800.0e9         # NVLink 6, 3.6 TB/s bidirectional (HGX page); src: nv-rubin
+tdp_w: 1800               # assumption (not in sources)

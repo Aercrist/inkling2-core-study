@@ -1,0 +1,24 @@
+# Private working notes, never committed.
+BRIEF.md
+brief*.md
+
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Raw safetensors headers are a download cache; the committed ground truth is
+# data/inkling2_small/checkpoint_tensors.csv (rebuild with tools/fetch_checkpoint_manifest.py).
+data/headers_cache/
+# Weight shards are never committed.
+*.safetensors
+data/shards/
+
+rtl/build/
+results/*.tmp
+
+# DeepSeek-V4.1 figures are regenerated but not tracked here; that study's repo holds them.
+results/dsv41/*.png
+rtl/**/build/
+NOTES.md

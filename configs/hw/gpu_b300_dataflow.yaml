@@ -1,0 +1,13 @@
+# G1: the same B300 GPUs running the execution model our chips use, in software: one persistent
+# program with flag hand-offs instead of dependent kernel launches, and cross-layer prefetch of
+# the dense weights. Same projection as the DeepSeek-V4.1 study's gpu_dataflow_tp4.yaml, with the
+# same constants. Not demonstrated for this model. Constants that are the same physics as the
+# HBM chip (A) are equal to A's.
+extends: gpu_b300.yaml
+name: B300, dataflow-style software (projected)
+prefetch: true
+stage_bytes: 64.0e6       # assumption: a staging slice of L2
+op_overhead: 0.5e-6       # flag hand-off through L2 (0.306 us measured round trip) plus tail; src: ar-latency
+router_latency: 0.5e-6    # top-k inside one kernel plus expert issue (assumption)
+hbm_latency: 0.5e-6       # same DRAM as the HBM chip
+coll_latency: 2.37e-6     # best measured 4-GPU small all-reduce; src: ar-latency

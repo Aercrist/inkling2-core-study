@@ -1,0 +1,340 @@
+# Pre-registered predictions. Written on 2026-11-14, before any simulation of Inkling 2 Small.
+# Frozen at the commit that adds this file: later edits are not allowed. docs/00_hypotheses.md is
+# rendered from this file now, and gains an "observed" column from results/*.json at the end.
+#
+# These are judgment calls made from the checkpoint headers, the published serving figures and
+# first-order arithmetic (results/phase0_workload.json). They are expected to be partly wrong.
+# `central` is the single best guess; `low`/`high` is the range we would not be surprised by.
+
+frozen_on: "2026-11-14"
+prior_stated_in_advance: >-
+  Before this study, our prior for a frontier-scale model against the newest GPUs was a gain of
+  about 2-10x. That is a prior, not a target.
+
+operating_points:
+  batch1: "one request, 8K context, text only, DSpark on (8 verified rows per step), NVFP4 checkpoint"
+  best: "each platform at its own best batch subject to at least 100 tok/s per user, 32K context"
+  long: "one request at 1,048,576 tokens of context"
+  g0: "2x B300, the smallest deployment the model card gives, running the best published engine (calibrated)"
+  g0x4: "4x B300 at TP4 + EP4, the layout the engines publish numbers for"
+
+predictions:
+  # ------------------------------------------------------------------ baselines
+  - id: P01
+    group: baseline
+    claim: "G0 (2x B300), per-user decode speed at batch 1"
+    unit: tok/s per user
+    central: 380
+    low: 300
+    high: 470
+    basis: >-
+      Published 4-GPU steps are about half weight streaming. Two GPUs have half the bandwidth, so the
+      streaming half doubles and the fixed half does not.
+  - id: P02
+    group: baseline
+    claim: "G1 / G0 per-user speed at batch 1 on 2x B300 (same GPUs, dataflow-style software)"
+    unit: ratio
+    central: 1.45
+    low: 1.15
+    high: 1.8
+    basis: "G1 reaches about 90% of the bandwidth ceiling; G0 on two GPUs is already more than half streaming."
+  - id: P03
+    group: baseline
+    claim: "G1 / G0 per-user speed at batch 1 on 4x B300"
+    unit: ratio
+    central: 2.0
+    low: 1.5
+    high: 2.6
+    basis: "On four GPUs the published engines run at 39-49% of the bandwidth ceiling."
+
+  # ------------------------------------------------------------------ H1
+  - id: P04
+    group: H1
+    claim: "A / G1 per-user speed at equal HBM bandwidth, batch 1"
+    unit: ratio
+    central: 1.0
+    low: 0.9
+    high: 1.15
+    basis: "Same memory, same physics, same execution model. The DeepSeek study found 0.92x-1.19x."
+  - id: P05
+    group: H1
+    claim: "A / G1 tokens per joule, batch 1"
+    unit: ratio
+    central: 1.7
+    low: 1.2
+    high: 2.5
+    basis: "No general-purpose compute to keep powered. The DeepSeek study found 1.8x (1.2x-3.0x across GPU power)."
+  - id: P06
+    group: H1
+    claim: "G1 / A cost per million tokens (above 1 means A is cheaper), batch 1"
+    unit: ratio
+    central: 1.4
+    low: 0.9
+    high: 2.0
+    basis: "The DeepSeek study found 1.5x (0.9x-2.1x across GPU price)."
+
+  # ------------------------------------------------------------------ H2
+  - id: P07
+    group: H2
+    claim: "S: number of reticle-class dies holding every weight in SRAM, N4P-class, checkpoint precision"
+    unit: dies
+    central: 250
+    low: 160
+    high: 330
+    basis: "393 GB of weights at 0.25-0.5 mm2 per MiB of SRAM, about 600 mm2 of SRAM per die."
+  - id: P08
+    group: H2
+    claim: "S per-user decode speed at batch 1"
+    unit: tok/s per user
+    central: 4500
+    low: 2000
+    high: 9000
+    basis: >-
+      About 12 microseconds per layer once weights stop moving, which existing weight-stationary systems
+      roughly achieve on dense models; 48 layers plus the draft; 3.5 tokens accepted per step.
+  - id: P09
+    group: H2
+    claim: "S / G0 per-user speed at batch 1"
+    unit: ratio
+    central: 12
+    low: 5
+    high: 24
+    basis: "P08 over P01."
+  - id: P10
+    group: H2
+    claim: "S / G0 tokens per joule at batch 1, idle weight banks power-managed"
+    unit: ratio
+    central: 6
+    low: 2
+    high: 15
+    basis: >-
+      S is about 12x faster, and a system of about 250 dies with links, clocks, KV memory and a host draws
+      about twice what two GPUs draw at 60% of TDP.
+  - id: P11
+    group: H2
+    claim: "S / G0 tokens per joule at batch 1, no power management (every bank at full voltage, clocks running)"
+    unit: ratio
+    central: 3.5
+    low: 1.0
+    high: 8
+    basis: >-
+      Physical leakage for 3.1 trillion bitcells is about a kilowatt (our estimate, not yet sourced), not
+      the hundreds of kilowatts that product-level figures imply. We therefore expect S not to lose to a
+      batch-1 GPU even unmanaged. This departs from the wording of H2 and from the DeepSeek study's
+      bound, and is the prediction most likely to be wrong.
+  - id: P12
+    group: H2
+    claim: "S at batch 1, unmanaged, against G0 at its own best batch: tokens per joule"
+    unit: ratio
+    central: 1.0
+    low: 0.3
+    high: 2.0
+    basis: "A GPU serving many users is several times more efficient than the same GPU serving one."
+  - id: P13
+    group: H2
+    claim: "S / G0 tokens per joule, each at its best operating point"
+    unit: ratio
+    central: 6
+    low: 3
+    high: 15
+    basis: "Memory read energy dominates S; streaming every expert through HBM dominates the GPU."
+  - id: P14
+    group: H2
+    claim: "G0 / S cost per million tokens, each at its best operating point, NRE included"
+    unit: ratio
+    central: 3
+    low: 1
+    high: 8
+    basis: "About 250 large dies cost about as much as three or four GPUs; NRE is spread over few systems."
+
+  # ------------------------------------------------------------------ H3
+  - id: P15
+    group: H3
+    claim: "Synthesis: reloadable / fixed-weight cell area of the dot-product datapath (logic only, same function)"
+    unit: ratio
+    central: 1.8
+    low: 1.3
+    high: 3.0
+    basis: >-
+      An E2M1 by E2M1 product is already a few dozen gates, so folding constants saves less than it would
+      for 8-bit weights. Most of the remaining logic is the adder tree and the FP32 accumulation.
+  - id: P16
+    group: H3
+    claim: "Synthesis: reloadable / fixed-weight dynamic energy per dot product"
+    unit: ratio
+    central: 2.0
+    low: 1.3
+    high: 3.5
+    basis: "Folded constants remove toggling on the weight inputs and prune zero terms."
+  - id: P17
+    group: H3
+    claim: "System: S die count / F die count"
+    unit: ratio
+    central: 4
+    low: 2.5
+    high: 6
+    basis: "Six transistors per stored bit against about one for a mask-programmed bit, less shared overhead."
+  - id: P18
+    group: H3
+    claim: "System: F / S tokens per joule at the best operating point"
+    unit: ratio
+    central: 1.8
+    low: 1.2
+    high: 3
+    basis: "The gap shrinks at system level: attention, KV memory, links and the host are the same on both."
+  - id: P19
+    group: H3
+    claim: "F: distinct die designs needed for one model version"
+    unit: designs
+    central: 60
+    low: 40
+    high: 100
+    basis: "Every die holds different weights, so the count of designs equals the count of dies."
+
+  # ------------------------------------------------------------------ H4
+  - id: P20
+    group: H4
+    claim: "Ladder, S / best GPU per-user speed at batch 1, at 594B"
+    unit: ratio
+    central: 12
+    low: 5
+    high: 24
+    basis: "P09."
+  - id: P21
+    group: H4
+    claim: "Ladder, S / best GPU per-user speed at batch 1, hypothetical ~100B rung"
+    unit: ratio
+    central: 15
+    low: 7
+    high: 30
+    basis: "Fewer dies per layer shorten the hops; the GPU stays bound by per-kernel latency."
+  - id: P22
+    group: H4
+    claim: "Ladder, S / best GPU per-user speed at batch 1, hypothetical ~30B rung"
+    unit: ratio
+    central: 25
+    low: 10
+    high: 50
+    basis: "As above."
+  - id: P23
+    group: H4
+    claim: "Ladder, S / best GPU per-user speed at batch 1, hypothetical ~8B rung"
+    unit: ratio
+    central: 40
+    low: 15
+    high: 80
+    basis: "Speeds reported for Llama 3.1 8B, which we have yet to verify at source, span about 8x (wafer-scale SRAM) to about 74x (fixed-weight) over a single GPU."
+  - id: P24
+    group: H4
+    claim: "Ladder: largest rung at which S fits on 8 dies or fewer"
+    unit: billion parameters
+    central: 16
+    low: 8
+    high: 30
+    basis: "Die count scales with weight bytes: about 250 dies at 594B."
+  - id: P25
+    group: H4
+    claim: "Ladder: step in S / GPU tokens per joule (best operating point) between the last multi-board rung and the first rung that fits one package"
+    unit: ratio
+    central: 1.8
+    low: 1.2
+    high: 3
+    basis: "Board-level links, their idle power and most of the host disappear."
+
+  # ------------------------------------------------------------------ H5
+  - id: P26
+    group: H5
+    claim: "S / A per-user speed at 8K context, batch 1"
+    unit: ratio
+    central: 8
+    low: 4
+    high: 15
+    basis: "P08 against a chip that still streams 73 GB of weights per step."
+  - id: P27
+    group: H5
+    claim: "S / A per-user speed at 1M context, batch 1, both with the same HBM bandwidth for KV"
+    unit: ratio
+    central: 2.3
+    low: 1.3
+    high: 4
+    basis: >-
+      At 1M tokens a step reads about 39 GB of KV. That is all of S's memory traffic but only about a
+      third of A's, because A still streams its weights. The designs converge by about 3x, not to parity.
+  - id: P28
+    group: H5
+    claim: "Context above which S with LPDDR-only KV is slower per user than A"
+    unit: tokens of context
+    central: 65000
+    low: 30000
+    high: 150000
+    basis: "LPDDR at about 0.5 TB/s against HBM at about 13 TB/s effective."
+  - id: P29
+    group: H5
+    claim: "G0 per-user speed at 1M context / at 8K context"
+    unit: ratio
+    central: 0.3
+    low: 0.15
+    high: 0.5
+    basis: "Published throughput already falls 2.4x from 32K to 256K sessions."
+
+  # ------------------------------------------------------------------ where purpose-built silicon should not win
+  - id: P30
+    group: limits
+    claim: "Prefill: S / G0 prefill tokens per second per dollar of hardware"
+    unit: ratio
+    central: 0.6
+    low: 0.2
+    high: 1.5
+    basis: "Prefill is compute-bound and GPUs use their tensor cores well there. We expect to keep prefill on GPUs."
+  - id: P31
+    group: limits
+    claim: "S / G0 tokens per joule at batch 256 and above, 32K context"
+    unit: ratio
+    central: 4
+    low: 2
+    high: 10
+    basis: "At high batch a GPU shares each weight read across many tokens."
+
+  # ------------------------------------------------------------------ the method itself
+  - id: P32
+    group: method
+    claim: "Llama 3.1 8B on four architectures: how many of the four published speeds the simulator reproduces within 30% on the first pass"
+    unit: of 4
+    central: 2
+    low: 1
+    high: 3
+    basis: "The single-GPU figure depends on software overheads we have not calibrated for that engine."
+  - id: P33
+    group: method
+    claim: "GPU model, leave-one-out on the published Inkling 2 Small speeds: median absolute error"
+    unit: percent
+    central: 20
+    low: 10
+    high: 35
+    basis: "Twelve points from two engines, with workloads only partly specified."
+  - id: P34
+    group: method
+    claim: "Largest change in any headline ratio caused by the two adversarial reviews"
+    unit: ratio
+    central: 1.5
+    low: 1.2
+    high: 3
+    basis: "The DeepSeek study's reviews removed the proposed chip's speed lead entirely."
+
+  # ------------------------------------------------------------------ absolute baselines (mechanical, given P01)
+  - id: P35
+    group: baseline
+    claim: "G0 (2x B300) tokens per joule at batch 1, GPU power at 60% of TDP"
+    unit: tokens per joule
+    central: 0.29
+    low: 0.2
+    high: 0.5
+    basis: "P01 over two GPUs at 60% of an 1,100 W TDP. GPU power is an assumption and will be swept from 40% to 100%."
+  - id: P36
+    group: baseline
+    claim: "G0 (2x B300) cost per million tokens at batch 1, owned, fully utilized"
+    unit: USD per million tokens
+    central: 2.0
+    low: 1.4
+    high: 3.0
+    basis: "P01 with the DeepSeek study's cost assumptions: $45K per GPU all-in over 4 years, plus energy."

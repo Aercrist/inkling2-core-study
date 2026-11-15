@@ -1,0 +1,82 @@
+# MDS-1: proposed reloadable weight-stationary design. Every weight sits in on-die SRAM across
+# N identical dies, loaded at boot or after a retrain; tokens move between dies, weights do not.
+# The KV cache of the full-attention layers lives in HBM beside the attention engines.
+# TSMC N4P-class, the process B300 is built on. Constants that are the same physics as MDA-1 in
+# the DeepSeek-V4.1 study are set equal to MDA-1's. Every value cites a key in docs/sources.md or
+# is marked `assumption` and swept. See docs/03_architecture.md.
+name: MDS-1 (proposed)
+kind: stationary
+storage: sram
+f_clk: 1.5e9              # same clock as MDA-1 (assumption)
+scan_rows: 512            # wordlines per bank: a pass over any weight tensor takes scan_rows / f_clk (assumption, swept)
+lane_rows_dense: 8        # one pass serves the 8 rows a speculative step verifies
+lane_rows_expert: 2       # one pass serves 2 rows per expert (1.07 on average at batch 1)
+t_pipe: 0.3e-6            # per weight op, beyond the memory pass. Overwritten at run time with what published machines show (experiments/calibration_llama.py): Cerebras-implied for reloadable SRAM, HC1-implied for fixed weights. 0.3 us is MDA-1's value, kept as the optimistic case
+router_latency: 0.1e-6    # rtl/moe_router: 98 cycles (65 ns) plus the score epilogue
+vector_latency: 0.1e-6    # attention-residual mix, norms, short convolutions (assumption)
+wake_latency: 10.0e-9     # retention -> active: one clock cycle measured on a 3 nm macro, 15 cycles assumed here (set from the clock at run time); src: sram-3nm-macro
+d2d_latency: 0.1e-6       # one hop between dies of a tile, including buffering at both ends (assumption; MDA-1 used 0.1 us)
+d2d_bw: 800.0e9           # all die-to-die links of a layer's hub die together, per direction (assumption; below MDA-1's 900 GB/s package link)
+hop_latency: 0.25e-6      # one hop between tiles: long-reach SerDes 20+ ns plus >100 ns FEC, doubled for buffering; src: ucie-targets (assumption on the margin, swept 0.1-2 us)
+link_bw: 900.0e9          # 72 x 112G lanes between neighbouring tiles, as MDA-1's package link; src: serdes-energy
+act_bytes_dispatch: 0.5625  # activations go to an expert already NVFP4-quantized (4.5 bits per value)
+attn_peak: 4.0e14         # FLOP/s of one sliding-window attention engine, one per layer: 133K BF16 multipliers at 1.5 GHz (assumption)
+attn_peak_full: 2.0e15    # pooled full-attention engine on the attention tile: what four MDA-1 packages give (1 PF BF16 each at 0.5), so that S and A attend long contexts with the same arithmetic (assumption)
+kv_bw_per_stack: 1.0e12   # HBM3E stack run at 1.0 TB/s, as MDA-1 runs it; src: hbm3e
+tile_dies_max: 8          # dies per tile (assumption; fan-out tiles with 25 large dies have shipped)
+kv_eff: 0.8375            # same HBM, same physics: the GPU's calibrated efficiency (overridden at run time)
+kv_latency: 0.5e-6        # MDA-1's dependent-fetch latency (assumption)
+kv_window_bw: 40.0e12     # on-die SRAM holding the sliding windows; MDA-1's sram_bw
+kv_kind: hbm
+step_overhead: 2.0e-6     # MDA-1's step-boundary sync with the host and sampler
+managed: true             # idle banks held at retention voltage
+area:
+  die_mm2: 800.0          # near the reticle limit (assumption)
+  die_fill: 0.85          # share of the die that is not pad ring, scribe or whitespace (assumption)
+  mm2_per_mib_sram: 0.5   # MDA-1's value: 0.25 mm2/MiB at macro level (35.5 Mbit/mm2 measured at 3 nm, scaled by bitcell area), x2 for ECC, lanes' routing and power grid. A 7 nm stacked cache die scaled to this cell gives 0.46; src: sram-density, sram-3nm-macro, vcache (swept 0.3-0.6)
+  mm2_per_mib_rom: 0.1    # used only when storage = rom (the fixed-weight design)
+  um2_per_mac: {fp4: 12.0, fp8: 40.0, bf16: 80.0}   # assumed before synthesis; overridden at run time from results/silicon_scaled.json
+  mm2_per_attn_engine: 12.0   # 133K BF16 multipliers plus softmax and relative bias, at the reference clock (assumption)
+  attn_ref_clk: 1.5e9         # the clock the attention engines' areas assume; at the synthesized clock they grow in proportion
+  kv_window_sessions: 256     # concurrent sessions whose sliding-window KV cache (86.5 MB each) is held in SRAM on the hub dies (design choice)
+  mm2_link_phy_per_tile: 50.4 # 72 lanes x 0.7 mm2; MDA-1's lane area (assumption)
+  mm2_d2d_phy_per_die: 10.0   # MDA-1's die-to-die PHY (assumption)
+  mm2_ctrl_per_die: 20.0      # clocking, sequencing, power management, test (assumption)
+  kv_stacks_per_layer: 2      # HBM stacks of the attention tile per full-history layer (8 target + 5 draft = 26 stacks, pooled)
+  mm2_attn_tile: 213.0        # the pooled full-attention engine: MDA-1's compute area x4; src: MDA-1 area model (assumption)
+  mm2_per_kv_phy: 12.0        # MDA-1's HBM PHY; src: hbm-phy-area
+  vision_resident: true
+power:
+  sram_read_pj_per_bit: 0.22  # 7 nm 1 MB SRAM, 14 pJ per 64-bit read. Bits are used at the bank, so MDA-1's x2.3 for cross-die wires does not apply; src: sram-energy (swept 0.05-0.5)
+  rom_read_pj_per_bit: 0.22   # used only when storage = rom; taken equal to SRAM (assumption)
+  pj_per_flop: {fp4: 0.15, fp8: 0.25, bf16: 0.5, fp32: 1.5}   # MDA-1's values, overridden at run time from results/silicon_scaled.json; src: mac-energy
+  link_pj_per_bit: 5.0        # 112G SerDes; src: serdes-energy
+  d2d_pj_per_bit: 0.25        # advanced-package die-to-die link; src: d2d-energy
+  kv_pj_per_bit: 4.0          # HBM2 device + I/O; src: hbm-energy
+  leak_w_per_gb: 0.66         # 27.5 pW/bit measured at 25 C on a 3 nm macro (0.22 W/GB), x3 for operating temperature. The x3 is an assumption: no public hot figure exists; src: sram-3nm-macro (swept 0.22-4.4)
+  leak_w_per_gb_rom: 0.02
+  retention_factor: 0.2       # leakage at retention / at full voltage. Published: 0.31 (4 nm compiler), 0.2 (16 nm source bias), 0.05 (5 nm, array supply 400 mV lower); src: sram-retention (swept 0.05-0.31)
+  logic_static_w_per_die: 4.0            # leakage and gated clocks of lanes and control (assumption)
+  logic_static_w_per_die_unmanaged: 12.0 # clocks running (assumption)
+  link_idle_w_per_tile: 10.8  # 72 lanes x 0.15 W when idle. ASSUMPTION: no public idle figure for long-reach lanes (swept 0-36)
+  d2d_idle_w_per_die: 0.25    # die-to-die PHYs save at least 85% when idle; src: ucie-targets
+  kv_static_w_per_stack: 3.0  # HBM stack and PHY idle (assumption)
+  host_w: 500.0               # host server and fans (assumption)
+  vr_efficiency: 0.88         # MDA-1's power-delivery efficiency (assumption)
+cost:
+  wafer_usd: 17000        # src: wafer-price
+  d0_per_cm2: 0.10        # src: defect-density
+  package_test_usd_per_die: 700.0   # from the same sourced parts as MDA-1's $2,500 package (substrate $1.1K for a two-die, eight-stack package; yield loss $1.0K; test $0.4K), re-applied to an 8-die tile without HBM: substrate by area $2.9K, yield loss 28% of the dies $0.9K, test $200 a die $1.6K = $5.4K a tile; src: cowos-cost (swept 400-1,250; the top is MDA-1's per-die rate)
+  attn_package_usd: 2500.0  # per 8 HBM stacks on the attention tile, as one MDA-1 package; src: cowos-cost
+  gross_margin: 0.0         # the chip is costed to its owner, like MDA-1; GPUs are at street price (swept 0-0.5)
+  hbm_usd_per_gb: 15.0    # src: hbm-price
+  kv_gb_per_stack: 36.0   # HBM3E 12-high; src: hbm3e
+  system_usd_per_die: 500.0   # boards, power delivery, cooling, chassis: $4,000 per 8-die tile, half of MDA-1's per-package share since a tile carries no HBM, NIC or host (assumption, swept 150-1,000)
+  host_usd: 15000.0       # assumption
+  die_designs: 3           # weight die, layer hub die, attention-tile die
+  mask_set_usd: 10.0e6     # each further die design is another full mask set; N5/N4 mask set $6.5M, total per design $10M; src: mask-cost
+  nre_usd: 300.0e6        # MDA-1's value. Published range runs from $30M (a fixed-weight chip start-up's total to first product) to $436M (IBS, 5 nm from scratch); src: nre (swept)
+  volume_dies: 2000000    # fallback only: experiments size the fleet from a token demand (configs/fleet.yaml), the same for every chip
+  lifetime_years: 4
+  pue: 1.25               # NVIDIA's figure for Blackwell systems, applied to every platform; src: pue-blackwell
+  usd_per_kwh: 0.0862     # src: electricity

@@ -1,0 +1,14 @@
+# MDA-1 respin with HBM4 (projection for comparison with Rubin): same core, the same HBM4 parts
+# and per-package bandwidth as Rubin (19.2 TB/s; above the JEDEC 2 TB/s/stack base rate, as Rubin
+# runs them). Area/power/cost updated where sources exist.
+extends: asic_mda1.yaml
+name: MDA-1 HBM4 x4 (projected)
+hbm_bw: 19.2e12           # iso with Rubin NVL72; src: nv-rubin, hbm4
+hbm_cap: 288.0e9          # 8 x 36 GB 12-high
+link_bw: 1800.0e9
+power:
+  hbm_pj_per_bit: 3.0     # HBM3E figure x 0.75 (SK hynix claims >40% better); src: hbm4
+area:
+  mm2_per_hbm_phy: 15.0   # GUC HBM4 PHY (unverified); src: hbm-phy-area
+cost:
+  hbm_usd_per_gb: 32.0    # forecast $4-5/Gb in 2027 (lower end); src: hbm-price

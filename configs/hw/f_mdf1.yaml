@@ -1,0 +1,18 @@
+# MDF-1: fixed-weight comparison point. The same organization as MDS-1, with the weights in
+# mask-programmed storage instead of SRAM, so the chip serves one model version only. It is here
+# to measure what reloadability costs, not as a proposal. Everything not listed is MDS-1's.
+extends: s_mds1.yaml
+name: MDF-1 (fixed weights, comparison point)
+storage: rom
+managed: false            # nothing to manage: mask-programmed storage does not leak like SRAM
+wake_latency: 0.0
+area:
+  mm2_per_mib_rom: 0.127  # storage AND arithmetic together. A shipped fixed-weight chip holds 8B parameters of 3 and 6 bits on 815 mm2 at N6: 29-59 Mbit/mm2 of whole die. Midpoint x1.5 for N6 -> N4P (assumption) = 66 Mbit/mm2; src: taalas-hc1 (swept 0.08-0.25)
+  um2_per_mac: {fp4: 0.0, fp8: 0.0, bf16: 0.0}   # arithmetic is inside the density above
+power:
+  rom_read_pj_per_bit: 0.22   # taken equal to SRAM (assumption)
+  pj_per_flop: {fp4: 0.075, fp8: 0.125, bf16: 0.5, fp32: 1.5}   # overridden at run time from results/silicon_scaled.json
+  leak_w_per_gb_rom: 0.0      # a mask ROM array is powered off when not read; src: rom-leakage
+cost:
+  unique_mask_layers: 2       # the shipped fixed-weight chip changes two metal layers per model; src: taalas-hc1
+  usd_per_unique_mask: 300000.0   # ASSUMPTION between a 193i mask ($50-100K) and an EUV mask ($0.5-1M); src: mask-cost (swept)

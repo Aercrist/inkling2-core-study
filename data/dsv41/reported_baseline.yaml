@@ -1,0 +1,39 @@
+# Measurements reported by basetenlabs/deepseek-ultrafast. Everything here is copied from the
+# repository at the commit below; nothing is measured by this study.
+source:
+  repo: https://github.com/basetenlabs/deepseek-ultrafast
+  commit: 76766a97308bfd1658fb055e835d0f92de737dc3   # 2026-11-14
+  file: README.md
+model:
+  name: DeepSeek-V4.1-Flash
+  hf_repo: deepseek-ai/DeepSeek-V4.1-Flash
+  hf_revision: 314113f8a7dadb388215396ba5fbee2c610a04d6
+workload:
+  prompt: "implement the tetris game. output HTML code directly - no explanation."
+  thinking: disabled
+  temperature: 1.0           # docs/SERVER.md: "temperature and top_p are fixed at 1"
+  output_tokens_example: 5142  # README: "It ends with a line like `5142 tokens at 1,717 tokens/s`"
+  concurrent_requests: 1     # crates/server/src/engine.rs: one Job at a time across all GPUs
+  draft_block: 5             # config dspark_block_size; verify runs block + 1 = 6 rows
+configs:
+  gb300_tp4:
+    hardware: 4 x GB300 (sm_103a), tensor parallel 4
+    decode_tok_s: 1740
+    decode_tok_s_range: [1700, 1770]   # "We see 1,700-1,770 tokens/s on 4xGB300"
+    step_ms: 3.30
+    step_ms_range: [3.24, 3.37]        # "Over 30 runs we see 3.24-3.37 ms"
+    accept_len: 5.6
+    accept_len_range: [5.1, 6.1]
+    prefill_1m_s: 13.2                 # "1,000,000 tokens in 13.2 s (76,000 tokens/s)"
+    ttft_short_prompt_s: 0.04          # "first token after 0.04 s" (client-side, includes HTTP)
+    verify_head: fp8                   # ops.rs verify_head_fp8() = sm103 && tp4
+  b300_tp8:
+    hardware: 8 x B300 (sm_103a), tensor parallel 8
+    decode_tok_s: 2060
+    decode_tok_s_range: [1980, 2170]
+    step_ms: 2.71
+    step_ms_range: [2.69, 2.74]
+    accept_len: 5.6
+    accept_len_range: [5.3, 6.1]
+    prefill_1m_s: 11.7
+    verify_head: bf16

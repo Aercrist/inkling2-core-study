@@ -1,0 +1,131 @@
+# 05 · Limitations and review log
+
+## What this study is
+
+A model of five platforms serving one model, calibrated where public measurements exist. One small
+circuit block was synthesized. No chip was built, no GPU was run, no token was generated. The GPU rows
+reproduce other people's published measurements; everything else is a design on paper.
+
+## Limits, in order of how much they could move the headline
+
+{% set tp = (U.tornado.rows | selectattr("parameter", "equalto", "S per-operation latency") | first) %}
+{% set td = (U.tornado.rows | selectattr("parameter", "equalto", "fleet demand (tokens per day)") | first) %}
+1. **The time per weight operation of S is borrowed.** It is what a published wafer-scale SRAM machine
+   takes on a dense 8B model, applied to a different design running a 594B mixture-of-experts model.
+   Across the plausible range (half again S's own bank pass, to a many-chip SRAM system's time) the
+   batch-1 speed gain runs from {{ x(tp.speed_batch1_high) }} to {{ x(tp.speed_batch1_low) }}.
+2. **Cost depends on a token demand nobody knows.** Design cost is spread over the systems a demand of
+   {{ n(I.fleet.demand_tokens_per_day / 1e12, 0) }} trillion tokens a day needs. At {{ n(td.low / 1e12, 1) }} trillion the cost gain is {{ x(td.cost_best_low, 2) }}; at {{ n(td.high / 1e12, 0) }} trillion,
+   {{ x(td.cost_best_high, 2) }}. The 5th to 95th percentile of the decode cost gain is {{ x(MC.cost_best.p05, 2) }} to {{ x(MC.cost_best.p95, 2) }}: the study does
+   not show a cost advantage at {{ n(I.headline.sla_tok_s_user) }} tok/s per user.
+3. **The chips are costed without a seller's margin; GPUs are at street price.** At a 50% gross margin
+   S's decode cost gain falls to {{ x(I.margin.rows[-1].cost_gain, 2) }}.
+   Spares, tile assembly yield, software and bring-up are not costed either.
+4. **The shared attention tile is sized by assumption and caps S's throughput.** A tile eight times
+   larger gives {{ x(I.attention_tile.rows[-1].cost_gain) }} in cost instead of {{ x(I.attention_tile.rows[0].cost_gain) }}. The tile runs close to full with no
+   queueing modeled.
+5. **The GPU model is fitted to {{ CG.n_points }} published figures from two engines.** It reproduces them to
+   {{ pct(CG.rms_log_error, 1) }} RMS. Held out one at a time, the worst is {{ pct(CG.loo_max_abs_error) }} (the only figure without the
+   draft model); the rest are within {{ pct(LOO_REST) }}. How much prefill sat on the GPUs during the published
+   throughput runs decides the GPU's attention efficiency, and with it the high-batch comparison; our
+   reading now favours the GPU against the engine's own kernel timings ([06](06_simulator.md)).
+6. **The GPU model is least constrained at batches of 2 to 16**, which is where the GPUs sit when every
+   user must get 150 or 200 tok/s. The large cost gains at those thresholds ([04](04_results.md),
+   section 17) carry that weakness.
+7. **The simulator did not predict any of four published Llama 3.1 8B speeds within 30%** from public
+   specifications. We used the misses as measurements ([06](06_simulator.md)). A reader may fairly
+   weigh that as evidence the simulator's absolute numbers for unbuilt machines carry wide error bars.
+   The Monte Carlo ranges are our statement of those error bars.
+8. **GPU software is still improving.** The engines published their Inkling 2 Small numbers within a
+   week of the weights. G1 is our estimate of where software can go ({{ x(R["g1_x4/g0_x4"].speed_batch1) }} at batch 1).
+9. **No routing traces.** Expert popularity and locality are swept across values measured on other
+   models, without refitting the GPU model, which favours the GPU. The most skewed case lowers the
+   speed gain to {{ x(I.routing.cases[-1].s_over_g0.speed_batch1) }}.
+10. **Power management is assumed to work.** Without it S's batch-1 tokens per joule fall from
+    {{ x(I.power_management.managed.over_g0_batch1) }} to {{ x(I.power_management.unmanaged.over_g0_batch1) }} of the GPU's. SRAM leakage at operating temperature has no
+    public figure at this node.
+11. **Full utilization on every platform, and the same lifetime in the central case.** A machine of
+    {{ I.designs.s.area.dies }} dies needs hundreds of concurrent sessions to exist. A chip laid out for one
+    architecture may be retired sooner than a GPU; lifetime is in the sweep (2 to 5 years).
+12. **The design was not re-tuned.** Under the latency rule used here (S's whole time per operation is a
+    published machine's), deeper banks would cost no speed and would cut the die count, and so would
+    sharing lanes between experts or a larger attention tile. The design is reported as specified.
+13. **Small simplifications in the chip engine**: the router takes one pass whatever the row count,
+    and expert passes use the average rows per expert, not the busiest. A reviewer's patch for both
+    moved results by under 2%.
+
+## Not modeled
+
+- **Vision input.** The vision encoder is resident in the area count; no image workload was run.
+- **Reasoning effort and output length.** One acceptance length (3.5 tokens per step, swept 3 to 4).
+- **Reliability.** A {{ I.designs.s.area.dies }}-die system will have failed dies, links and banks. Repair,
+  sparing and availability are not modeled.
+- **Time.** A chip takes years. The model will have successors before silicon exists, which is the
+  argument for reloadable weights and also a risk to any design sized to one model.
+- **The fixed-weight design beyond one die.** F carries one shipped 8B chip's density and speed to
+  {{ I.designs.f.area.dies }} dies. Nothing public confirms that.
+- **Sampling, tokenization, networking, the host.** A fixed {{ n(S_HW.step_overhead * 1e6, 0) }} µs per
+  step and 500 W.
+- **Quality.** All platforms run the same checkpoint at the same precision; none changes the model's
+  outputs. The circuit block is checked bit-for-bit against a reference ([07](07_silicon.md)), but we
+  did not run the model end to end.
+- **Layout.** No floorplan, no timing closure, no signal or power integrity.
+
+## What would change the conclusions
+
+{% set tp = (U.tornado.rows | selectattr("parameter", "equalto", "S per-operation latency") | first) %}
+- A measured time per weight operation for a reloadable weight-stationary design. At {{ n(tp.high * 1e6, 1) }} µs the
+  speed gain is {{ x(tp.speed_batch1_high) }}.
+- Real token demand for one model. Below about {{ n(I.demand.breakeven_tokens_per_day.s / 1e12, 1) }} trillion tokens a day S costs more than GPUs.
+- A product requirement for fast tokens. At {{ n(I.thresholds.rows[-1].tok_s_user_min, 0) }} tok/s per user S is {{ x(I.thresholds.rows[-1].s.cost, 0) }} cheaper; at 100 it is level.
+- A GPU engine that removes dependent launches. That takes {{ x(R["g1_x4/g0_x4"].speed_batch1) }} off the batch-1 speed gain,
+  leaving {{ x(R["s/g1_x4"].speed_batch1) }}.
+- A larger attention tile, or lanes shared between experts. Either moves cost in S's favour
+  ([04](04_results.md), section 19).
+- Routing traces showing strong skew. Then a hybrid (hot experts on-chip, cold in HBM) deserves the
+  study we cut.
+
+## Review log
+
+{% if RV %}
+Adversarial reviews were run by fresh agents that saw only a clean copy of the repository. Their
+findings and what we did with each:
+
+| # | review | severity | finding | what we did | effect |
+|---|---|---|---|---|---|
+{% for r in RV.findings %}
+| {{ loop.index }} | {{ r.review }} | {{ r.severity }} | {{ r.finding }} | {{ r.action }} | {{ r.effect }} |
+{% endfor %}
+
+How far the headline (S against the GPUs, central case) moved, review by review:
+
+| | before the reviews | after | factor |
+|---|---|---|---|
+{% for k, name in [("speed_batch1", "speed for one user"), ("tokens_per_joule_batch1", "tokens per joule, one user"), ("tokens_per_joule_best", "tokens per joule, best point"), ("cost_best", "decode cost per token, best point")] %}
+{% set c = RV.headline_change["s/g0:" + k] %}
+| {{ name }} | {{ x(c.before) }} | {{ x(c.after) }} | {{ x(c.factor, 2) }} |
+{% endfor %}
+
+The largest change was {{ x(RV.largest_headline_change, 1) }}. We had predicted {{ sig(PRD.P34.central) }}x (range
+{{ sig(PRD.P34.low) }}x to {{ sig(PRD.P34.high) }}x): the study was less robust to review than we expected, and almost all of
+the movement was in cost.
+{% else %}
+The adversarial reviews have not been run yet.
+{% endif %}
+
+### Corrections made before review
+
+These are changes to our own first results, each made because a check failed.
+
+| what we first had | what was wrong | what it became |
+|---|---|---|
+| S at about 8,000 tok/s per user, 15x the GPUs | per-operation latency was an unsourced 0.3 µs | latency taken from a published SRAM machine: {{ n(H.s.batch1.tok_s_user, -1) }} tok/s, {{ x(R["s/g0"].speed_batch1) }} |
+| GPU power at a flat 60% of TDP | measured data shows 43% at one request rising to 86% at 128 (gpu-power-batch) | power follows the measured curve |
+| B300 at $45,000 | reseller quotes are $56,000 to $76,000 with networking (b300-price) | $60,000, swept |
+| S slower than the GPUs at 1M context | each full-attention layer had its own two HBM stacks | one pooled attention tile |
+| small models charged for one tile per layer | a model that fits one package needs no board links | tiles sized by die count |
+| A with 0.3 µs per operation while S paid a published machine's latency | same physics, different constants | A pays the same latency as S |
+{% if SE.available %}
+| multiplier lane assumed at {{ n(SE.assumed.um2_per_mac_fp4, 0) }} µm² and {{ n(SE.assumed.f_clk / 1e9, 1) }} GHz | the block was placed and routed ([07](07_silicon.md)) | {{ n(SE.synthesized.um2_per_mac_fp4, 0) }} µm² and {{ n(SE.synthesized.f_clk / 1e9, 2) }} GHz; in today's model that is {{ SE.assumed.dies }} against {{ SE.synthesized.dies }} dies |
+{% endif %}
+| best batch searched on a coarse grid | it penalized the GPU, whose best batch fell between grid points | one fine grid for every platform |

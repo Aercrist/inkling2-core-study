@@ -1,0 +1,482 @@
+{
+ "validation": [
+  {
+   "quantity": "backbone parameters",
+   "paper": "552B",
+   "ours": 551880233584
+  },
+  {
+   "quantity": "Engram parameters",
+   "paper": "196B",
+   "ours": 196611158016
+  },
+  {
+   "quantity": "activated / token, decode",
+   "paper": "16B",
+   "ours": 16090663424
+  },
+  {
+   "quantity": "activated / token, prefill",
+   "paper": "8B",
+   "ours": 7840727000.0
+  },
+  {
+   "quantity": "global KV bytes / token",
+   "paper": "890",
+   "ours": 890.0
+  },
+  {
+   "quantity": "weighted decode FLOPs, 1M vs 4K context",
+   "paper": "+1/4",
+   "ours": 0.334859
+  }
+ ],
+ "param_counts": {
+  "attention": 5064622080,
+  "routed_experts": 543581798400,
+  "shared_experts": 1415577600,
+  "embed_head": 1323827200,
+  "gate": 78643200,
+  "indexer": 43516416,
+  "compressor": 18352128,
+  "mhc": 39323760,
+  "engram_proj": 314572800,
+  "backbone_total": 551880233584,
+  "engram_tables": 196611158016,
+  "activated_decode": 16090663424,
+  "activated_prefill": 7840727000.0
+ },
+ "expert_bytes": 18800640.0,
+ "shared_expert_bytes": 35424000.0,
+ "kv_entry_bytes": {
+  "main": 288.0,
+  "swa": 528.0,
+  "index": 68.0
+ },
+ "decode_table": [
+  {
+   "category": "attn_proj",
+   "label": "CSA2 attention projections (wq_a, wkv, wq_b, wo_a, wo_b)",
+   "flops_per_token": 11620940000.0,
+   "bytes_per_token": 980673100.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 11.84996
+  },
+  {
+   "category": "attn_core",
+   "label": "sparse attention core (SWA window + top-512 latent KV)",
+   "flops_per_token": 3498007000.0,
+   "bytes_per_token": 6522514.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 536.297393
+  },
+  {
+   "category": "indexer",
+   "label": "indexer score/top-k + KV compressor",
+   "flops_per_token": 192258400.0,
+   "bytes_per_token": 7320551.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 26.262832
+  },
+  {
+   "category": "router",
+   "label": "MoE gate + top-k routing",
+   "flops_per_token": 172166400.0,
+   "bytes_per_token": 28789030.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 5.980278
+  },
+  {
+   "category": "moe_shared",
+   "label": "shared expert (FP8)",
+   "flops_per_token": 3222967000.0,
+   "bytes_per_token": 272005700.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 11.848894
+  },
+  {
+   "category": "moe_routed",
+   "label": "routed experts (FP4 x FP8)",
+   "flops_per_token": 18769040000.0,
+   "bytes_per_token": 4793652000.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 3.915395
+  },
+  {
+   "category": "mhc",
+   "label": "mHC residual mixing (Sinkhorn)",
+   "flops_per_token": 89643430.0,
+   "bytes_per_token": 30193370.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 2.968977
+  },
+  {
+   "category": "engram",
+   "label": "Engram n-gram memory",
+   "flops_per_token": 674084600.0,
+   "bytes_per_token": 56242150.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 11.985399
+  },
+  {
+   "category": "collective",
+   "label": "TP all-reduce / gathers",
+   "flops_per_token": 0.0,
+   "bytes_per_token": 0.0,
+   "coll_bytes_per_token": 5595429.0,
+   "intensity": Infinity
+  },
+  {
+   "category": "draft",
+   "label": "DSpark drafter glue (main_proj, Markov head)",
+   "flops_per_token": 87186290.0,
+   "bytes_per_token": 25877030.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 3.369254
+  },
+  {
+   "category": "head",
+   "label": "LM heads (draft + verify) + sampling",
+   "flops_per_token": 2601483000.0,
+   "bytes_per_token": 236628600.0,
+   "coll_bytes_per_token": 822.857143,
+   "intensity": 10.993951
+  },
+  {
+   "category": "misc",
+   "label": "embedding",
+   "flops_per_token": 0.0,
+   "bytes_per_token": 10971.428571,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 0.0
+  }
+ ],
+ "decode_step": {
+  "accept_len": 5.6,
+  "verify_rows": 6,
+  "draft_rows": 5,
+  "distinct_experts_verify": 34.622706,
+  "distinct_experts_draft": 14.313162,
+  "unique_bytes": 36052320000.0,
+  "flops": 229195500000.0
+ },
+ "decode_per_gpu_tp4": {
+  "weights_tp": 2130130000.0,
+  "weights_replicated": 807043300.0,
+  "experts_routed": 6711113000.0,
+  "kv": 37675280.0,
+  "total": 9685961000.0
+ },
+ "decode_per_gpu_tp8": {
+  "weights_tp": 1191511000.0,
+  "weights_replicated": 807043300.0,
+  "experts_routed": 3472526000.0,
+  "kv": 37675280.0,
+  "total": 5508755000.0
+ },
+ "engram": {
+  "lookup_bytes_per_step": 76032.0,
+  "table_bytes": 202755300000.0,
+  "wkv_bytes_per_step": 314880000.0
+ },
+ "kernels_per_step": 388,
+ "layout_factor": {
+  "tp4": 1.0,
+  "tp8": 1.034858
+ },
+ "collectives_per_step": 86,
+ "ops_per_step": 554,
+ "ep_alltoall_bytes_per_layer": 737280,
+ "tp_allreduce_bytes_per_layer": 122880,
+ "prefill_table_64k": [
+  {
+   "category": "attn_proj",
+   "label": "CSA2 attention projections (wq_a, wkv, wq_b, wo_a, wo_b)",
+   "flops_per_token": 5064622000.0,
+   "bytes_per_token": 309421.875,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 16368.01561
+  },
+  {
+   "category": "attn_core",
+   "label": "sparse attention core (SWA window + top-512 latent KV)",
+   "flops_per_token": 1543504000.0,
+   "bytes_per_token": 0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": Infinity
+  },
+  {
+   "category": "indexer",
+   "label": "indexer score/top-k + KV compressor",
+   "flops_per_token": 815792100.0,
+   "bytes_per_token": 816.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 999745.254902
+  },
+  {
+   "category": "router",
+   "label": "MoE gate + top-k routing",
+   "flops_per_token": 78643200.0,
+   "bytes_per_token": 9600.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 8192.0
+  },
+  {
+   "category": "moe_shared",
+   "label": "shared expert (FP8)",
+   "flops_per_token": 1415578000.0,
+   "bytes_per_token": 86484.375,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 16368.01561
+  },
+  {
+   "category": "moe_routed",
+   "label": "routed experts (FP4 x FP8)",
+   "flops_per_token": 8493466000.0,
+   "bytes_per_token": 17625600.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 481.882353
+  },
+  {
+   "category": "mhc",
+   "label": "mHC residual mixing (Sinkhorn)",
+   "flops_per_token": 39321600.0,
+   "bytes_per_token": 9600.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 4096.0
+  },
+  {
+   "category": "engram",
+   "label": "Engram n-gram memory",
+   "flops_per_token": 629145600.0,
+   "bytes_per_token": 51109.5,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 12309.75846
+  },
+  {
+   "category": "collective",
+   "label": "TP all-reduce / gathers",
+   "flops_per_token": 0.0,
+   "bytes_per_token": 0.0,
+   "coll_bytes_per_token": 819200,
+   "intensity": Infinity
+  }
+ ],
+ "prefill_table_1m": [
+  {
+   "category": "attn_proj",
+   "label": "CSA2 attention projections (wq_a, wkv, wq_b, wo_a, wo_b)",
+   "flops_per_token": 5064622000.0,
+   "bytes_per_token": 309421.875,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 16368.01561
+  },
+  {
+   "category": "attn_core",
+   "label": "sparse attention core (SWA window + top-512 latent KV)",
+   "flops_per_token": 1543504000.0,
+   "bytes_per_token": 0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": Infinity
+  },
+  {
+   "category": "indexer",
+   "label": "indexer score/top-k + KV compressor",
+   "flops_per_token": 12895390000.0,
+   "bytes_per_token": 13056.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 987698.196078
+  },
+  {
+   "category": "router",
+   "label": "MoE gate + top-k routing",
+   "flops_per_token": 78643200.0,
+   "bytes_per_token": 9600.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 8192.0
+  },
+  {
+   "category": "moe_shared",
+   "label": "shared expert (FP8)",
+   "flops_per_token": 1415578000.0,
+   "bytes_per_token": 86484.375,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 16368.01561
+  },
+  {
+   "category": "moe_routed",
+   "label": "routed experts (FP4 x FP8)",
+   "flops_per_token": 8493466000.0,
+   "bytes_per_token": 17625600.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 481.882353
+  },
+  {
+   "category": "mhc",
+   "label": "mHC residual mixing (Sinkhorn)",
+   "flops_per_token": 39321600.0,
+   "bytes_per_token": 9600.0,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 4096.0
+  },
+  {
+   "category": "engram",
+   "label": "Engram n-gram memory",
+   "flops_per_token": 629145600.0,
+   "bytes_per_token": 51109.5,
+   "coll_bytes_per_token": 0.0,
+   "intensity": 12309.75846
+  },
+  {
+   "category": "collective",
+   "label": "TP all-reduce / gathers",
+   "flops_per_token": 0.0,
+   "bytes_per_token": 0.0,
+   "coll_bytes_per_token": 819200,
+   "intensity": Infinity
+  }
+ ],
+ "ridge": {
+  "fp4": 1753.246753,
+  "fp8": 584.415584,
+  "bf16": 292.207792
+ },
+ "roofline_points": [
+  {
+   "series": "decode, batch 1 (measured workload)",
+   "category": "attn_proj",
+   "intensity": 11.84996
+  },
+  {
+   "series": "decode, batch 1 (measured workload)",
+   "category": "moe_routed",
+   "intensity": 3.915395
+  },
+  {
+   "series": "decode, batch 1 (measured workload)",
+   "category": "moe_shared",
+   "intensity": 11.848894
+  },
+  {
+   "series": "decode, batch 1 (measured workload)",
+   "category": "attn_core",
+   "intensity": 536.297393
+  },
+  {
+   "series": "decode, batch 1 (measured workload)",
+   "category": "indexer",
+   "intensity": 26.262832
+  },
+  {
+   "series": "decode, batch 1 (measured workload)",
+   "category": "head",
+   "intensity": 10.993951
+  },
+  {
+   "series": "decode, batch 64",
+   "category": "attn_proj",
+   "intensity": 758.397416
+  },
+  {
+   "series": "decode, batch 64",
+   "category": "moe_routed",
+   "intensity": 22.778787
+  },
+  {
+   "series": "decode, batch 64",
+   "category": "moe_shared",
+   "intensity": 758.329212
+  },
+  {
+   "series": "decode, batch 64",
+   "category": "attn_core",
+   "intensity": 536.297393
+  },
+  {
+   "series": "decode, batch 64",
+   "category": "indexer",
+   "intensity": 607.660001
+  },
+  {
+   "series": "decode, batch 64",
+   "category": "head",
+   "intensity": 703.612878
+  },
+  {
+   "series": "prefill, 8K chunk @64K ctx",
+   "category": "attn_proj",
+   "intensity": 16368.01561
+  },
+  {
+   "series": "prefill, 8K chunk @64K ctx",
+   "category": "indexer",
+   "intensity": 999745.254902
+  },
+  {
+   "series": "prefill, 8K chunk @64K ctx",
+   "category": "moe_shared",
+   "intensity": 16368.01561
+  },
+  {
+   "series": "prefill, 8K chunk @64K ctx",
+   "category": "moe_routed",
+   "intensity": 481.882353
+  }
+ ],
+ "bytes_vs_context": {
+  "1": [
+   {
+    "context": 4096,
+    "weights": 36014570000.0,
+    "kv": 38336510.0
+   },
+   {
+    "context": 16384,
+    "weights": 36014570000.0,
+    "kv": 43767810.0
+   },
+   {
+    "context": 65536,
+    "weights": 36014570000.0,
+    "kv": 52123650.0
+   },
+   {
+    "context": 262144,
+    "weights": 36014570000.0,
+    "kv": 85547010.0
+   },
+   {
+    "context": 1048576,
+    "weights": 36014570000.0,
+    "kv": 219240400.0
+   }
+  ],
+  "32": [
+   {
+    "context": 4096,
+    "weights": 290966100000.0,
+    "kv": 1226768000.0
+   },
+   {
+    "context": 16384,
+    "weights": 290966100000.0,
+    "kv": 1400570000.0
+   },
+   {
+    "context": 65536,
+    "weights": 290966100000.0,
+    "kv": 1667957000.0
+   },
+   {
+    "context": 262144,
+    "weights": 290966100000.0,
+    "kv": 2737504000.0
+   },
+   {
+    "context": 1048576,
+    "weights": 290966100000.0,
+    "kv": 7015694000.0
+   }
+  ]
+ }
+}

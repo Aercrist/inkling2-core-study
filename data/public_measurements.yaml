@@ -1,0 +1,213 @@
+# Published, measured serving figures for Inkling 2 Small on disclosed hardware.
+# Every entry is "measured (source)": we quote it, we did not run it. Pages read 2026-11-14.
+# Keys in `src` resolve in docs/sources.md. The GPU model (G0) is calibrated to these (sim/calibrate_gpu.py).
+
+measurements:
+  - id: tokenspeed_b300_c1_dspark
+    value: 476
+    unit: tok/s per user (decode, median across requests)
+    hardware: 4x B300
+    layout: TP4 + EP4
+    engine: TokenSpeed
+    speculation: DSpark
+    kv_cache: MXFP8
+    concurrency: 1
+    workload: AgentX agentic coding sessions replayed; prompts average 94k tokens, 94% prefix-cache hits; replies average 866 tokens
+    src: tokenspeed-blog
+    quote: "DSPARK makes per-user decode 75% faster than the target model alone at concurrency 1 (476 versus 272 tokens per second)"
+
+  - id: tokenspeed_b300_c1_target_only
+    value: 272
+    unit: tok/s per user (decode, median across requests)
+    hardware: 4x B300
+    layout: TP4 + EP4
+    engine: TokenSpeed
+    speculation: none
+    concurrency: 1
+    workload: same as tokenspeed_b300_c1_dspark
+    src: tokenspeed-blog
+    quote: "476 versus 272 tokens per second"
+
+  - id: tokenspeed_b300_c8_dspark
+    value: 325
+    unit: tok/s per user (decode, median across requests)
+    hardware: 4x B300
+    layout: TP4 + EP4
+    engine: TokenSpeed
+    speculation: DSpark
+    kv_cache: MXFP8
+    concurrency: 8
+    workload: same as tokenspeed_b300_c1_dspark
+    src: tokenspeed-blog
+    quote: "67% faster at concurrency 8 (325 versus 195 tokens per second)"
+
+  - id: tokenspeed_b300_c8_target_only
+    value: 195
+    unit: tok/s per user (decode, median across requests)
+    hardware: 4x B300
+    layout: TP4 + EP4
+    engine: TokenSpeed
+    speculation: none
+    concurrency: 8
+    workload: same as tokenspeed_b300_c1_dspark
+    src: tokenspeed-blog
+    quote: "325 versus 195 tokens per second"
+
+  - id: tokenspeed_b300_c64_mxfp8_kv
+    value: 403
+    unit: output tok/s per GPU
+    hardware: 4x B300
+    layout: TP4 + EP4
+    engine: TokenSpeed
+    speculation: DSpark
+    kv_cache: MXFP8
+    concurrency: 64
+    workload: same as tokenspeed_b300_c1_dspark
+    src: tokenspeed-blog
+    quote: "at concurrency 64, MXFP8 reaches 403 output tokens/s per GPU against 300 with BF16"
+
+  - id: tokenspeed_b300_c64_bf16_kv
+    value: 300
+    unit: output tok/s per GPU
+    hardware: 4x B300
+    layout: TP4 + EP4
+    engine: TokenSpeed
+    speculation: DSpark
+    kv_cache: BF16
+    concurrency: 64
+    workload: same as tokenspeed_b300_c1_dspark
+    src: tokenspeed-blog
+    quote: "403 output tokens/s per GPU against 300 with BF16"
+
+  - id: vllm_gb200_tp4_single_user
+    value: 630
+    unit: tok/s per user
+    hardware: 4x GB200
+    layout: TP4 (experts expert-parallel across the TP group)
+    engine: vLLM
+    speculation: DSpark, probabilistic drafting
+    acceptance_length: 3.5
+    concurrency: 1
+    workload: not stated for the single-user figure
+    src: vllm-blog
+    quote: "For a single user at TP4, the model decodes at about 630 tok/s with an acceptance length of 3.5."
+
+  - id: vllm_gb200_tp8_32k
+    value: 1070
+    unit: output tok/s per GPU at 100 tok/s per user
+    hardware: 8x GB200 (two 4-GPU nodes)
+    layout: TP8
+    engine: vLLM
+    speculation: DSpark, probabilistic drafting
+    acceptance_length: 3.3
+    concurrency: 84
+    prefix_cache_hit: 0.91
+    session_context: 32768
+    workload: agentic sessions; about 3K new tokens per turn, 1,024 generated, reasoning on, temperature 1.0
+    src: vllm-blog
+    quote: "32K | ~1,070 | ~84 | 91% | 3.3"
+
+  - id: vllm_gb200_tp8_64k
+    value: 915
+    unit: output tok/s per GPU at 100 tok/s per user
+    hardware: 8x GB200 (two 4-GPU nodes)
+    layout: TP8
+    engine: vLLM
+    speculation: DSpark, probabilistic drafting
+    acceptance_length: 3.4
+    concurrency: 72
+    prefix_cache_hit: 0.95
+    session_context: 65536
+    workload: same as vllm_gb200_tp8_32k
+    src: vllm-blog
+    quote: "64K | ~915 | ~72 | 95% | 3.4"
+
+  - id: vllm_gb200_tp8_128k
+    value: 700
+    unit: output tok/s per GPU at 100 tok/s per user
+    hardware: 8x GB200 (two 4-GPU nodes)
+    layout: TP8
+    engine: vLLM
+    speculation: DSpark, probabilistic drafting
+    acceptance_length: 3.5
+    concurrency: 55
+    prefix_cache_hit: 0.98
+    session_context: 131072
+    workload: same as vllm_gb200_tp8_32k
+    src: vllm-blog
+    quote: "128K | ~700 | ~55 | 98% | 3.5"
+
+  - id: vllm_gb200_tp8_256k
+    value: 450
+    unit: output tok/s per GPU at 100 tok/s per user
+    hardware: 8x GB200 (two 4-GPU nodes)
+    layout: TP8
+    engine: vLLM
+    speculation: DSpark, probabilistic drafting
+    acceptance_length: 3.5
+    concurrency: 37
+    prefix_cache_hit: 0.99
+    session_context: 262144
+    workload: same as vllm_gb200_tp8_32k
+    src: vllm-blog
+    quote: "256K | ~450 | ~37 | 99% | 3.5"
+
+  - id: vllm_gb200_step_100k_gluon
+    value: 4.8
+    unit: ms per batch-1 decode step at 100K context
+    hardware: GB200 (TP not stated)
+    engine: vLLM
+    speculation: not stated
+    src: vllm-blog
+    quote: "A batch-1 decode step at 100K context drops from 15.1 ms to 4.8 ms."
+
+  - id: tokenspeed_b300_prefill_2k
+    value: 44.0
+    unit: ms for one prefill forward of 2K tokens (all-reduce path; 45.2 ms with sequence parallelism)
+    hardware: 4x B300
+    layout: TP4
+    engine: TokenSpeed
+    speculation: none
+    concurrency: 1
+    workload: prefill forward; the comment does not give the cached prefix length
+    src: tokenspeed-src
+    quote: "B300 TP4 prefill: 45.2 against 44.0 ms at 2K tokens, 57.7 against 59.9 at 3K"
+
+  - id: tokenspeed_b300_prefill_3k
+    value: 57.7
+    unit: ms for one prefill forward of 3K tokens (sequence-parallel path; 59.9 ms with all-reduces)
+    hardware: 4x B300
+    layout: TP4
+    engine: TokenSpeed
+    speculation: none
+    concurrency: 1
+    workload: prefill forward; the comment does not give the cached prefix length
+    src: tokenspeed-src
+    quote: "B300 TP4 prefill: 45.2 against 44.0 ms at 2K tokens, 57.7 against 59.9 at 3K"
+
+  - id: tokenspeed_b300_attn_kernel
+    value: [10.3, 14.6, 36.7]
+    unit: microseconds for one full-attention decode launch at 8K / 32K / 128K keys
+    hardware: B300 (per rank at TP4)
+    engine: TokenSpeed
+    workload: one request, 8 query rows, 12 query heads over 2 KV heads, head dim 128, 24 splits
+    src: tokenspeed-src
+    quote: "at one request, 24 splits take 10.3 / 14.6 / 36.7 us at 8K / 32K / 128K keys"
+
+# Published facts that constrain the KV-cache model (not speeds).
+kv_facts:
+  - id: tokenspeed_kv_bytes_per_rank
+    value: 528
+    unit: bytes per token per target full-attention layer, per rank at TP4, MXFP8 KV
+    src: tokenspeed-blog
+    quote: "full-attention history in 128-token pages that grow with the context at 528 bytes per token per target layer"
+  - id: tokenspeed_kv_ratio_mxfp8
+    value: 0.70
+    unit: MXFP8-KV bytes per token / BF16-KV bytes per token (target MXFP8, draft stays BF16)
+    src: tokenspeed-recipe
+    quote: "A token takes 0.70 of its BF16 cache bytes, so four B300 GPUs hold 15.8M tokens instead of 10.9M."
+  - id: vllm_kv_1m_request
+    value: 64.47
+    unit: GiB of KV cache for one request at 1,048,576 tokens
+    src: vllm-recipe
+    quote: "To serve at least one request with the model's max seq len (1048576), (64.47 GiB KV cache is needed"

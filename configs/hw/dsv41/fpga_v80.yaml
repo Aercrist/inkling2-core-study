@@ -1,0 +1,37 @@
+# AMD Alveo V80 FPGA cards as a decode engine. 16 cards hold the ~300 GB of weights.
+# Static dataflow overlay at FPGA clocks; FP8/FP4 via DSP58 + LUT multipliers.
+name: 16x Alveo V80 (FPGA)
+kind: fpga
+n_chips: 16
+hbm_bw: 0.82e12           # src: amd-v80
+hbm_cap: 32.0e9           # src: amd-v80
+hbm_eff: 0.80             # assumption (swept)
+hbm_latency: 1.0e-6
+engram_in_hbm: false
+host_bw: 32.0e9           # host DDR over PCIe Gen5 x8 share
+peak:                     # Versal HBM: "up to 75 TOPS INT8, 17.5 TFLOPs DSP"; src: amd-versal-hbm
+  fp4: 0.06e15            # FP4 weights decoded in LUTs onto the INT8 path (assumption)
+  fp8: 0.035e15           # FP8 via INT8 DSP path with per-block rescale: ~half of 75 TOPS (assumption)
+  bf16: 0.0175e15
+  fp32: 0.004e15
+mm_eff: 0.7
+topk_rate: 0.1e12
+sram_bytes: 70.0e6
+sram_bw: 20.0e12
+stage_bytes: 16.0e6
+link_bw: 100.0e9          # 4 x 200 GbE QSFP56-DD per card; src: amd-v80
+coll_latency: 5.0e-6      # Ethernet switch hop + MAC/PCS/FEC, two-hop all-reduce (assumption)
+prefetch: true
+op_overhead: 1.0e-6       # 400 cycles at 400 MHz
+router_latency: 0.3e-6
+serial_round_latency: 1.0e-6
+step_overhead: 5.0e-6
+tdp_w: 190                # src: amd-v80
+power:
+  model: tdp
+  load_fraction: 0.8
+cost:
+  unit_usd: 12000         # $9,495 MSRP (src: amd-v80) + $2.5K server share (assumption)
+  lifetime_years: 4
+  pue: 1.44
+  usd_per_kwh: 0.0862

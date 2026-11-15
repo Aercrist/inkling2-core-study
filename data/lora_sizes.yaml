@@ -1,0 +1,12 @@
+# LoRA adapter sizes for Inkling 2 Small, per unit of rank, as Tinker computes them.
+# Source: thinking-machines-lab/tinker-cookbook at 1991897, tinker_cookbook/hyperparam_utils.py,
+# `_LORA_PARAMS_PER_RANK_BY_COMPONENT` (what `get_lora_param_count` multiplies by the rank). src: tinker-cookbook
+# For expert layers Tinker shares the factor on the hidden side across experts and keeps the other per expert.
+model: thinkingmachines/Inkling-2-Small
+per_rank:
+  mlp: 128065536
+  attn: 2347008
+  unembed: 205632
+default_rank: 32
+# Serving note (src: vllm-recipe): "Expert adapters need BF16 expert weights; with the NVFP4/MXFP8
+# experts of this checkpoint, use attention-only adapters."

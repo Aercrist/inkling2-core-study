@@ -1,0 +1,7277 @@
+{
+ "label": "modeled; GPU rows calibrated to published speeds",
+ "headline": {
+  "rows": {
+   "g0_x4": {
+    "label": "G0 \u00b7 4x B300, today's engines (calibrated)",
+    "batch1": {
+     "platform": "g0_x4",
+     "family": "G0",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 550.433,
+     "tok_s": 550.433,
+     "step_ms": 6.35863,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.230114,
+     "usd_per_mtok": 3.58423,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    "best_energy": {
+     "platform": "g0_x4",
+     "family": "G0",
+     "batch": 101,
+     "context": 32768,
+     "tok_s_user": 100.292,
+     "tok_s": 10129.5,
+     "step_ms": 34.898,
+     "watts": 4191.62,
+     "tokens_per_joule": 2.41661,
+     "usd_per_mtok": 0.200083,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    "best_cost": {
+     "platform": "g0_x4",
+     "family": "G0",
+     "batch": 101,
+     "context": 32768,
+     "tok_s_user": 100.292,
+     "tok_s": 10129.5,
+     "step_ms": 34.898,
+     "watts": 4191.62,
+     "tokens_per_joule": 2.41661,
+     "usd_per_mtok": 0.200083,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    "batch_max_at_sla": 101,
+    "energy_parts_batch1": {
+     "board": 3.4373,
+     "host": 0.908376
+    },
+    "time_by_cause_batch1_ms": {
+     "overhead": 2.39612,
+     "memory": 3.58971,
+     "compute": 0.0632878,
+     "collective": 0.309513
+    },
+    "energy_parts_best": {
+     "board": 0.364442,
+     "host": 0.0493607
+    }
+   },
+   "g0_x8": {
+    "label": "G0 \u00b7 8x B300, today's engines (calibrated)",
+    "batch1": {
+     "platform": "g0_x8",
+     "family": "G0",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 721.085,
+     "tok_s": 721.085,
+     "step_ms": 4.85379,
+     "watts": 4284.0,
+     "tokens_per_joule": 0.168321,
+     "usd_per_mtok": 5.45122,
+     "system_usd": 480000,
+     "chips": 8
+    },
+    "best_energy": {
+     "platform": "g0_x8",
+     "family": "G0",
+     "batch": 150,
+     "context": 32768,
+     "tok_s_user": 100.107,
+     "tok_s": 15016.1,
+     "step_ms": 34.9626,
+     "watts": 8068.0,
+     "tokens_per_joule": 1.86119,
+     "usd_per_mtok": 0.269315,
+     "system_usd": 480000,
+     "chips": 8
+    },
+    "best_cost": {
+     "platform": "g0_x8",
+     "family": "G0",
+     "batch": 150,
+     "context": 32768,
+     "tok_s_user": 100.107,
+     "tok_s": 15016.1,
+     "step_ms": 34.9626,
+     "watts": 8068.0,
+     "tokens_per_joule": 1.86119,
+     "usd_per_mtok": 0.269315,
+     "system_usd": 480000,
+     "chips": 8
+    },
+    "batch_max_at_sla": 150,
+    "energy_parts_batch1": {
+     "board": 5.24764,
+     "host": 0.693399
+    },
+    "time_by_cause_batch1_ms": {
+     "overhead": 2.39612,
+     "memory": 2.07605,
+     "compute": 0.0413249,
+     "collective": 0.340296
+    },
+    "energy_parts_best": {
+     "board": 0.503994,
+     "host": 0.0332977
+    }
+   },
+   "g0_x2": {
+    "label": "G0 \u00b7 2x B300, today's engines (calibrated)",
+    "batch1": {
+     "platform": "g0_x2",
+     "family": "G0",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 378.154,
+     "tok_s": 378.154,
+     "step_ms": 9.25549,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.261517,
+     "usd_per_mtok": 2.62835,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    "best_energy": {
+     "platform": "g0_x2",
+     "family": "G0",
+     "batch": 14,
+     "context": 32768,
+     "tok_s_user": 101.248,
+     "tok_s": 1417.48,
+     "step_ms": 34.5684,
+     "watts": 1960.54,
+     "tokens_per_joule": 0.723005,
+     "usd_per_mtok": 0.712055,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    "best_cost": {
+     "platform": "g0_x2",
+     "family": "G0",
+     "batch": 14,
+     "context": 32768,
+     "tok_s_user": 101.248,
+     "tok_s": 1417.48,
+     "step_ms": 34.5684,
+     "watts": 1960.54,
+     "tokens_per_joule": 0.723005,
+     "usd_per_mtok": 0.712055,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    "batch_max_at_sla": 14,
+    "energy_parts_batch1": {
+     "board": 2.50163,
+     "host": 1.32221
+    },
+    "time_by_cause_batch1_ms": {
+     "overhead": 2.39612,
+     "memory": 6.46132,
+     "compute": 0.107214,
+     "collective": 0.290834
+    },
+    "energy_parts_best": {
+     "board": 1.03038,
+     "host": 0.352739
+    }
+   },
+   "g1_x4": {
+    "label": "G1 \u00b7 4x B300, dataflow-style software (projected)",
+    "batch1": {
+     "platform": "g1_x4",
+     "family": "G1",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 925.451,
+     "tok_s": 925.451,
+     "step_ms": 3.78194,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.386894,
+     "usd_per_mtok": 2.1318,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    "best_energy": {
+     "platform": "g1_x4",
+     "family": "G1",
+     "batch": 153,
+     "context": 32768,
+     "tok_s_user": 100.262,
+     "tok_s": 15340.1,
+     "step_ms": 34.9085,
+     "watts": 4284.0,
+     "tokens_per_joule": 3.58079,
+     "usd_per_mtok": 0.132301,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    "best_cost": {
+     "platform": "g1_x4",
+     "family": "G1",
+     "batch": 153,
+     "context": 32768,
+     "tok_s_user": 100.262,
+     "tok_s": 15340.1,
+     "step_ms": 34.9085,
+     "watts": 4284.0,
+     "tokens_per_joule": 3.58079,
+     "usd_per_mtok": 0.132301,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    "batch_max_at_sla": 153,
+    "energy_parts_batch1": {
+     "board": 2.04441,
+     "host": 0.540277
+    },
+    "time_by_cause_batch1_ms": {
+     "overhead": 0.196388,
+     "collective": 0.309513,
+     "memory": 3.21275,
+     "compute": 0.0632878
+    },
+    "energy_parts_best": {
+     "board": 0.246674,
+     "host": 0.0325943
+    }
+   },
+   "g1_x2": {
+    "label": "G1 \u00b7 2x B300, dataflow-style software (projected)",
+    "batch1": {
+     "platform": "g1_x2",
+     "family": "G1",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 530.536,
+     "tok_s": 530.536,
+     "step_ms": 6.5971,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.366899,
+     "usd_per_mtok": 1.87343,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    "best_energy": {
+     "platform": "g1_x2",
+     "family": "G1",
+     "batch": 24,
+     "context": 32768,
+     "tok_s_user": 100.404,
+     "tok_s": 2409.69,
+     "step_ms": 34.8593,
+     "watts": 2065.62,
+     "tokens_per_joule": 1.16657,
+     "usd_per_mtok": 0.420165,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    "best_cost": {
+     "platform": "g1_x2",
+     "family": "G1",
+     "batch": 24,
+     "context": 32768,
+     "tok_s_user": 100.404,
+     "tok_s": 2409.69,
+     "step_ms": 34.8593,
+     "watts": 2065.62,
+     "tokens_per_joule": 1.16657,
+     "usd_per_mtok": 0.420165,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    "batch_max_at_sla": 24,
+    "energy_parts_batch1": {
+     "board": 1.7831,
+     "host": 0.942443
+    },
+    "time_by_cause_batch1_ms": {
+     "overhead": 0.196388,
+     "collective": 0.290834,
+     "memory": 6.00267,
+     "compute": 0.107214
+    },
+    "energy_parts_best": {
+     "board": 0.649721,
+     "host": 0.207496
+    }
+   },
+   "a_x4": {
+    "label": "A \u00b7 4x MDA-1, HBM decode chip (proposed)",
+    "batch1": {
+     "platform": "a_x4",
+     "family": "A",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 785.089,
+     "tok_s": 785.089,
+     "step_ms": 4.4581,
+     "watts": 2132.23,
+     "tokens_per_joule": 0.3682,
+     "usd_per_mtok": 1.37157,
+     "system_usd": 127869.0,
+     "chips": 4
+    },
+    "best_energy": {
+     "platform": "a_x4",
+     "family": "A",
+     "batch": 128,
+     "context": 32768,
+     "tok_s_user": 100.212,
+     "tok_s": 12827.1,
+     "step_ms": 34.9261,
+     "watts": 2434.49,
+     "tokens_per_joule": 5.26891,
+     "usd_per_mtok": 0.0846527,
+     "system_usd": 127869.0,
+     "chips": 4
+    },
+    "best_cost": {
+     "platform": "a_x4",
+     "family": "A",
+     "batch": 128,
+     "context": 32768,
+     "tok_s_user": 100.212,
+     "tok_s": 12827.1,
+     "step_ms": 34.9261,
+     "watts": 2434.49,
+     "tokens_per_joule": 5.26891,
+     "usd_per_mtok": 0.0846527,
+     "system_usd": 127869.0,
+     "chips": 4
+    },
+    "batch_max_at_sla": 128,
+    "energy_parts_batch1": {
+     "hbm": 0.823972,
+     "sram": 0.102996,
+     "compute": 0.0339227,
+     "links": 0.00142324,
+     "host_dram": 0.0,
+     "noc": 0.102996,
+     "static": 0.764245,
+     "power_delivery_loss": 0.249485,
+     "host": 0.636871
+    },
+    "time_by_cause_batch1_ms": {
+     "overhead": 1.12291,
+     "collective": 0.332713,
+     "memory": 2.40242,
+     "compute": 0.600059
+    },
+    "energy_parts_best": {
+     "hbm": 0.0353298,
+     "sram": 0.00441623,
+     "compute": 0.0403535,
+     "links": 0.00142324,
+     "host_dram": 0.0,
+     "noc": 0.00441623,
+     "static": 0.046776,
+     "power_delivery_loss": 0.0180975,
+     "host": 0.03898
+    }
+   },
+   "a_x2": {
+    "label": "A \u00b7 2x MDA-1, HBM decode chip (proposed)",
+    "batch1": {
+     "platform": "a_x2",
+     "family": "A",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 502.811,
+     "tok_s": 502.811,
+     "step_ms": 6.96086,
+     "watts": 1388.83,
+     "tokens_per_joule": 0.36204,
+     "usd_per_mtok": 1.17401,
+     "system_usd": 69267.3,
+     "chips": 2
+    },
+    "best_energy": {
+     "platform": "a_x2",
+     "family": "A",
+     "batch": 20,
+     "context": 32768,
+     "tok_s_user": 101.545,
+     "tok_s": 2030.91,
+     "step_ms": 34.4673,
+     "watts": 1457.66,
+     "tokens_per_joule": 1.39326,
+     "usd_per_mtok": 0.291675,
+     "system_usd": 69267.3,
+     "chips": 2
+    },
+    "best_cost": {
+     "platform": "a_x2",
+     "family": "A",
+     "batch": 20,
+     "context": 32768,
+     "tok_s_user": 101.545,
+     "tok_s": 2030.91,
+     "step_ms": 34.4673,
+     "watts": 1457.66,
+     "tokens_per_joule": 1.39326,
+     "usd_per_mtok": 0.291675,
+     "system_usd": 69267.3,
+     "chips": 2
+    },
+    "batch_max_at_sla": 20,
+    "energy_parts_batch1": {
+     "hbm": 0.740753,
+     "sram": 0.0925941,
+     "compute": 0.032678,
+     "links": 0.000327367,
+     "host_dram": 0.0,
+     "noc": 0.0925941,
+     "static": 0.596645,
+     "power_delivery_loss": 0.212126,
+     "host": 0.994409
+    },
+    "time_by_cause_batch1_ms": {
+     "overhead": 1.12291,
+     "collective": 0.314034,
+     "memory": 4.33542,
+     "compute": 1.1885
+    },
+    "energy_parts_best": {
+     "hbm": 0.182245,
+     "sram": 0.0227806,
+     "compute": 0.0391088,
+     "links": 0.000327367,
+     "host_dram": 0.0,
+     "noc": 0.0227806,
+     "static": 0.147717,
+     "power_delivery_loss": 0.0565854,
+     "host": 0.246195
+    }
+   },
+   "s": {
+    "label": "S \u00b7 MDS-1, reloadable weights on-die (proposed)",
+    "batch1": {
+     "platform": "s",
+     "family": "S",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 2963.3,
+     "tok_s": 2963.3,
+     "step_ms": 1.18111,
+     "watts": 4231.51,
+     "tokens_per_joule": 0.700295,
+     "usd_per_mtok": 3.7376,
+     "system_usd": 1382100.0,
+     "chips": 521
+    },
+    "best_energy": {
+     "platform": "s",
+     "family": "S",
+     "batch": 96,
+     "context": 32768,
+     "tok_s_user": 1051.89,
+     "tok_s": 100982.0,
+     "step_ms": 3.32733,
+     "watts": 9486.74,
+     "tokens_per_joule": 10.6445,
+     "usd_per_mtok": 0.111237,
+     "system_usd": 1382100.0,
+     "chips": 521
+    },
+    "best_cost": {
+     "platform": "s",
+     "family": "S",
+     "batch": 96,
+     "context": 32768,
+     "tok_s_user": 1051.89,
+     "tok_s": 100982.0,
+     "step_ms": 3.32733,
+     "watts": 9486.74,
+     "tokens_per_joule": 10.6445,
+     "usd_per_mtok": 0.111237,
+     "system_usd": 1382100.0,
+     "chips": 521
+    },
+    "batch_max_at_sla": 256,
+    "energy_parts_batch1": {
+     "storage_read": 0.0380924,
+     "compute": 0.0112643,
+     "links": 0.000172168,
+     "kv_memory": 0.00176916,
+     "static_storage_leakage": 0.0224979,
+     "static_logic_and_clock": 0.703269,
+     "static_links_idle": 0.284497,
+     "static_kv_memory": 0.026322,
+     "static_host": 0.168731,
+     "power_delivery_loss": 0.171356
+    },
+    "time_by_cause_batch1_ms": {
+     "fixed": 0.0186,
+     "scan": 1.0963,
+     "attn_fetch": 0.0246575,
+     "attn_compute": 0.0256269,
+     "hop": 0.0159322
+    },
+    "energy_parts_best": {
+     "storage_read": 0.0270474,
+     "compute": 0.0135698,
+     "links": 0.000172168,
+     "kv_memory": 0.00648595,
+     "static_storage_leakage": 0.000686593,
+     "static_logic_and_clock": 0.0206374,
+     "static_links_idle": 0.00834854,
+     "static_kv_memory": 0.000772417,
+     "static_host": 0.00495139,
+     "power_delivery_loss": 0.0112734
+    }
+   },
+   "f": {
+    "label": "F \u00b7 MDF-1, fixed weights (comparison point)",
+    "batch1": {
+     "platform": "f",
+     "family": "F",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 12318.6,
+     "tok_s": 12318.6,
+     "step_ms": 0.284123,
+     "watts": 2826.94,
+     "tokens_per_joule": 4.35756,
+     "usd_per_mtok": 0.550308,
+     "system_usd": 845037.0,
+     "chips": 93
+    },
+    "best_energy": {
+     "platform": "f",
+     "family": "F",
+     "batch": 256,
+     "context": 32768,
+     "tok_s_user": 389.663,
+     "tok_s": 99753.7,
+     "step_ms": 8.98213,
+     "watts": 7282.48,
+     "tokens_per_joule": 13.6978,
+     "usd_per_mtok": 0.0692944,
+     "system_usd": 845037.0,
+     "chips": 93
+    },
+    "best_cost": {
+     "platform": "f",
+     "family": "F",
+     "batch": 256,
+     "context": 32768,
+     "tok_s_user": 389.663,
+     "tok_s": 99753.7,
+     "step_ms": 8.98213,
+     "watts": 7282.48,
+     "tokens_per_joule": 13.6978,
+     "usd_per_mtok": 0.0692944,
+     "system_usd": 845037.0,
+     "chips": 93
+    },
+    "batch_max_at_sla": 256,
+    "energy_parts_batch1": {
+     "storage_read": 0.0380924,
+     "compute": 0.0109302,
+     "links": 4.56417e-05,
+     "kv_memory": 0.00176916,
+     "static_storage_leakage": 0.00118652,
+     "static_logic_and_clock": 0.0905948,
+     "static_links_idle": 0.0124081,
+     "static_kv_memory": 0.00633189,
+     "static_host": 0.0405891,
+     "power_delivery_loss": 0.0275383
+    },
+    "time_by_cause_batch1_ms": {
+     "fixed": 0.0186,
+     "scan": 0.0968371,
+     "attn_fetch": 0.0246575,
+     "attn_compute": 0.0256269,
+     "hop": 0.118402
+    },
+    "energy_parts_best": {
+     "storage_read": 0.0258162,
+     "compute": 0.0132357,
+     "links": 4.56417e-05,
+     "kv_memory": 0.00648595,
+     "static_storage_leakage": 0.000146524,
+     "static_logic_and_clock": 0.0111876,
+     "static_links_idle": 0.00153227,
+     "static_kv_memory": 0.000781926,
+     "static_host": 0.00501235,
+     "power_delivery_loss": 0.00876056
+    }
+   },
+   "g0": {
+    "label": "G0 \u00b7 best B300 layout for each metric, today's engines (calibrated)",
+    "layout": {
+     "batch1": "g0_x8",
+     "batch1_energy": "g0_x2",
+     "batch1_cost": "g0_x2",
+     "best_energy": "g0_x4",
+     "best_cost": "g0_x4"
+    },
+    "layout_names": {
+     "batch1": "8x B300",
+     "batch1_energy": "2x B300",
+     "batch1_cost": "2x B300",
+     "best_energy": "4x B300",
+     "best_cost": "4x B300"
+    },
+    "batch1": {
+     "platform": "g0_x8",
+     "family": "G0",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 721.085,
+     "tok_s": 721.085,
+     "step_ms": 4.85379,
+     "watts": 4284.0,
+     "tokens_per_joule": 0.261517,
+     "usd_per_mtok": 2.62835,
+     "system_usd": 480000,
+     "chips": 8
+    },
+    "best_energy": {
+     "platform": "g0_x4",
+     "family": "G0",
+     "batch": 101,
+     "context": 32768,
+     "tok_s_user": 100.292,
+     "tok_s": 10129.5,
+     "step_ms": 34.898,
+     "watts": 4191.62,
+     "tokens_per_joule": 2.41661,
+     "usd_per_mtok": 0.200083,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    "best_cost": {
+     "platform": "g0_x4",
+     "family": "G0",
+     "batch": 101,
+     "context": 32768,
+     "tok_s_user": 100.292,
+     "tok_s": 10129.5,
+     "step_ms": 34.898,
+     "watts": 4191.62,
+     "tokens_per_joule": 2.41661,
+     "usd_per_mtok": 0.200083,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    "batch_max_at_sla": 101,
+    "energy_parts_batch1": {
+     "board": 5.24764,
+     "host": 0.693399
+    },
+    "time_by_cause_batch1_ms": {
+     "overhead": 2.39612,
+     "memory": 2.07605,
+     "compute": 0.0413249,
+     "collective": 0.340296
+    },
+    "energy_parts_best": {
+     "board": 0.364442,
+     "host": 0.0493607
+    }
+   }
+  },
+  "ratios": {
+   "g1_x4/g0": {
+    "speed_batch1": 1.28341,
+    "tokens_per_joule_batch1": 1.47942,
+    "cost_batch1": 1.23292,
+    "tokens_per_joule_best": 1.48174,
+    "cost_best": 1.51233
+   },
+   "g1_x2/g0": {
+    "speed_batch1": 0.735746,
+    "tokens_per_joule_batch1": 1.40296,
+    "cost_batch1": 1.40296,
+    "tokens_per_joule_best": 0.482728,
+    "cost_best": 0.4762
+   },
+   "a_x4/g0": {
+    "speed_batch1": 1.08876,
+    "tokens_per_joule_batch1": 1.40794,
+    "cost_batch1": 1.91631,
+    "tokens_per_joule_best": 2.18029,
+    "cost_best": 2.36357
+   },
+   "a_x2/g0": {
+    "speed_batch1": 0.697298,
+    "tokens_per_joule_batch1": 1.38438,
+    "cost_batch1": 2.23878,
+    "tokens_per_joule_best": 0.576535,
+    "cost_best": 0.685978
+   },
+   "s/g0": {
+    "speed_batch1": 4.10951,
+    "tokens_per_joule_batch1": 2.67781,
+    "cost_batch1": 0.703219,
+    "tokens_per_joule_best": 4.40473,
+    "cost_best": 1.7987
+   },
+   "f/g0": {
+    "speed_batch1": 17.0834,
+    "tokens_per_joule_batch1": 16.6626,
+    "cost_batch1": 4.77615,
+    "tokens_per_joule_best": 5.66816,
+    "cost_best": 2.88743
+   },
+   "g0_x8/g0_x4": {
+    "speed_batch1": 1.31003,
+    "tokens_per_joule_batch1": 0.731466,
+    "cost_batch1": 0.657511,
+    "tokens_per_joule_best": 0.770163,
+    "cost_best": 0.742932
+   },
+   "g0_x2/g0_x4": {
+    "speed_batch1": 0.687012,
+    "tokens_per_joule_batch1": 1.13647,
+    "cost_batch1": 1.36368,
+    "tokens_per_joule_best": 0.299181,
+    "cost_best": 0.280993
+   },
+   "g1_x4/g0_x4": {
+    "speed_batch1": 1.68132,
+    "tokens_per_joule_batch1": 1.68132,
+    "cost_batch1": 1.68132,
+    "tokens_per_joule_best": 1.48174,
+    "cost_best": 1.51233
+   },
+   "g1_x2/g0_x4": {
+    "speed_batch1": 0.963852,
+    "tokens_per_joule_batch1": 1.59442,
+    "cost_batch1": 1.91319,
+    "tokens_per_joule_best": 0.482728,
+    "cost_best": 0.4762
+   },
+   "a_x4/g0_x4": {
+    "speed_batch1": 1.42631,
+    "tokens_per_joule_batch1": 1.60008,
+    "cost_batch1": 2.61324,
+    "tokens_per_joule_best": 2.18029,
+    "cost_best": 2.36357
+   },
+   "a_x2/g0_x4": {
+    "speed_batch1": 0.913484,
+    "tokens_per_joule_batch1": 1.57331,
+    "cost_batch1": 3.05298,
+    "tokens_per_joule_best": 0.576535,
+    "cost_best": 0.685978
+   },
+   "s/g0_x4": {
+    "speed_batch1": 5.38359,
+    "tokens_per_joule_batch1": 3.04325,
+    "cost_batch1": 0.958966,
+    "tokens_per_joule_best": 4.40473,
+    "cost_best": 1.7987
+   },
+   "f/g0_x4": {
+    "speed_batch1": 22.3798,
+    "tokens_per_joule_batch1": 18.9365,
+    "cost_batch1": 6.51314,
+    "tokens_per_joule_best": 5.66816,
+    "cost_best": 2.88743
+   },
+   "g0_x4/g0_x2": {
+    "speed_batch1": 1.45558,
+    "tokens_per_joule_batch1": 0.879919,
+    "cost_batch1": 0.73331,
+    "tokens_per_joule_best": 3.34246,
+    "cost_best": 3.5588
+   },
+   "g0_x8/g0_x2": {
+    "speed_batch1": 1.90686,
+    "tokens_per_joule_batch1": 0.643631,
+    "cost_batch1": 0.482159,
+    "tokens_per_joule_best": 2.57424,
+    "cost_best": 2.64395
+   },
+   "g1_x4/g0_x2": {
+    "speed_batch1": 2.44729,
+    "tokens_per_joule_batch1": 1.47942,
+    "cost_batch1": 1.23292,
+    "tokens_per_joule_best": 4.95265,
+    "cost_best": 5.38209
+   },
+   "g1_x2/g0_x2": {
+    "speed_batch1": 1.40296,
+    "tokens_per_joule_batch1": 1.40296,
+    "cost_batch1": 1.40296,
+    "tokens_per_joule_best": 1.6135,
+    "cost_best": 1.6947
+   },
+   "a_x4/g0_x2": {
+    "speed_batch1": 2.07611,
+    "tokens_per_joule_batch1": 1.40794,
+    "cost_batch1": 1.91631,
+    "tokens_per_joule_best": 7.28752,
+    "cost_best": 8.41148
+   },
+   "a_x2/g0_x2": {
+    "speed_batch1": 1.32965,
+    "tokens_per_joule_batch1": 1.38438,
+    "cost_batch1": 2.23878,
+    "tokens_per_joule_best": 1.92704,
+    "cost_best": 2.44126
+   },
+   "s/g0_x2": {
+    "speed_batch1": 7.83624,
+    "tokens_per_joule_batch1": 2.67781,
+    "cost_batch1": 0.703219,
+    "tokens_per_joule_best": 14.7226,
+    "cost_best": 6.40122
+   },
+   "f/g0_x2": {
+    "speed_batch1": 32.5756,
+    "tokens_per_joule_batch1": 16.6626,
+    "cost_batch1": 4.77615,
+    "tokens_per_joule_best": 18.9456,
+    "cost_best": 10.2758
+   },
+   "g0_x4/g1_x4": {
+    "speed_batch1": 0.594772,
+    "tokens_per_joule_batch1": 0.594772,
+    "cost_batch1": 0.594772,
+    "tokens_per_joule_best": 0.674882,
+    "cost_best": 0.66123
+   },
+   "g0_x8/g1_x4": {
+    "speed_batch1": 0.779172,
+    "tokens_per_joule_batch1": 0.435056,
+    "cost_batch1": 0.391069,
+    "tokens_per_joule_best": 0.51977,
+    "cost_best": 0.491249
+   },
+   "g0_x2/g1_x4": {
+    "speed_batch1": 0.408616,
+    "tokens_per_joule_batch1": 0.67594,
+    "cost_batch1": 0.81108,
+    "tokens_per_joule_best": 0.201912,
+    "cost_best": 0.185801
+   },
+   "g1_x2/g1_x4": {
+    "speed_batch1": 0.573273,
+    "tokens_per_joule_batch1": 0.948318,
+    "cost_batch1": 1.13791,
+    "tokens_per_joule_best": 0.325785,
+    "cost_best": 0.314878
+   },
+   "a_x4/g1_x4": {
+    "speed_batch1": 0.848331,
+    "tokens_per_joule_batch1": 0.951683,
+    "cost_batch1": 1.55428,
+    "tokens_per_joule_best": 1.47144,
+    "cost_best": 1.56286
+   },
+   "a_x2/g1_x4": {
+    "speed_batch1": 0.543315,
+    "tokens_per_joule_batch1": 0.935759,
+    "cost_batch1": 1.81583,
+    "tokens_per_joule_best": 0.389093,
+    "cost_best": 0.453589
+   },
+   "s/g1_x4": {
+    "speed_batch1": 3.20201,
+    "tokens_per_joule_batch1": 1.81004,
+    "cost_batch1": 0.570367,
+    "tokens_per_joule_best": 2.97267,
+    "cost_best": 1.18936
+   },
+   "f/g1_x4": {
+    "speed_batch1": 13.3109,
+    "tokens_per_joule_batch1": 11.2629,
+    "cost_batch1": 3.87384,
+    "tokens_per_joule_best": 3.82534,
+    "cost_best": 1.90925
+   }
+  },
+  "sla_tok_s_user": 100.0,
+  "context_batch1": 8192,
+  "context_best": 32768,
+  "best_published_single_user": {
+   "tok_s": 630.0,
+   "src": "vllm-blog",
+   "hardware": "4x GB200",
+   "s_over_published": 4.70366,
+   "f_over_published": 19.5533
+  }
+ },
+ "frontier": {
+  "batches": [
+   1,
+   2,
+   4,
+   8,
+   16,
+   32,
+   64,
+   128,
+   256,
+   512,
+   1024
+  ],
+  "by_context": {
+   "8192": {
+    "g0_x4": [
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 550.433,
+      "tok_s": 550.433,
+      "step_ms": 6.35863,
+      "watts": 2392.0,
+      "tokens_per_joule": 0.230114,
+      "usd_per_mtok": 3.58423,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 2,
+      "context": 8192,
+      "tok_s_user": 395.847,
+      "tok_s": 791.694,
+      "step_ms": 8.8418,
+      "watts": 2662.29,
+      "tokens_per_joule": 0.297374,
+      "usd_per_mtok": 2.50219,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 4,
+      "context": 8192,
+      "tok_s_user": 285.566,
+      "tok_s": 1142.26,
+      "step_ms": 12.2564,
+      "watts": 2932.57,
+      "tokens_per_joule": 0.389509,
+      "usd_per_mtok": 1.74133,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 8,
+      "context": 8192,
+      "tok_s_user": 213.128,
+      "tok_s": 1705.02,
+      "step_ms": 16.4221,
+      "watts": 3202.86,
+      "tokens_per_joule": 0.532344,
+      "usd_per_mtok": 1.17133,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 16,
+      "context": 8192,
+      "tok_s_user": 175.254,
+      "tok_s": 2804.06,
+      "step_ms": 19.9711,
+      "watts": 3473.14,
+      "tokens_per_joule": 0.807355,
+      "usd_per_mtok": 0.71512,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 32,
+      "context": 8192,
+      "tok_s_user": 155.682,
+      "tok_s": 4981.81,
+      "step_ms": 22.4818,
+      "watts": 3743.43,
+      "tokens_per_joule": 1.33082,
+      "usd_per_mtok": 0.404136,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 64,
+      "context": 8192,
+      "tok_s_user": 130.666,
+      "tok_s": 8362.65,
+      "step_ms": 26.7858,
+      "watts": 4013.71,
+      "tokens_per_joule": 2.08352,
+      "usd_per_mtok": 0.24172,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 128,
+      "context": 8192,
+      "tok_s_user": 98.6652,
+      "tok_s": 12629.1,
+      "step_ms": 35.4735,
+      "watts": 4284.0,
+      "tokens_per_joule": 2.94798,
+      "usd_per_mtok": 0.1607,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 256,
+      "context": 8192,
+      "tok_s_user": 66.2091,
+      "tok_s": 16949.5,
+      "step_ms": 52.8628,
+      "watts": 4284.0,
+      "tokens_per_joule": 3.95647,
+      "usd_per_mtok": 0.119738,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 512,
+      "context": 8192,
+      "tok_s_user": 39.9354,
+      "tok_s": 20446.9,
+      "step_ms": 87.6416,
+      "watts": 4284.0,
+      "tokens_per_joule": 4.77286,
+      "usd_per_mtok": 0.0992574,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 1024,
+      "context": 8192,
+      "tok_s_user": 22.2648,
+      "tok_s": 22799.1,
+      "step_ms": 157.199,
+      "watts": 4284.0,
+      "tokens_per_joule": 5.32192,
+      "usd_per_mtok": 0.0890169,
+      "system_usd": 240000,
+      "chips": 4
+     }
+    ],
+    "g0_x8": [
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 721.085,
+      "tok_s": 721.085,
+      "step_ms": 4.85379,
+      "watts": 4284.0,
+      "tokens_per_joule": 0.168321,
+      "usd_per_mtok": 5.45122,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 2,
+      "context": 8192,
+      "tok_s_user": 550.348,
+      "tok_s": 1100.7,
+      "step_ms": 6.35961,
+      "watts": 4824.57,
+      "tokens_per_joule": 0.228144,
+      "usd_per_mtok": 3.58589,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 4,
+      "context": 8192,
+      "tok_s_user": 423.544,
+      "tok_s": 1694.18,
+      "step_ms": 8.2636,
+      "watts": 5365.14,
+      "tokens_per_joule": 0.315775,
+      "usd_per_mtok": 2.33928,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 8,
+      "context": 8192,
+      "tok_s_user": 329.578,
+      "tok_s": 2636.62,
+      "step_ms": 10.6196,
+      "watts": 5905.71,
+      "tokens_per_joule": 0.446453,
+      "usd_per_mtok": 1.50925,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 16,
+      "context": 8192,
+      "tok_s_user": 271.509,
+      "tok_s": 4344.15,
+      "step_ms": 12.8909,
+      "watts": 6446.29,
+      "tokens_per_joule": 0.6739,
+      "usd_per_mtok": 0.919745,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 32,
+      "context": 8192,
+      "tok_s_user": 228.965,
+      "tok_s": 7326.88,
+      "step_ms": 15.2862,
+      "watts": 6986.86,
+      "tokens_per_joule": 1.04867,
+      "usd_per_mtok": 0.547531,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 64,
+      "context": 8192,
+      "tok_s_user": 175.434,
+      "tok_s": 11227.8,
+      "step_ms": 19.9506,
+      "watts": 7527.43,
+      "tokens_per_joule": 1.49158,
+      "usd_per_mtok": 0.358742,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 128,
+      "context": 8192,
+      "tok_s_user": 119.0,
+      "tok_s": 15232.0,
+      "step_ms": 29.4117,
+      "watts": 8068.0,
+      "tokens_per_joule": 1.88796,
+      "usd_per_mtok": 0.265496,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 256,
+      "context": 8192,
+      "tok_s_user": 72.392,
+      "tok_s": 18532.4,
+      "step_ms": 48.3479,
+      "watts": 8068.0,
+      "tokens_per_joule": 2.29702,
+      "usd_per_mtok": 0.218216,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 512,
+      "context": 8192,
+      "tok_s_user": 40.5937,
+      "tok_s": 20784.0,
+      "step_ms": 86.2202,
+      "watts": 8068.0,
+      "tokens_per_joule": 2.5761,
+      "usd_per_mtok": 0.194575,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 1024,
+      "context": 8192,
+      "tok_s_user": 21.6096,
+      "tok_s": 22128.2,
+      "step_ms": 161.965,
+      "watts": 8068.0,
+      "tokens_per_joule": 2.74272,
+      "usd_per_mtok": 0.182755,
+      "system_usd": 480000,
+      "chips": 8
+     }
+    ],
+    "g0_x2": [
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 378.154,
+      "tok_s": 378.154,
+      "step_ms": 9.25549,
+      "watts": 1446.0,
+      "tokens_per_joule": 0.261517,
+      "usd_per_mtok": 2.62835,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 2,
+      "context": 8192,
+      "tok_s_user": 255.52,
+      "tok_s": 511.04,
+      "step_ms": 13.6976,
+      "watts": 1581.14,
+      "tokens_per_joule": 0.323209,
+      "usd_per_mtok": 1.95282,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 4,
+      "context": 8192,
+      "tok_s_user": 173.281,
+      "tok_s": 693.126,
+      "step_ms": 20.1984,
+      "watts": 1716.29,
+      "tokens_per_joule": 0.403852,
+      "usd_per_mtok": 1.44564,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 8,
+      "context": 8192,
+      "tok_s_user": 124.196,
+      "tok_s": 993.566,
+      "step_ms": 28.1813,
+      "watts": 1851.43,
+      "tokens_per_joule": 0.536649,
+      "usd_per_mtok": 1.01257,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 16,
+      "context": 8192,
+      "tok_s_user": 100.837,
+      "tok_s": 1613.39,
+      "step_ms": 34.7096,
+      "watts": 1986.57,
+      "tokens_per_joule": 0.812146,
+      "usd_per_mtok": 0.626075,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 32,
+      "context": 8192,
+      "tok_s_user": 91.5838,
+      "tok_s": 2930.68,
+      "step_ms": 38.2164,
+      "watts": 2121.71,
+      "tokens_per_joule": 1.38128,
+      "usd_per_mtok": 0.346045,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 64,
+      "context": 8192,
+      "tok_s_user": 81.0202,
+      "tok_s": 5185.29,
+      "step_ms": 43.1991,
+      "watts": 2256.86,
+      "tokens_per_joule": 2.29757,
+      "usd_per_mtok": 0.196361,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 128,
+      "context": 8192,
+      "tok_s_user": 65.9297,
+      "tok_s": 8439.01,
+      "step_ms": 53.0868,
+      "watts": 2392.0,
+      "tokens_per_joule": 3.52801,
+      "usd_per_mtok": 0.121132,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 256,
+      "context": 8192,
+      "tok_s_user": 48.0293,
+      "tok_s": 12295.5,
+      "step_ms": 72.8722,
+      "watts": 2392.0,
+      "tokens_per_joule": 5.14026,
+      "usd_per_mtok": 0.0831391,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 512,
+      "context": 8192,
+      "tok_s_user": 31.1268,
+      "tok_s": 15936.9,
+      "step_ms": 112.443,
+      "watts": 2392.0,
+      "tokens_per_joule": 6.6626,
+      "usd_per_mtok": 0.0641426,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 1024,
+      "context": 8192,
+      "tok_s_user": 18.2687,
+      "tok_s": 18707.1,
+      "step_ms": 191.585,
+      "watts": 2392.0,
+      "tokens_per_joule": 7.8207,
+      "usd_per_mtok": 0.0546443,
+      "system_usd": 120000,
+      "chips": 2
+     }
+    ],
+    "g1_x4": [
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 925.451,
+      "tok_s": 925.451,
+      "step_ms": 3.78194,
+      "watts": 2392.0,
+      "tokens_per_joule": 0.386894,
+      "usd_per_mtok": 2.1318,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 2,
+      "context": 8192,
+      "tok_s_user": 583.49,
+      "tok_s": 1166.98,
+      "step_ms": 5.99839,
+      "watts": 2662.29,
+      "tokens_per_joule": 0.438337,
+      "usd_per_mtok": 1.69752,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 4,
+      "context": 8192,
+      "tok_s_user": 374.7,
+      "tok_s": 1498.8,
+      "step_ms": 9.34079,
+      "watts": 2932.57,
+      "tokens_per_joule": 0.511088,
+      "usd_per_mtok": 1.3271,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 8,
+      "context": 8192,
+      "tok_s_user": 261.662,
+      "tok_s": 2093.29,
+      "step_ms": 13.376,
+      "watts": 3202.86,
+      "tokens_per_joule": 0.653571,
+      "usd_per_mtok": 0.95407,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 16,
+      "context": 8192,
+      "tok_s_user": 209.718,
+      "tok_s": 3355.48,
+      "step_ms": 16.6891,
+      "watts": 3473.14,
+      "tokens_per_joule": 0.966123,
+      "usd_per_mtok": 0.597601,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 32,
+      "context": 8192,
+      "tok_s_user": 186.119,
+      "tok_s": 5955.82,
+      "step_ms": 18.8051,
+      "watts": 3743.43,
+      "tokens_per_joule": 1.59101,
+      "usd_per_mtok": 0.338044,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 64,
+      "context": 8192,
+      "tok_s_user": 160.287,
+      "tok_s": 10258.4,
+      "step_ms": 21.8358,
+      "watts": 4013.71,
+      "tokens_per_joule": 2.55583,
+      "usd_per_mtok": 0.197051,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 128,
+      "context": 8192,
+      "tok_s_user": 125.229,
+      "tok_s": 16029.4,
+      "step_ms": 27.9487,
+      "watts": 4284.0,
+      "tokens_per_joule": 3.74168,
+      "usd_per_mtok": 0.126612,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 256,
+      "context": 8192,
+      "tok_s_user": 87.0844,
+      "tok_s": 22293.6,
+      "step_ms": 40.1909,
+      "watts": 4284.0,
+      "tokens_per_joule": 5.20393,
+      "usd_per_mtok": 0.0910354,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 512,
+      "context": 8192,
+      "tok_s_user": 54.1158,
+      "tok_s": 27707.3,
+      "step_ms": 64.6762,
+      "watts": 4284.0,
+      "tokens_per_joule": 6.46762,
+      "usd_per_mtok": 0.0732482,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 1024,
+      "context": 8192,
+      "tok_s_user": 30.7979,
+      "tok_s": 31537.0,
+      "step_ms": 113.644,
+      "watts": 4284.0,
+      "tokens_per_joule": 7.36159,
+      "usd_per_mtok": 0.0643531,
+      "system_usd": 240000,
+      "chips": 4
+     }
+    ],
+    "g1_x2": [
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 530.536,
+      "tok_s": 530.536,
+      "step_ms": 6.5971,
+      "watts": 1446.0,
+      "tokens_per_joule": 0.366899,
+      "usd_per_mtok": 1.87343,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 2,
+      "context": 8192,
+      "tok_s_user": 326.35,
+      "tok_s": 652.7,
+      "step_ms": 10.7247,
+      "watts": 1581.14,
+      "tokens_per_joule": 0.412803,
+      "usd_per_mtok": 1.52898,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 4,
+      "context": 8192,
+      "tok_s_user": 205.028,
+      "tok_s": 820.112,
+      "step_ms": 17.0708,
+      "watts": 1716.29,
+      "tokens_per_joule": 0.477841,
+      "usd_per_mtok": 1.2218,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 8,
+      "context": 8192,
+      "tok_s_user": 140.042,
+      "tok_s": 1120.34,
+      "step_ms": 24.9924,
+      "watts": 1851.43,
+      "tokens_per_joule": 0.605121,
+      "usd_per_mtok": 0.897993,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 16,
+      "context": 8192,
+      "tok_s_user": 111.899,
+      "tok_s": 1790.39,
+      "step_ms": 31.2782,
+      "watts": 1986.57,
+      "tokens_per_joule": 0.901245,
+      "usd_per_mtok": 0.564181,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 32,
+      "context": 8192,
+      "tok_s_user": 101.41,
+      "tok_s": 3245.12,
+      "step_ms": 34.5133,
+      "watts": 2121.71,
+      "tokens_per_joule": 1.52948,
+      "usd_per_mtok": 0.312514,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 64,
+      "context": 8192,
+      "tok_s_user": 91.5721,
+      "tok_s": 5860.61,
+      "step_ms": 38.2213,
+      "watts": 2256.86,
+      "tokens_per_joule": 2.5968,
+      "usd_per_mtok": 0.173735,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 128,
+      "context": 8192,
+      "tok_s_user": 76.9038,
+      "tok_s": 9843.69,
+      "step_ms": 45.5114,
+      "watts": 2392.0,
+      "tokens_per_joule": 4.11525,
+      "usd_per_mtok": 0.103847,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 256,
+      "context": 8192,
+      "tok_s_user": 58.2347,
+      "tok_s": 14908.1,
+      "step_ms": 60.1016,
+      "watts": 2392.0,
+      "tokens_per_joule": 6.23248,
+      "usd_per_mtok": 0.0685693,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 512,
+      "context": 8192,
+      "tok_s_user": 39.2004,
+      "tok_s": 20070.6,
+      "step_ms": 89.2848,
+      "watts": 2392.0,
+      "tokens_per_joule": 8.39072,
+      "usd_per_mtok": 0.050932,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 1024,
+      "context": 8192,
+      "tok_s_user": 23.7053,
+      "tok_s": 24274.2,
+      "step_ms": 147.646,
+      "watts": 2392.0,
+      "tokens_per_joule": 10.1481,
+      "usd_per_mtok": 0.042112,
+      "system_usd": 120000,
+      "chips": 2
+     }
+    ],
+    "a_x4": [
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 785.089,
+      "tok_s": 785.089,
+      "step_ms": 4.4581,
+      "watts": 2132.23,
+      "tokens_per_joule": 0.3682,
+      "usd_per_mtok": 1.37157,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 2,
+      "context": 8192,
+      "tok_s_user": 533.789,
+      "tok_s": 1067.58,
+      "step_ms": 6.5569,
+      "watts": 2217.5,
+      "tokens_per_joule": 0.481434,
+      "usd_per_mtok": 1.01103,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 4,
+      "context": 8192,
+      "tok_s_user": 356.88,
+      "tok_s": 1427.52,
+      "step_ms": 9.80723,
+      "watts": 2270.2,
+      "tokens_per_joule": 0.628806,
+      "usd_per_mtok": 0.75721,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 8,
+      "context": 8192,
+      "tok_s_user": 252.871,
+      "tok_s": 2022.97,
+      "step_ms": 13.8411,
+      "watts": 2297.95,
+      "tokens_per_joule": 0.880336,
+      "usd_per_mtok": 0.53474,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 16,
+      "context": 8192,
+      "tok_s_user": 201.808,
+      "tok_s": 3228.93,
+      "step_ms": 17.3432,
+      "watts": 2313.36,
+      "tokens_per_joule": 1.39578,
+      "usd_per_mtok": 0.335164,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 32,
+      "context": 8192,
+      "tok_s_user": 175.144,
+      "tok_s": 5604.6,
+      "step_ms": 19.9836,
+      "watts": 2323.82,
+      "tokens_per_joule": 2.41181,
+      "usd_per_mtok": 0.193151,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 64,
+      "context": 8192,
+      "tok_s_user": 146.365,
+      "tok_s": 9367.38,
+      "step_ms": 23.9128,
+      "watts": 2339.57,
+      "tokens_per_joule": 4.00389,
+      "usd_per_mtok": 0.115615,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 128,
+      "context": 8192,
+      "tok_s_user": 109.852,
+      "tok_s": 14061.1,
+      "step_ms": 31.861,
+      "watts": 2358.03,
+      "tokens_per_joule": 5.96306,
+      "usd_per_mtok": 0.0770609,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 256,
+      "context": 8192,
+      "tok_s_user": 73.2431,
+      "tok_s": 18750.2,
+      "step_ms": 47.7861,
+      "watts": 2376.13,
+      "tokens_per_joule": 7.89108,
+      "usd_per_mtok": 0.0578181,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 512,
+      "context": 8192,
+      "tok_s_user": 42.9439,
+      "tok_s": 21987.3,
+      "step_ms": 81.5017,
+      "watts": 2362.94,
+      "tokens_per_joule": 9.30503,
+      "usd_per_mtok": 0.049288,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 1024,
+      "context": 8192,
+      "tok_s_user": 22.0344,
+      "tok_s": 22563.2,
+      "step_ms": 158.843,
+      "watts": 2281.32,
+      "tokens_per_joule": 9.89039,
+      "usd_per_mtok": 0.0479216,
+      "system_usd": 127869.0,
+      "chips": 4
+     }
+    ],
+    "a_x2": [
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 502.811,
+      "tok_s": 502.811,
+      "step_ms": 6.96086,
+      "watts": 1388.83,
+      "tokens_per_joule": 0.36204,
+      "usd_per_mtok": 1.17401,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 2,
+      "context": 8192,
+      "tok_s_user": 320.205,
+      "tok_s": 640.41,
+      "step_ms": 10.9305,
+      "watts": 1413.57,
+      "tokens_per_joule": 0.453043,
+      "usd_per_mtok": 0.922918,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 4,
+      "context": 8192,
+      "tok_s_user": 203.21,
+      "tok_s": 812.841,
+      "step_ms": 17.2235,
+      "watts": 1425.65,
+      "tokens_per_joule": 0.570155,
+      "usd_per_mtok": 0.72758,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 8,
+      "context": 8192,
+      "tok_s_user": 139.884,
+      "tok_s": 1119.07,
+      "step_ms": 25.0207,
+      "watts": 1435.45,
+      "tokens_per_joule": 0.779597,
+      "usd_per_mtok": 0.528742,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 16,
+      "context": 8192,
+      "tok_s_user": 109.79,
+      "tok_s": 1756.64,
+      "step_ms": 31.879,
+      "watts": 1442.68,
+      "tokens_per_joule": 1.21762,
+      "usd_per_mtok": 0.336959,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 32,
+      "context": 8192,
+      "tok_s_user": 96.0993,
+      "tok_s": 3075.18,
+      "step_ms": 36.4207,
+      "watts": 1456.87,
+      "tokens_per_joule": 2.11082,
+      "usd_per_mtok": 0.19262,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 64,
+      "context": 8192,
+      "tok_s_user": 82.6296,
+      "tok_s": 5288.3,
+      "step_ms": 42.3577,
+      "watts": 1479.96,
+      "tokens_per_joule": 3.57328,
+      "usd_per_mtok": 0.112141,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 128,
+      "context": 8192,
+      "tok_s_user": 64.6822,
+      "tok_s": 8279.32,
+      "step_ms": 54.1107,
+      "watts": 1511.17,
+      "tokens_per_joule": 5.47876,
+      "usd_per_mtok": 0.071741,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 256,
+      "context": 8192,
+      "tok_s_user": 45.0878,
+      "tok_s": 11542.5,
+      "step_ms": 77.6263,
+      "watts": 1545.22,
+      "tokens_per_joule": 7.46982,
+      "usd_per_mtok": 0.0515475,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 512,
+      "context": 8192,
+      "tok_s_user": 27.2672,
+      "tok_s": 13960.8,
+      "step_ms": 128.359,
+      "watts": 1553.61,
+      "tokens_per_joule": 8.98603,
+      "usd_per_mtok": 0.0426363,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 1024,
+      "context": 8192,
+      "tok_s_user": 14.0102,
+      "tok_s": 14346.4,
+      "step_ms": 249.818,
+      "watts": 1501.79,
+      "tokens_per_joule": 9.55287,
+      "usd_per_mtok": 0.0413822,
+      "system_usd": 69267.3,
+      "chips": 2
+     }
+    ],
+    "s": [
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 2963.3,
+      "tok_s": 2963.3,
+      "step_ms": 1.18111,
+      "watts": 4231.51,
+      "tokens_per_joule": 0.700295,
+      "usd_per_mtok": 3.7376,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 2,
+      "context": 8192,
+      "tok_s_user": 2962.83,
+      "tok_s": 5925.66,
+      "step_ms": 1.1813,
+      "watts": 4404.32,
+      "tokens_per_joule": 1.34542,
+      "usd_per_mtok": 1.86997,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 4,
+      "context": 8192,
+      "tok_s_user": 2961.88,
+      "tok_s": 11847.5,
+      "step_ms": 1.18168,
+      "watts": 4749.78,
+      "tokens_per_joule": 2.49433,
+      "usd_per_mtok": 0.936158,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 8,
+      "context": 8192,
+      "tok_s_user": 2959.99,
+      "tok_s": 23679.9,
+      "step_ms": 1.18244,
+      "watts": 5440.04,
+      "tokens_per_joule": 4.3529,
+      "usd_per_mtok": 0.469251,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 16,
+      "context": 8192,
+      "tok_s_user": 2955.42,
+      "tok_s": 47286.7,
+      "step_ms": 1.18426,
+      "watts": 6817.17,
+      "tokens_per_joule": 6.93641,
+      "usd_per_mtok": 0.23586,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 32,
+      "context": 8192,
+      "tok_s_user": 2944.56,
+      "tok_s": 94225.8,
+      "step_ms": 1.18863,
+      "watts": 9555.42,
+      "tokens_per_joule": 9.86098,
+      "usd_per_mtok": 0.119235,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 64,
+      "context": 8192,
+      "tok_s_user": 2540.85,
+      "tok_s": 162615.0,
+      "step_ms": 1.37749,
+      "watts": 13077.6,
+      "tokens_per_joule": 12.4346,
+      "usd_per_mtok": 0.069738,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 128,
+      "context": 8192,
+      "tok_s_user": 2183.58,
+      "tok_s": 279498.0,
+      "step_ms": 1.60287,
+      "watts": 18885.5,
+      "tokens_per_joule": 14.7996,
+      "usd_per_mtok": 0.0411962,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 256,
+      "context": 8192,
+      "tok_s_user": 1416.22,
+      "tok_s": 362552.0,
+      "step_ms": 2.47137,
+      "watts": 20653.8,
+      "tokens_per_joule": 17.5538,
+      "usd_per_mtok": 0.0319049,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 512,
+      "context": 8192,
+      "tok_s_user": 620.778,
+      "tok_s": 317838.0,
+      "step_ms": 5.63809,
+      "watts": 17618.4,
+      "tokens_per_joule": 18.0402,
+      "usd_per_mtok": 0.0361074,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 1024,
+      "context": 8192,
+      "tok_s_user": 259.888,
+      "tok_s": 266125.0,
+      "step_ms": 13.4673,
+      "watts": 15889.2,
+      "tokens_per_joule": 16.7489,
+      "usd_per_mtok": 0.0429293,
+      "system_usd": 1382100.0,
+      "chips": 521
+     }
+    ],
+    "f": [
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 12318.6,
+      "tok_s": 12318.6,
+      "step_ms": 0.284123,
+      "watts": 2826.94,
+      "tokens_per_joule": 4.35756,
+      "usd_per_mtok": 0.550308,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 2,
+      "context": 8192,
+      "tok_s_user": 12284.6,
+      "tok_s": 24569.3,
+      "step_ms": 0.284909,
+      "watts": 3534.66,
+      "tokens_per_joule": 6.95096,
+      "usd_per_mtok": 0.276776,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 4,
+      "context": 8192,
+      "tok_s_user": 12208.6,
+      "tok_s": 48834.5,
+      "step_ms": 0.286683,
+      "watts": 4936.46,
+      "tokens_per_joule": 9.89262,
+      "usd_per_mtok": 0.140109,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 8,
+      "context": 8192,
+      "tok_s_user": 12030.4,
+      "tok_s": 96242.8,
+      "step_ms": 0.290931,
+      "watts": 7675.22,
+      "tokens_per_joule": 12.5394,
+      "usd_per_mtok": 0.0719444,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 16,
+      "context": 8192,
+      "tok_s_user": 11559.4,
+      "tok_s": 184951.0,
+      "step_ms": 0.302783,
+      "watts": 12799.9,
+      "tokens_per_joule": 14.4494,
+      "usd_per_mtok": 0.038267,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 32,
+      "context": 8192,
+      "tok_s_user": 7800.75,
+      "tok_s": 249624.0,
+      "step_ms": 0.448675,
+      "watts": 15819.2,
+      "tokens_per_joule": 15.7798,
+      "usd_per_mtok": 0.0287147,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 64,
+      "context": 8192,
+      "tok_s_user": 4687.13,
+      "tok_s": 299976.0,
+      "step_ms": 0.746726,
+      "watts": 17221.8,
+      "tokens_per_joule": 17.4184,
+      "usd_per_mtok": 0.0240348,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 128,
+      "context": 8192,
+      "tok_s_user": 2594.26,
+      "tok_s": 332065.0,
+      "step_ms": 1.34913,
+      "watts": 16626.4,
+      "tokens_per_joule": 19.9722,
+      "usd_per_mtok": 0.0216585,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 256,
+      "context": 8192,
+      "tok_s_user": 1356.18,
+      "tok_s": 347182.0,
+      "step_ms": 2.58078,
+      "watts": 19068.5,
+      "tokens_per_joule": 18.2071,
+      "usd_per_mtok": 0.020926,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 512,
+      "context": 8192,
+      "tok_s_user": 702.349,
+      "tok_s": 359603.0,
+      "step_ms": 4.98328,
+      "watts": 18110.3,
+      "tokens_per_joule": 19.8563,
+      "usd_per_mtok": 0.0201235,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 1024,
+      "context": 8192,
+      "tok_s_user": 360.879,
+      "tok_s": 369540.0,
+      "step_ms": 9.69855,
+      "watts": 18709.1,
+      "tokens_per_joule": 19.7519,
+      "usd_per_mtok": 0.0196308,
+      "system_usd": 845037.0,
+      "chips": 93
+     }
+    ]
+   },
+   "32768": {
+    "g0_x4": [
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 1,
+      "context": 32768,
+      "tok_s_user": 547.795,
+      "tok_s": 547.795,
+      "step_ms": 6.38925,
+      "watts": 2392.0,
+      "tokens_per_joule": 0.229011,
+      "usd_per_mtok": 3.60149,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 2,
+      "context": 32768,
+      "tok_s_user": 393.124,
+      "tok_s": 786.249,
+      "step_ms": 8.90304,
+      "watts": 2662.29,
+      "tokens_per_joule": 0.295328,
+      "usd_per_mtok": 2.51952,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 4,
+      "context": 32768,
+      "tok_s_user": 282.741,
+      "tok_s": 1130.96,
+      "step_ms": 12.3788,
+      "watts": 2932.57,
+      "tokens_per_joule": 0.385656,
+      "usd_per_mtok": 1.75873,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 8,
+      "context": 32768,
+      "tok_s_user": 209.996,
+      "tok_s": 1679.97,
+      "step_ms": 16.667,
+      "watts": 3202.86,
+      "tokens_per_joule": 0.524521,
+      "usd_per_mtok": 1.1888,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 16,
+      "context": 32768,
+      "tok_s_user": 171.058,
+      "tok_s": 2736.93,
+      "step_ms": 20.4609,
+      "watts": 3473.14,
+      "tokens_per_joule": 0.788026,
+      "usd_per_mtok": 0.732661,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 32,
+      "context": 32768,
+      "tok_s_user": 149.181,
+      "tok_s": 4773.78,
+      "step_ms": 23.4615,
+      "watts": 3743.43,
+      "tokens_per_joule": 1.27524,
+      "usd_per_mtok": 0.421747,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 64,
+      "context": 32768,
+      "tok_s_user": 121.759,
+      "tok_s": 7792.6,
+      "step_ms": 28.7452,
+      "watts": 4013.71,
+      "tokens_per_joule": 1.94149,
+      "usd_per_mtok": 0.259402,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 128,
+      "context": 32768,
+      "tok_s_user": 88.8496,
+      "tok_s": 11372.7,
+      "step_ms": 39.3924,
+      "watts": 4284.0,
+      "tokens_per_joule": 2.6547,
+      "usd_per_mtok": 0.178454,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 256,
+      "context": 32768,
+      "tok_s_user": 57.66,
+      "tok_s": 14761.0,
+      "step_ms": 60.7007,
+      "watts": 4284.0,
+      "tokens_per_joule": 3.4456,
+      "usd_per_mtok": 0.137492,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 512,
+      "context": 32768,
+      "tok_s_user": 33.8762,
+      "tok_s": 17344.6,
+      "step_ms": 103.317,
+      "watts": 4284.0,
+      "tokens_per_joule": 4.0487,
+      "usd_per_mtok": 0.117011,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 1024,
+      "context": 32768,
+      "tok_s_user": 18.5627,
+      "tok_s": 19008.2,
+      "step_ms": 188.55,
+      "watts": 4284.0,
+      "tokens_per_joule": 4.43702,
+      "usd_per_mtok": 0.10677,
+      "system_usd": 240000,
+      "chips": 4
+     }
+    ],
+    "g0_x8": [
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 1,
+      "context": 32768,
+      "tok_s_user": 718.818,
+      "tok_s": 718.818,
+      "step_ms": 4.8691,
+      "watts": 4284.0,
+      "tokens_per_joule": 0.167791,
+      "usd_per_mtok": 5.46841,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 2,
+      "context": 32768,
+      "tok_s_user": 547.712,
+      "tok_s": 1095.42,
+      "step_ms": 6.39022,
+      "watts": 4824.57,
+      "tokens_per_joule": 0.227051,
+      "usd_per_mtok": 3.60315,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 4,
+      "context": 32768,
+      "tok_s_user": 420.429,
+      "tok_s": 1681.72,
+      "step_ms": 8.32483,
+      "watts": 5365.14,
+      "tokens_per_joule": 0.313452,
+      "usd_per_mtok": 2.35661,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 8,
+      "context": 32768,
+      "tok_s_user": 325.82,
+      "tok_s": 2606.56,
+      "step_ms": 10.7421,
+      "watts": 5905.71,
+      "tokens_per_joule": 0.441363,
+      "usd_per_mtok": 1.52666,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 16,
+      "context": 32768,
+      "tok_s_user": 266.447,
+      "tok_s": 4263.15,
+      "step_ms": 13.1358,
+      "watts": 6446.29,
+      "tokens_per_joule": 0.661334,
+      "usd_per_mtok": 0.937221,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 32,
+      "context": 32768,
+      "tok_s_user": 221.855,
+      "tok_s": 7099.37,
+      "step_ms": 15.7761,
+      "watts": 6986.86,
+      "tokens_per_joule": 1.0161,
+      "usd_per_mtok": 0.565077,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 64,
+      "context": 32768,
+      "tok_s_user": 167.222,
+      "tok_s": 10702.2,
+      "step_ms": 20.9303,
+      "watts": 7527.43,
+      "tokens_per_joule": 1.42176,
+      "usd_per_mtok": 0.376359,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 128,
+      "context": 32768,
+      "tok_s_user": 111.567,
+      "tok_s": 14280.6,
+      "step_ms": 31.3712,
+      "watts": 8068.0,
+      "tokens_per_joule": 1.77003,
+      "usd_per_mtok": 0.283184,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 256,
+      "context": 32768,
+      "tok_s_user": 66.9641,
+      "tok_s": 17142.8,
+      "step_ms": 52.2668,
+      "watts": 8068.0,
+      "tokens_per_joule": 2.12479,
+      "usd_per_mtok": 0.235903,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 512,
+      "context": 32768,
+      "tok_s_user": 37.211,
+      "tok_s": 19052.1,
+      "step_ms": 94.0581,
+      "watts": 8068.0,
+      "tokens_per_joule": 2.36143,
+      "usd_per_mtok": 0.212263,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     {
+      "platform": "g0_x8",
+      "family": "G0",
+      "batch": 1024,
+      "context": 32768,
+      "tok_s_user": 19.7027,
+      "tok_s": 20175.6,
+      "step_ms": 177.641,
+      "watts": 8068.0,
+      "tokens_per_joule": 2.50069,
+      "usd_per_mtok": 0.200443,
+      "system_usd": 480000,
+      "chips": 8
+     }
+    ],
+    "g0_x2": [
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 1,
+      "context": 32768,
+      "tok_s_user": 375.669,
+      "tok_s": 375.669,
+      "step_ms": 9.31672,
+      "watts": 1446.0,
+      "tokens_per_joule": 0.259799,
+      "usd_per_mtok": 2.64574,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 2,
+      "context": 32768,
+      "tok_s_user": 253.256,
+      "tok_s": 506.512,
+      "step_ms": 13.82,
+      "watts": 1581.14,
+      "tokens_per_joule": 0.320345,
+      "usd_per_mtok": 1.97027,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 4,
+      "context": 32768,
+      "tok_s_user": 171.205,
+      "tok_s": 684.821,
+      "step_ms": 20.4433,
+      "watts": 1716.29,
+      "tokens_per_joule": 0.399014,
+      "usd_per_mtok": 1.46317,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 8,
+      "context": 32768,
+      "tok_s_user": 122.074,
+      "tok_s": 976.591,
+      "step_ms": 28.6712,
+      "watts": 1851.43,
+      "tokens_per_joule": 0.52748,
+      "usd_per_mtok": 1.03017,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 16,
+      "context": 32768,
+      "tok_s_user": 98.0685,
+      "tok_s": 1569.1,
+      "step_ms": 35.6893,
+      "watts": 1986.57,
+      "tokens_per_joule": 0.789852,
+      "usd_per_mtok": 0.643747,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 32,
+      "context": 32768,
+      "tok_s_user": 87.1171,
+      "tok_s": 2787.75,
+      "step_ms": 40.1758,
+      "watts": 2121.71,
+      "tokens_per_joule": 1.31391,
+      "usd_per_mtok": 0.363787,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 64,
+      "context": 32768,
+      "tok_s_user": 74.2816,
+      "tok_s": 4754.02,
+      "step_ms": 47.118,
+      "watts": 2256.86,
+      "tokens_per_joule": 2.10648,
+      "usd_per_mtok": 0.214175,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 128,
+      "context": 32768,
+      "tok_s_user": 57.448,
+      "tok_s": 7353.34,
+      "step_ms": 60.9247,
+      "watts": 2392.0,
+      "tokens_per_joule": 3.07414,
+      "usd_per_mtok": 0.139017,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 256,
+      "context": 32768,
+      "tok_s_user": 39.5266,
+      "tok_s": 10118.8,
+      "step_ms": 88.5479,
+      "watts": 2392.0,
+      "tokens_per_joule": 4.23027,
+      "usd_per_mtok": 0.101023,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 512,
+      "context": 32768,
+      "tok_s_user": 24.3403,
+      "tok_s": 12462.2,
+      "step_ms": 143.795,
+      "watts": 2392.0,
+      "tokens_per_joule": 5.20996,
+      "usd_per_mtok": 0.0820268,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g0_x2",
+      "family": "G0",
+      "batch": 1024,
+      "context": 32768,
+      "tok_s_user": 13.7639,
+      "tok_s": 14094.3,
+      "step_ms": 254.288,
+      "watts": 2392.0,
+      "tokens_per_joule": 5.89225,
+      "usd_per_mtok": 0.0725285,
+      "system_usd": 120000,
+      "chips": 2
+     }
+    ],
+    "g1_x4": [
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 1,
+      "context": 32768,
+      "tok_s_user": 916.29,
+      "tok_s": 916.29,
+      "step_ms": 3.81975,
+      "watts": 2392.0,
+      "tokens_per_joule": 0.383064,
+      "usd_per_mtok": 2.15312,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 2,
+      "context": 32768,
+      "tok_s_user": 577.37,
+      "tok_s": 1154.74,
+      "step_ms": 6.06197,
+      "watts": 2662.29,
+      "tokens_per_joule": 0.43374,
+      "usd_per_mtok": 1.71551,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 4,
+      "context": 32768,
+      "tok_s_user": 369.478,
+      "tok_s": 1477.91,
+      "step_ms": 9.47283,
+      "watts": 2932.57,
+      "tokens_per_joule": 0.503964,
+      "usd_per_mtok": 1.34586,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 8,
+      "context": 32768,
+      "tok_s_user": 256.928,
+      "tok_s": 2055.42,
+      "step_ms": 13.6225,
+      "watts": 3202.86,
+      "tokens_per_joule": 0.641746,
+      "usd_per_mtok": 0.97165,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 16,
+      "context": 32768,
+      "tok_s_user": 203.73,
+      "tok_s": 3259.68,
+      "step_ms": 17.1796,
+      "watts": 3473.14,
+      "tokens_per_joule": 0.93854,
+      "usd_per_mtok": 0.615163,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 32,
+      "context": 32768,
+      "tok_s_user": 177.064,
+      "tok_s": 5666.06,
+      "step_ms": 19.7668,
+      "watts": 3743.43,
+      "tokens_per_joule": 1.5136,
+      "usd_per_mtok": 0.355331,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 64,
+      "context": 32768,
+      "tok_s_user": 147.379,
+      "tok_s": 9432.29,
+      "step_ms": 23.7482,
+      "watts": 4013.71,
+      "tokens_per_joule": 2.35001,
+      "usd_per_mtok": 0.214308,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 128,
+      "context": 32768,
+      "tok_s_user": 110.163,
+      "tok_s": 14100.9,
+      "step_ms": 31.771,
+      "watts": 4284.0,
+      "tokens_per_joule": 3.29153,
+      "usd_per_mtok": 0.143927,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 256,
+      "context": 32768,
+      "tok_s_user": 73.1673,
+      "tok_s": 18730.8,
+      "step_ms": 47.8356,
+      "watts": 4284.0,
+      "tokens_per_joule": 4.37228,
+      "usd_per_mtok": 0.108351,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 512,
+      "context": 32768,
+      "tok_s_user": 43.764,
+      "tok_s": 22407.2,
+      "step_ms": 79.9743,
+      "watts": 4284.0,
+      "tokens_per_joule": 5.23044,
+      "usd_per_mtok": 0.090574,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 1024,
+      "context": 32768,
+      "tok_s_user": 24.2681,
+      "tok_s": 24850.5,
+      "step_ms": 144.222,
+      "watts": 4284.0,
+      "tokens_per_joule": 5.80078,
+      "usd_per_mtok": 0.0816686,
+      "system_usd": 240000,
+      "chips": 4
+     }
+    ],
+    "g1_x2": [
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 1,
+      "context": 32768,
+      "tok_s_user": 527.2,
+      "tok_s": 527.2,
+      "step_ms": 6.63885,
+      "watts": 1446.0,
+      "tokens_per_joule": 0.364592,
+      "usd_per_mtok": 1.88529,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 2,
+      "context": 32768,
+      "tok_s_user": 323.356,
+      "tok_s": 646.712,
+      "step_ms": 10.824,
+      "watts": 1581.14,
+      "tokens_per_joule": 0.409015,
+      "usd_per_mtok": 1.54314,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 4,
+      "context": 32768,
+      "tok_s_user": 202.083,
+      "tok_s": 808.333,
+      "step_ms": 17.3196,
+      "watts": 1716.29,
+      "tokens_per_joule": 0.470978,
+      "usd_per_mtok": 1.2396,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 8,
+      "context": 32768,
+      "tok_s_user": 137.318,
+      "tok_s": 1098.54,
+      "step_ms": 25.4883,
+      "watts": 1851.43,
+      "tokens_per_joule": 0.593348,
+      "usd_per_mtok": 0.915812,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 16,
+      "context": 32768,
+      "tok_s_user": 108.49,
+      "tok_s": 1735.84,
+      "step_ms": 32.2611,
+      "watts": 1986.57,
+      "tokens_per_joule": 0.873785,
+      "usd_per_mtok": 0.58191,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 32,
+      "context": 32768,
+      "tok_s_user": 95.9904,
+      "tok_s": 3071.69,
+      "step_ms": 36.462,
+      "watts": 2121.71,
+      "tokens_per_joule": 1.44774,
+      "usd_per_mtok": 0.330159,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 64,
+      "context": 32768,
+      "tok_s_user": 83.247,
+      "tok_s": 5327.81,
+      "step_ms": 42.0435,
+      "watts": 2256.86,
+      "tokens_per_joule": 2.36072,
+      "usd_per_mtok": 0.191109,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 128,
+      "context": 32768,
+      "tok_s_user": 65.844,
+      "tok_s": 8428.03,
+      "step_ms": 53.1559,
+      "watts": 2392.0,
+      "tokens_per_joule": 3.52342,
+      "usd_per_mtok": 0.12129,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 256,
+      "context": 32768,
+      "tok_s_user": 46.4248,
+      "tok_s": 11884.8,
+      "step_ms": 75.3907,
+      "watts": 2392.0,
+      "tokens_per_joule": 4.96854,
+      "usd_per_mtok": 0.0860124,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 512,
+      "context": 32768,
+      "tok_s_user": 29.2007,
+      "tok_s": 14950.7,
+      "step_ms": 119.86,
+      "watts": 2392.0,
+      "tokens_per_joule": 6.25031,
+      "usd_per_mtok": 0.0683737,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     {
+      "platform": "g1_x2",
+      "family": "G1",
+      "batch": 1024,
+      "context": 32768,
+      "tok_s_user": 16.7625,
+      "tok_s": 17164.8,
+      "step_ms": 208.8,
+      "watts": 2392.0,
+      "tokens_per_joule": 7.17592,
+      "usd_per_mtok": 0.0595543,
+      "system_usd": 120000,
+      "chips": 2
+     }
+    ],
+    "a_x4": [
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 1,
+      "context": 32768,
+      "tok_s_user": 777.632,
+      "tok_s": 777.632,
+      "step_ms": 4.50084,
+      "watts": 2134.1,
+      "tokens_per_joule": 0.364385,
+      "usd_per_mtok": 1.38479,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 2,
+      "context": 32768,
+      "tok_s_user": 529.848,
+      "tok_s": 1059.7,
+      "step_ms": 6.60567,
+      "watts": 2224.69,
+      "tokens_per_joule": 0.476334,
+      "usd_per_mtok": 1.01875,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 4,
+      "context": 32768,
+      "tok_s_user": 352.919,
+      "tok_s": 1411.67,
+      "step_ms": 9.9173,
+      "watts": 2277.9,
+      "tokens_per_joule": 0.619727,
+      "usd_per_mtok": 0.765872,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 8,
+      "context": 32768,
+      "tok_s_user": 249.44,
+      "tok_s": 1995.52,
+      "step_ms": 14.0314,
+      "watts": 2310.76,
+      "tokens_per_joule": 0.863579,
+      "usd_per_mtok": 0.542287,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 16,
+      "context": 32768,
+      "tok_s_user": 197.408,
+      "tok_s": 3158.52,
+      "step_ms": 17.7298,
+      "watts": 2332.93,
+      "tokens_per_joule": 1.35389,
+      "usd_per_mtok": 0.342821,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 32,
+      "context": 32768,
+      "tok_s_user": 168.806,
+      "tok_s": 5401.78,
+      "step_ms": 20.7339,
+      "watts": 2358.15,
+      "tokens_per_joule": 2.29068,
+      "usd_per_mtok": 0.200594,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 64,
+      "context": 32768,
+      "tok_s_user": 137.524,
+      "tok_s": 8801.52,
+      "step_ms": 25.4501,
+      "watts": 2392.92,
+      "tokens_per_joule": 3.67815,
+      "usd_per_mtok": 0.123229,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 128,
+      "context": 32768,
+      "tok_s_user": 100.212,
+      "tok_s": 12827.1,
+      "step_ms": 34.9261,
+      "watts": 2434.49,
+      "tokens_per_joule": 5.26891,
+      "usd_per_mtok": 0.0846527,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 256,
+      "context": 32768,
+      "tok_s_user": 64.9662,
+      "tok_s": 16631.3,
+      "step_ms": 53.8742,
+      "watts": 2474.13,
+      "tokens_per_joule": 6.72209,
+      "usd_per_mtok": 0.0653607,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 512,
+      "context": 32768,
+      "tok_s_user": 37.362,
+      "tok_s": 19129.4,
+      "step_ms": 93.678,
+      "watts": 2477.38,
+      "tokens_per_joule": 7.72161,
+      "usd_per_mtok": 0.0568306,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 1024,
+      "context": 32768,
+      "tok_s_user": 19.1053,
+      "tok_s": 19563.8,
+      "step_ms": 183.195,
+      "watts": 2409.21,
+      "tokens_per_joule": 8.12044,
+      "usd_per_mtok": 0.0554642,
+      "system_usd": 127869.0,
+      "chips": 4
+     }
+    ],
+    "a_x2": [
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 1,
+      "context": 32768,
+      "tok_s_user": 496.182,
+      "tok_s": 496.182,
+      "step_ms": 7.05387,
+      "watts": 1388.55,
+      "tokens_per_joule": 0.357337,
+      "usd_per_mtok": 1.18968,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 2,
+      "context": 32768,
+      "tok_s_user": 317.016,
+      "tok_s": 634.033,
+      "step_ms": 11.0404,
+      "watts": 1416.75,
+      "tokens_per_joule": 0.447526,
+      "usd_per_mtok": 0.932351,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 4,
+      "context": 32768,
+      "tok_s_user": 200.868,
+      "tok_s": 803.473,
+      "step_ms": 17.4243,
+      "watts": 1430.16,
+      "tokens_per_joule": 0.561805,
+      "usd_per_mtok": 0.736232,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 8,
+      "context": 32768,
+      "tok_s_user": 137.733,
+      "tok_s": 1101.86,
+      "step_ms": 25.4115,
+      "watts": 1441.74,
+      "tokens_per_joule": 0.764257,
+      "usd_per_mtok": 0.537172,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 16,
+      "context": 32768,
+      "tok_s_user": 107.242,
+      "tok_s": 1715.88,
+      "step_ms": 32.6363,
+      "watts": 1452.75,
+      "tokens_per_joule": 1.18112,
+      "usd_per_mtok": 0.34514,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 32,
+      "context": 32768,
+      "tok_s_user": 92.2418,
+      "tok_s": 2951.74,
+      "step_ms": 37.9438,
+      "watts": 1473.49,
+      "tokens_per_joule": 2.00323,
+      "usd_per_mtok": 0.200844,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 64,
+      "context": 32768,
+      "tok_s_user": 77.0794,
+      "tok_s": 4933.08,
+      "step_ms": 45.4077,
+      "watts": 1506.13,
+      "tokens_per_joule": 3.27533,
+      "usd_per_mtok": 0.120374,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 128,
+      "context": 32768,
+      "tok_s_user": 58.1407,
+      "tok_s": 7442.01,
+      "step_ms": 60.1988,
+      "watts": 1547.63,
+      "tokens_per_joule": 4.80866,
+      "usd_per_mtok": 0.0799594,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 256,
+      "context": 32768,
+      "tok_s_user": 38.9744,
+      "tok_s": 9977.45,
+      "step_ms": 89.8025,
+      "watts": 1589.48,
+      "tokens_per_joule": 6.27717,
+      "usd_per_mtok": 0.0597659,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 512,
+      "context": 32768,
+      "tok_s_user": 22.919,
+      "tok_s": 11734.5,
+      "step_ms": 152.712,
+      "watts": 1604.33,
+      "tokens_per_joule": 7.31427,
+      "usd_per_mtok": 0.0508547,
+      "system_usd": 69267.3,
+      "chips": 2
+     },
+     {
+      "platform": "a_x2",
+      "family": "A",
+      "batch": 1024,
+      "context": 32768,
+      "tok_s_user": 11.7244,
+      "tok_s": 12005.8,
+      "step_ms": 298.523,
+      "watts": 1562.14,
+      "tokens_per_joule": 7.68546,
+      "usd_per_mtok": 0.0496006,
+      "system_usd": 69267.3,
+      "chips": 2
+     }
+    ],
+    "s": [
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 1,
+      "context": 32768,
+      "tok_s_user": 2902.54,
+      "tok_s": 2902.54,
+      "step_ms": 1.20584,
+      "watts": 4251.13,
+      "tokens_per_joule": 0.682769,
+      "usd_per_mtok": 3.81605,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 2,
+      "context": 32768,
+      "tok_s_user": 2899.21,
+      "tok_s": 5798.42,
+      "step_ms": 1.20722,
+      "watts": 4443.17,
+      "tokens_per_joule": 1.30502,
+      "usd_per_mtok": 1.91121,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 4,
+      "context": 32768,
+      "tok_s_user": 2892.58,
+      "tok_s": 11570.3,
+      "step_ms": 1.20999,
+      "watts": 4825.94,
+      "tokens_per_joule": 2.39753,
+      "usd_per_mtok": 0.958783,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 8,
+      "context": 32768,
+      "tok_s_user": 2875.14,
+      "tok_s": 23001.2,
+      "step_ms": 1.21733,
+      "watts": 5583.99,
+      "tokens_per_joule": 4.11912,
+      "usd_per_mtok": 0.483286,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 16,
+      "context": 32768,
+      "tok_s_user": 2827.17,
+      "tok_s": 45234.7,
+      "step_ms": 1.23799,
+      "watts": 7058.43,
+      "tokens_per_joule": 6.4086,
+      "usd_per_mtok": 0.246719,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 32,
+      "context": 32768,
+      "tok_s_user": 2673.27,
+      "tok_s": 85544.6,
+      "step_ms": 1.30926,
+      "watts": 9731.63,
+      "tokens_per_joule": 8.79037,
+      "usd_per_mtok": 0.131397,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 64,
+      "context": 32768,
+      "tok_s_user": 1543.59,
+      "tok_s": 98789.6,
+      "step_ms": 2.26744,
+      "watts": 9877.17,
+      "tokens_per_joule": 10.0018,
+      "usd_per_mtok": 0.113824,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 128,
+      "context": 32768,
+      "tok_s_user": 737.326,
+      "tok_s": 94377.8,
+      "step_ms": 4.74688,
+      "watts": 10047.4,
+      "tokens_per_joule": 9.39328,
+      "usd_per_mtok": 0.119199,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 256,
+      "context": 32768,
+      "tok_s_user": 362.342,
+      "tok_s": 92759.6,
+      "step_ms": 9.65938,
+      "watts": 9103.6,
+      "tokens_per_joule": 10.1893,
+      "usd_per_mtok": 0.120974,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 512,
+      "context": 32768,
+      "tok_s_user": 179.56,
+      "tok_s": 91934.5,
+      "step_ms": 19.4921,
+      "watts": 8879.19,
+      "tokens_per_joule": 10.3539,
+      "usd_per_mtok": 0.121986,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     {
+      "platform": "s",
+      "family": "S",
+      "batch": 1024,
+      "context": 32768,
+      "tok_s_user": 84.665,
+      "tok_s": 86696.9,
+      "step_ms": 41.3394,
+      "watts": 8505.28,
+      "tokens_per_joule": 10.1933,
+      "usd_per_mtok": 0.129227,
+      "system_usd": 1382100.0,
+      "chips": 521
+     }
+    ],
+    "f": [
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 1,
+      "context": 32768,
+      "tok_s_user": 11332.3,
+      "tok_s": 11332.3,
+      "step_ms": 0.308851,
+      "watts": 2860.4,
+      "tokens_per_joule": 3.9618,
+      "usd_per_mtok": 0.598291,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 2,
+      "context": 32768,
+      "tok_s_user": 11137.6,
+      "tok_s": 22275.1,
+      "step_ms": 0.314252,
+      "watts": 3579.88,
+      "tokens_per_joule": 6.22231,
+      "usd_per_mtok": 0.305343,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 4,
+      "context": 32768,
+      "tok_s_user": 10595.2,
+      "tok_s": 42380.9,
+      "step_ms": 0.330338,
+      "watts": 4901.83,
+      "tokens_per_joule": 8.64593,
+      "usd_per_mtok": 0.16142,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 8,
+      "context": 32768,
+      "tok_s_user": 9241.62,
+      "tok_s": 73932.9,
+      "step_ms": 0.378722,
+      "watts": 6976.36,
+      "tokens_per_joule": 10.5976,
+      "usd_per_mtok": 0.0933713,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 16,
+      "context": 32768,
+      "tok_s_user": 5488.82,
+      "tok_s": 87821.1,
+      "step_ms": 0.63766,
+      "watts": 7637.33,
+      "tokens_per_joule": 11.4989,
+      "usd_per_mtok": 0.0788307,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 32,
+      "context": 32768,
+      "tok_s_user": 2962.21,
+      "tok_s": 94790.9,
+      "step_ms": 1.18155,
+      "watts": 7645.31,
+      "tokens_per_joule": 12.3986,
+      "usd_per_mtok": 0.0730369,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 64,
+      "context": 32768,
+      "tok_s_user": 1529.41,
+      "tok_s": 97882.3,
+      "step_ms": 2.28846,
+      "watts": 7173.8,
+      "tokens_per_joule": 13.6444,
+      "usd_per_mtok": 0.070586,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 128,
+      "context": 32768,
+      "tok_s_user": 774.245,
+      "tok_s": 99103.4,
+      "step_ms": 4.52053,
+      "watts": 7745.43,
+      "tokens_per_joule": 12.7951,
+      "usd_per_mtok": 0.0698889,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 256,
+      "context": 32768,
+      "tok_s_user": 389.663,
+      "tok_s": 99753.7,
+      "step_ms": 8.98213,
+      "watts": 7282.48,
+      "tokens_per_joule": 13.6978,
+      "usd_per_mtok": 0.0692944,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 512,
+      "context": 32768,
+      "tok_s_user": 195.376,
+      "tok_s": 100033.0,
+      "step_ms": 17.9141,
+      "watts": 7305.19,
+      "tokens_per_joule": 13.6934,
+      "usd_per_mtok": 0.0691079,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     {
+      "platform": "f",
+      "family": "F",
+      "batch": 1024,
+      "context": 32768,
+      "tok_s_user": 97.8378,
+      "tok_s": 100186.0,
+      "step_ms": 35.7735,
+      "watts": 7144.52,
+      "tokens_per_joule": 14.0228,
+      "usd_per_mtok": 0.0689542,
+      "system_usd": 845037.0,
+      "chips": 93
+     }
+    ]
+   }
+  }
+ },
+ "context": {
+  "contexts": [
+   1024,
+   4096,
+   8192,
+   32768,
+   131072,
+   262144,
+   524288,
+   1048576
+  ],
+  "rows": {
+   "g0_x4": [
+    {
+     "platform": "g0_x4",
+     "family": "G0",
+     "batch": 1,
+     "context": 1024,
+     "tok_s_user": 551.207,
+     "tok_s": 551.207,
+     "step_ms": 6.3497,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.230438,
+     "usd_per_mtok": 3.5792,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    {
+     "platform": "g0_x4",
+     "family": "G0",
+     "batch": 1,
+     "context": 4096,
+     "tok_s_user": 550.875,
+     "tok_s": 550.875,
+     "step_ms": 6.35353,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.230299,
+     "usd_per_mtok": 3.58136,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    {
+     "platform": "g0_x4",
+     "family": "G0",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 550.433,
+     "tok_s": 550.433,
+     "step_ms": 6.35863,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.230114,
+     "usd_per_mtok": 3.58423,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    {
+     "platform": "g0_x4",
+     "family": "G0",
+     "batch": 1,
+     "context": 32768,
+     "tok_s_user": 547.795,
+     "tok_s": 547.795,
+     "step_ms": 6.38925,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.229011,
+     "usd_per_mtok": 3.60149,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    {
+     "platform": "g0_x4",
+     "family": "G0",
+     "batch": 1,
+     "context": 131072,
+     "tok_s_user": 537.493,
+     "tok_s": 537.493,
+     "step_ms": 6.51172,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.224704,
+     "usd_per_mtok": 3.67052,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    {
+     "platform": "g0_x4",
+     "family": "G0",
+     "batch": 1,
+     "context": 262144,
+     "tok_s_user": 524.344,
+     "tok_s": 524.344,
+     "step_ms": 6.675,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.219207,
+     "usd_per_mtok": 3.76256,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    {
+     "platform": "g0_x4",
+     "family": "G0",
+     "batch": 1,
+     "context": 524288,
+     "tok_s_user": 499.887,
+     "tok_s": 499.887,
+     "step_ms": 7.00158,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.208983,
+     "usd_per_mtok": 3.94665,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    {
+     "platform": "g0_x4",
+     "family": "G0",
+     "batch": 1,
+     "context": 1048576,
+     "tok_s_user": 457.233,
+     "tok_s": 457.233,
+     "step_ms": 7.65473,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.191151,
+     "usd_per_mtok": 4.31482,
+     "system_usd": 240000,
+     "chips": 4
+    }
+   ],
+   "g0_x8": [
+    {
+     "platform": "g0_x8",
+     "family": "G0",
+     "batch": 1,
+     "context": 1024,
+     "tok_s_user": 721.749,
+     "tok_s": 721.749,
+     "step_ms": 4.84933,
+     "watts": 4284.0,
+     "tokens_per_joule": 0.168476,
+     "usd_per_mtok": 5.4462,
+     "system_usd": 480000,
+     "chips": 8
+    },
+    {
+     "platform": "g0_x8",
+     "family": "G0",
+     "batch": 1,
+     "context": 4096,
+     "tok_s_user": 721.465,
+     "tok_s": 721.465,
+     "step_ms": 4.85124,
+     "watts": 4284.0,
+     "tokens_per_joule": 0.168409,
+     "usd_per_mtok": 5.44835,
+     "system_usd": 480000,
+     "chips": 8
+    },
+    {
+     "platform": "g0_x8",
+     "family": "G0",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 721.085,
+     "tok_s": 721.085,
+     "step_ms": 4.85379,
+     "watts": 4284.0,
+     "tokens_per_joule": 0.168321,
+     "usd_per_mtok": 5.45122,
+     "system_usd": 480000,
+     "chips": 8
+    },
+    {
+     "platform": "g0_x8",
+     "family": "G0",
+     "batch": 1,
+     "context": 32768,
+     "tok_s_user": 718.818,
+     "tok_s": 718.818,
+     "step_ms": 4.8691,
+     "watts": 4284.0,
+     "tokens_per_joule": 0.167791,
+     "usd_per_mtok": 5.46841,
+     "system_usd": 480000,
+     "chips": 8
+    },
+    {
+     "platform": "g0_x8",
+     "family": "G0",
+     "batch": 1,
+     "context": 131072,
+     "tok_s_user": 709.891,
+     "tok_s": 709.891,
+     "step_ms": 4.93034,
+     "watts": 4284.0,
+     "tokens_per_joule": 0.165707,
+     "usd_per_mtok": 5.53718,
+     "system_usd": 480000,
+     "chips": 8
+    },
+    {
+     "platform": "g0_x8",
+     "family": "G0",
+     "batch": 1,
+     "context": 262144,
+     "tok_s_user": 698.327,
+     "tok_s": 698.327,
+     "step_ms": 5.01198,
+     "watts": 4284.0,
+     "tokens_per_joule": 0.163008,
+     "usd_per_mtok": 5.62887,
+     "system_usd": 480000,
+     "chips": 8
+    },
+    {
+     "platform": "g0_x8",
+     "family": "G0",
+     "batch": 1,
+     "context": 524288,
+     "tok_s_user": 676.293,
+     "tok_s": 676.293,
+     "step_ms": 5.17527,
+     "watts": 4284.0,
+     "tokens_per_joule": 0.157865,
+     "usd_per_mtok": 5.81226,
+     "system_usd": 480000,
+     "chips": 8
+    },
+    {
+     "platform": "g0_x8",
+     "family": "G0",
+     "batch": 1,
+     "context": 1048576,
+     "tok_s_user": 636.15,
+     "tok_s": 636.15,
+     "step_ms": 5.50184,
+     "watts": 4284.0,
+     "tokens_per_joule": 0.148494,
+     "usd_per_mtok": 6.17903,
+     "system_usd": 480000,
+     "chips": 8
+    }
+   ],
+   "g0_x2": [
+    {
+     "platform": "g0_x2",
+     "family": "G0",
+     "batch": 1,
+     "context": 1024,
+     "tok_s_user": 378.885,
+     "tok_s": 378.885,
+     "step_ms": 9.23763,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.262023,
+     "usd_per_mtok": 2.62328,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    {
+     "platform": "g0_x2",
+     "family": "G0",
+     "batch": 1,
+     "context": 4096,
+     "tok_s_user": 378.572,
+     "tok_s": 378.572,
+     "step_ms": 9.24528,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.261806,
+     "usd_per_mtok": 2.62545,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    {
+     "platform": "g0_x2",
+     "family": "G0",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 378.154,
+     "tok_s": 378.154,
+     "step_ms": 9.25549,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.261517,
+     "usd_per_mtok": 2.62835,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    {
+     "platform": "g0_x2",
+     "family": "G0",
+     "batch": 1,
+     "context": 32768,
+     "tok_s_user": 375.669,
+     "tok_s": 375.669,
+     "step_ms": 9.31672,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.259799,
+     "usd_per_mtok": 2.64574,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    {
+     "platform": "g0_x2",
+     "family": "G0",
+     "batch": 1,
+     "context": 131072,
+     "tok_s_user": 366.046,
+     "tok_s": 366.046,
+     "step_ms": 9.56165,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.253144,
+     "usd_per_mtok": 2.7153,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    {
+     "platform": "g0_x2",
+     "family": "G0",
+     "batch": 1,
+     "context": 262144,
+     "tok_s_user": 353.956,
+     "tok_s": 353.956,
+     "step_ms": 9.88823,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.244783,
+     "usd_per_mtok": 2.80804,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    {
+     "platform": "g0_x2",
+     "family": "G0",
+     "batch": 1,
+     "context": 524288,
+     "tok_s_user": 332.025,
+     "tok_s": 332.025,
+     "step_ms": 10.5414,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.229616,
+     "usd_per_mtok": 2.99352,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    {
+     "platform": "g0_x2",
+     "family": "G0",
+     "batch": 1,
+     "context": 1048576,
+     "tok_s_user": 295.416,
+     "tok_s": 295.416,
+     "step_ms": 11.8477,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.204299,
+     "usd_per_mtok": 3.36448,
+     "system_usd": 120000,
+     "chips": 2
+    }
+   ],
+   "g1_x4": [
+    {
+     "platform": "g1_x4",
+     "family": "G1",
+     "batch": 1,
+     "context": 1024,
+     "tok_s_user": 926.674,
+     "tok_s": 926.674,
+     "step_ms": 3.77695,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.387405,
+     "usd_per_mtok": 2.12899,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    {
+     "platform": "g1_x4",
+     "family": "G1",
+     "batch": 1,
+     "context": 4096,
+     "tok_s_user": 929.673,
+     "tok_s": 929.673,
+     "step_ms": 3.76477,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.388659,
+     "usd_per_mtok": 2.12212,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    {
+     "platform": "g1_x4",
+     "family": "G1",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 925.451,
+     "tok_s": 925.451,
+     "step_ms": 3.78194,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.386894,
+     "usd_per_mtok": 2.1318,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    {
+     "platform": "g1_x4",
+     "family": "G1",
+     "batch": 1,
+     "context": 32768,
+     "tok_s_user": 916.29,
+     "tok_s": 916.29,
+     "step_ms": 3.81975,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.383064,
+     "usd_per_mtok": 2.15312,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    {
+     "platform": "g1_x4",
+     "family": "G1",
+     "batch": 1,
+     "context": 131072,
+     "tok_s_user": 887.582,
+     "tok_s": 887.582,
+     "step_ms": 3.9433,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.371063,
+     "usd_per_mtok": 2.22276,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    {
+     "platform": "g1_x4",
+     "family": "G1",
+     "batch": 1,
+     "context": 262144,
+     "tok_s_user": 852.364,
+     "tok_s": 852.364,
+     "step_ms": 4.10623,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.356339,
+     "usd_per_mtok": 2.3146,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    {
+     "platform": "g1_x4",
+     "family": "G1",
+     "batch": 1,
+     "context": 524288,
+     "tok_s_user": 789.54,
+     "tok_s": 789.54,
+     "step_ms": 4.43296,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.330075,
+     "usd_per_mtok": 2.49877,
+     "system_usd": 240000,
+     "chips": 4
+    },
+    {
+     "platform": "g1_x4",
+     "family": "G1",
+     "batch": 1,
+     "context": 1048576,
+     "tok_s_user": 684.569,
+     "tok_s": 684.569,
+     "step_ms": 5.1127,
+     "watts": 2392.0,
+     "tokens_per_joule": 0.286191,
+     "usd_per_mtok": 2.88193,
+     "system_usd": 240000,
+     "chips": 4
+    }
+   ],
+   "g1_x2": [
+    {
+     "platform": "g1_x2",
+     "family": "G1",
+     "batch": 1,
+     "context": 1024,
+     "tok_s_user": 531.517,
+     "tok_s": 531.517,
+     "step_ms": 6.58493,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.367577,
+     "usd_per_mtok": 1.86997,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    {
+     "platform": "g1_x2",
+     "family": "G1",
+     "batch": 1,
+     "context": 4096,
+     "tok_s_user": 531.096,
+     "tok_s": 531.096,
+     "step_ms": 6.59015,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.367286,
+     "usd_per_mtok": 1.87146,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    {
+     "platform": "g1_x2",
+     "family": "G1",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 530.536,
+     "tok_s": 530.536,
+     "step_ms": 6.5971,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.366899,
+     "usd_per_mtok": 1.87343,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    {
+     "platform": "g1_x2",
+     "family": "G1",
+     "batch": 1,
+     "context": 32768,
+     "tok_s_user": 527.2,
+     "tok_s": 527.2,
+     "step_ms": 6.63885,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.364592,
+     "usd_per_mtok": 1.88529,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    {
+     "platform": "g1_x2",
+     "family": "G1",
+     "batch": 1,
+     "context": 131072,
+     "tok_s_user": 509.253,
+     "tok_s": 509.253,
+     "step_ms": 6.87281,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.35218,
+     "usd_per_mtok": 1.95173,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    {
+     "platform": "g1_x2",
+     "family": "G1",
+     "batch": 1,
+     "context": 262144,
+     "tok_s_user": 486.152,
+     "tok_s": 486.152,
+     "step_ms": 7.19939,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.336205,
+     "usd_per_mtok": 2.04447,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    {
+     "platform": "g1_x2",
+     "family": "G1",
+     "batch": 1,
+     "context": 524288,
+     "tok_s_user": 445.716,
+     "tok_s": 445.716,
+     "step_ms": 7.85254,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.30824,
+     "usd_per_mtok": 2.22995,
+     "system_usd": 120000,
+     "chips": 2
+    },
+    {
+     "platform": "g1_x2",
+     "family": "G1",
+     "batch": 1,
+     "context": 1048576,
+     "tok_s_user": 382.144,
+     "tok_s": 382.144,
+     "step_ms": 9.15885,
+     "watts": 1446.0,
+     "tokens_per_joule": 0.264277,
+     "usd_per_mtok": 2.60091,
+     "system_usd": 120000,
+     "chips": 2
+    }
+   ],
+   "a_x4": [
+    {
+     "platform": "a_x4",
+     "family": "A",
+     "batch": 1,
+     "context": 1024,
+     "tok_s_user": 788.286,
+     "tok_s": 788.286,
+     "step_ms": 4.44001,
+     "watts": 2132.88,
+     "tokens_per_joule": 0.369587,
+     "usd_per_mtok": 1.36603,
+     "system_usd": 127869.0,
+     "chips": 4
+    },
+    {
+     "platform": "a_x4",
+     "family": "A",
+     "batch": 1,
+     "context": 4096,
+     "tok_s_user": 787.248,
+     "tok_s": 787.248,
+     "step_ms": 4.44587,
+     "watts": 2133.01,
+     "tokens_per_joule": 0.369079,
+     "usd_per_mtok": 1.36784,
+     "system_usd": 127869.0,
+     "chips": 4
+    },
+    {
+     "platform": "a_x4",
+     "family": "A",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 785.089,
+     "tok_s": 785.089,
+     "step_ms": 4.4581,
+     "watts": 2132.23,
+     "tokens_per_joule": 0.3682,
+     "usd_per_mtok": 1.37157,
+     "system_usd": 127869.0,
+     "chips": 4
+    },
+    {
+     "platform": "a_x4",
+     "family": "A",
+     "batch": 1,
+     "context": 32768,
+     "tok_s_user": 777.632,
+     "tok_s": 777.632,
+     "step_ms": 4.50084,
+     "watts": 2134.1,
+     "tokens_per_joule": 0.364385,
+     "usd_per_mtok": 1.38479,
+     "system_usd": 127869.0,
+     "chips": 4
+    },
+    {
+     "platform": "a_x4",
+     "family": "A",
+     "batch": 1,
+     "context": 131072,
+     "tok_s_user": 746.879,
+     "tok_s": 746.879,
+     "step_ms": 4.68617,
+     "watts": 2138.29,
+     "tokens_per_joule": 0.349289,
+     "usd_per_mtok": 1.44198,
+     "system_usd": 127869.0,
+     "chips": 4
+    },
+    {
+     "platform": "a_x4",
+     "family": "A",
+     "batch": 1,
+     "context": 262144,
+     "tok_s_user": 708.931,
+     "tok_s": 708.931,
+     "step_ms": 4.93701,
+     "watts": 2142.65,
+     "tokens_per_joule": 0.330866,
+     "usd_per_mtok": 1.51935,
+     "system_usd": 127869.0,
+     "chips": 4
+    },
+    {
+     "platform": "a_x4",
+     "family": "A",
+     "batch": 1,
+     "context": 524288,
+     "tok_s_user": 643.897,
+     "tok_s": 643.897,
+     "step_ms": 5.43565,
+     "watts": 2150.72,
+     "tokens_per_joule": 0.299387,
+     "usd_per_mtok": 1.67318,
+     "system_usd": 127869.0,
+     "chips": 4
+    },
+    {
+     "platform": "a_x4",
+     "family": "A",
+     "batch": 1,
+     "context": 1048576,
+     "tok_s_user": 545.123,
+     "tok_s": 545.123,
+     "step_ms": 6.42057,
+     "watts": 2164.99,
+     "tokens_per_joule": 0.25179,
+     "usd_per_mtok": 1.97714,
+     "system_usd": 127869.0,
+     "chips": 4
+    }
+   ],
+   "a_x2": [
+    {
+     "platform": "a_x2",
+     "family": "A",
+     "batch": 1,
+     "context": 1024,
+     "tok_s_user": 504.591,
+     "tok_s": 504.591,
+     "step_ms": 6.93631,
+     "watts": 1388.71,
+     "tokens_per_joule": 0.363353,
+     "usd_per_mtok": 1.16986,
+     "system_usd": 69267.3,
+     "chips": 2
+    },
+    {
+     "platform": "a_x2",
+     "family": "A",
+     "batch": 1,
+     "context": 4096,
+     "tok_s_user": 503.68,
+     "tok_s": 503.68,
+     "step_ms": 6.94886,
+     "watts": 1388.6,
+     "tokens_per_joule": 0.362725,
+     "usd_per_mtok": 1.17197,
+     "system_usd": 69267.3,
+     "chips": 2
+    },
+    {
+     "platform": "a_x2",
+     "family": "A",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 502.811,
+     "tok_s": 502.811,
+     "step_ms": 6.96086,
+     "watts": 1388.83,
+     "tokens_per_joule": 0.36204,
+     "usd_per_mtok": 1.17401,
+     "system_usd": 69267.3,
+     "chips": 2
+    },
+    {
+     "platform": "a_x2",
+     "family": "A",
+     "batch": 1,
+     "context": 32768,
+     "tok_s_user": 496.182,
+     "tok_s": 496.182,
+     "step_ms": 7.05387,
+     "watts": 1388.55,
+     "tokens_per_joule": 0.357337,
+     "usd_per_mtok": 1.18968,
+     "system_usd": 69267.3,
+     "chips": 2
+    },
+    {
+     "platform": "a_x2",
+     "family": "A",
+     "batch": 1,
+     "context": 131072,
+     "tok_s_user": 470.733,
+     "tok_s": 470.733,
+     "step_ms": 7.43522,
+     "watts": 1386.84,
+     "tokens_per_joule": 0.339428,
+     "usd_per_mtok": 1.25389,
+     "system_usd": 69267.3,
+     "chips": 2
+    },
+    {
+     "platform": "a_x2",
+     "family": "A",
+     "batch": 1,
+     "context": 262144,
+     "tok_s_user": 441.879,
+     "tok_s": 441.879,
+     "step_ms": 7.92072,
+     "watts": 1386.39,
+     "tokens_per_joule": 0.318726,
+     "usd_per_mtok": 1.33573,
+     "system_usd": 69267.3,
+     "chips": 2
+    },
+    {
+     "platform": "a_x2",
+     "family": "A",
+     "batch": 1,
+     "context": 524288,
+     "tok_s_user": 392.957,
+     "tok_s": 392.957,
+     "step_ms": 8.90684,
+     "watts": 1384.71,
+     "tokens_per_joule": 0.283782,
+     "usd_per_mtok": 1.5019,
+     "system_usd": 69267.3,
+     "chips": 2
+    },
+    {
+     "platform": "a_x2",
+     "family": "A",
+     "batch": 1,
+     "context": 1048576,
+     "tok_s_user": 321.664,
+     "tok_s": 321.664,
+     "step_ms": 10.8809,
+     "watts": 1382.17,
+     "tokens_per_joule": 0.232723,
+     "usd_per_mtok": 1.83454,
+     "system_usd": 69267.3,
+     "chips": 2
+    }
+   ],
+   "s": [
+    {
+     "platform": "s",
+     "family": "S",
+     "batch": 1,
+     "context": 1024,
+     "tok_s_user": 2981.51,
+     "tok_s": 2981.51,
+     "step_ms": 1.1739,
+     "watts": 4225.63,
+     "tokens_per_joule": 0.705577,
+     "usd_per_mtok": 3.71472,
+     "system_usd": 1382100.0,
+     "chips": 521
+    },
+    {
+     "platform": "s",
+     "family": "S",
+     "batch": 1,
+     "context": 4096,
+     "tok_s_user": 2973.68,
+     "tok_s": 2973.68,
+     "step_ms": 1.17699,
+     "watts": 4228.16,
+     "tokens_per_joule": 0.703304,
+     "usd_per_mtok": 3.72453,
+     "system_usd": 1382100.0,
+     "chips": 521
+    },
+    {
+     "platform": "s",
+     "family": "S",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 2963.3,
+     "tok_s": 2963.3,
+     "step_ms": 1.18111,
+     "watts": 4231.51,
+     "tokens_per_joule": 0.700295,
+     "usd_per_mtok": 3.7376,
+     "system_usd": 1382100.0,
+     "chips": 521
+    },
+    {
+     "platform": "s",
+     "family": "S",
+     "batch": 1,
+     "context": 32768,
+     "tok_s_user": 2902.54,
+     "tok_s": 2902.54,
+     "step_ms": 1.20584,
+     "watts": 4251.13,
+     "tokens_per_joule": 0.682769,
+     "usd_per_mtok": 3.81605,
+     "system_usd": 1382100.0,
+     "chips": 521
+    },
+    {
+     "platform": "s",
+     "family": "S",
+     "batch": 1,
+     "context": 131072,
+     "tok_s_user": 2682.5,
+     "tok_s": 2682.5,
+     "step_ms": 1.30475,
+     "watts": 4322.16,
+     "tokens_per_joule": 0.620639,
+     "usd_per_mtok": 4.12986,
+     "system_usd": 1382100.0,
+     "chips": 521
+    },
+    {
+     "platform": "s",
+     "family": "S",
+     "batch": 1,
+     "context": 262144,
+     "tok_s_user": 2436.25,
+     "tok_s": 2436.25,
+     "step_ms": 1.43663,
+     "watts": 4401.65,
+     "tokens_per_joule": 0.553485,
+     "usd_per_mtok": 4.54828,
+     "system_usd": 1382100.0,
+     "chips": 521
+    },
+    {
+     "platform": "s",
+     "family": "S",
+     "batch": 1,
+     "context": 524288,
+     "tok_s_user": 2058.34,
+     "tok_s": 2058.34,
+     "step_ms": 1.7004,
+     "watts": 4523.65,
+     "tokens_per_joule": 0.455018,
+     "usd_per_mtok": 5.38511,
+     "system_usd": 1382100.0,
+     "chips": 521
+    },
+    {
+     "platform": "s",
+     "family": "S",
+     "batch": 1,
+     "context": 1048576,
+     "tok_s_user": 1570.97,
+     "tok_s": 1570.97,
+     "step_ms": 2.22792,
+     "watts": 4680.98,
+     "tokens_per_joule": 0.335607,
+     "usd_per_mtok": 7.05877,
+     "system_usd": 1382100.0,
+     "chips": 521
+    }
+   ],
+   "f": [
+    {
+     "platform": "f",
+     "family": "F",
+     "batch": 1,
+     "context": 1024,
+     "tok_s_user": 12639.4,
+     "tok_s": 12639.4,
+     "step_ms": 0.276911,
+     "watts": 2816.06,
+     "tokens_per_joule": 4.48834,
+     "usd_per_mtok": 0.536313,
+     "system_usd": 845037.0,
+     "chips": 93
+    },
+    {
+     "platform": "f",
+     "family": "F",
+     "batch": 1,
+     "context": 4096,
+     "tok_s_user": 12499.9,
+     "tok_s": 12499.9,
+     "step_ms": 0.280002,
+     "watts": 2820.79,
+     "tokens_per_joule": 4.43134,
+     "usd_per_mtok": 0.542311,
+     "system_usd": 845037.0,
+     "chips": 93
+    },
+    {
+     "platform": "f",
+     "family": "F",
+     "batch": 1,
+     "context": 8192,
+     "tok_s_user": 12318.6,
+     "tok_s": 12318.6,
+     "step_ms": 0.284123,
+     "watts": 2826.94,
+     "tokens_per_joule": 4.35756,
+     "usd_per_mtok": 0.550308,
+     "system_usd": 845037.0,
+     "chips": 93
+    },
+    {
+     "platform": "f",
+     "family": "F",
+     "batch": 1,
+     "context": 32768,
+     "tok_s_user": 11332.3,
+     "tok_s": 11332.3,
+     "step_ms": 0.308851,
+     "watts": 2860.4,
+     "tokens_per_joule": 3.9618,
+     "usd_per_mtok": 0.598291,
+     "system_usd": 845037.0,
+     "chips": 93
+    },
+    {
+     "platform": "f",
+     "family": "F",
+     "batch": 1,
+     "context": 131072,
+     "tok_s_user": 8583.43,
+     "tok_s": 8583.43,
+     "step_ms": 0.407762,
+     "watts": 2953.64,
+     "tokens_per_joule": 2.90605,
+     "usd_per_mtok": 0.790221,
+     "system_usd": 845037.0,
+     "chips": 93
+    },
+    {
+     "platform": "f",
+     "family": "F",
+     "batch": 1,
+     "context": 262144,
+     "tok_s_user": 6485.76,
+     "tok_s": 6485.76,
+     "step_ms": 0.539644,
+     "watts": 3024.79,
+     "tokens_per_joule": 2.1442,
+     "usd_per_mtok": 1.04613,
+     "system_usd": 845037.0,
+     "chips": 93
+    },
+    {
+     "platform": "f",
+     "family": "F",
+     "batch": 1,
+     "context": 524288,
+     "tok_s_user": 4356.45,
+     "tok_s": 4356.45,
+     "step_ms": 0.803407,
+     "watts": 3097.02,
+     "tokens_per_joule": 1.40666,
+     "usd_per_mtok": 1.55794,
+     "system_usd": 845037.0,
+     "chips": 93
+    },
+    {
+     "platform": "f",
+     "family": "F",
+     "batch": 1,
+     "context": 1048576,
+     "tok_s_user": 2629.73,
+     "tok_s": 2629.73,
+     "step_ms": 1.33093,
+     "watts": 3155.59,
+     "tokens_per_joule": 0.833358,
+     "usd_per_mtok": 2.58158,
+     "system_usd": 845037.0,
+     "chips": 93
+    }
+   ]
+  },
+  "kv": [
+   {
+    "context": 1024,
+    "kv_sliding_bytes": 86507500.0,
+    "kv_full_bytes": 17301500.0,
+    "kv_draft_bytes": 20971500.0,
+    "weight_bytes": 75030400000.0,
+    "kv_share_of_bytes": 0.00166031
+   },
+   {
+    "context": 4096,
+    "kv_sliding_bytes": 86507500.0,
+    "kv_full_bytes": 69206000.0,
+    "kv_draft_bytes": 33554400.0,
+    "weight_bytes": 75030400000.0,
+    "kv_share_of_bytes": 0.0025162
+   },
+   {
+    "context": 8192,
+    "kv_sliding_bytes": 86507500.0,
+    "kv_full_bytes": 138412000.0,
+    "kv_draft_bytes": 50331600.0,
+    "weight_bytes": 75030400000.0,
+    "kv_share_of_bytes": 0.00365512
+   },
+   {
+    "context": 32768,
+    "kv_sliding_bytes": 86507500.0,
+    "kv_full_bytes": 553648000.0,
+    "kv_draft_bytes": 150995000.0,
+    "weight_bytes": 75030400000.0,
+    "kv_share_of_bytes": 0.0104344
+   },
+   {
+    "context": 131072,
+    "kv_sliding_bytes": 86507500.0,
+    "kv_full_bytes": 2214590000.0,
+    "kv_draft_bytes": 553648000.0,
+    "weight_bytes": 75030400000.0,
+    "kv_share_of_bytes": 0.0366533
+   },
+   {
+    "context": 262144,
+    "kv_sliding_bytes": 86507500.0,
+    "kv_full_bytes": 4429190000.0,
+    "kv_draft_bytes": 1090520000.0,
+    "weight_bytes": 75030400000.0,
+    "kv_share_of_bytes": 0.0695244
+   },
+   {
+    "context": 524288,
+    "kv_sliding_bytes": 86507500.0,
+    "kv_full_bytes": 8858370000.0,
+    "kv_draft_bytes": 2164260000.0,
+    "weight_bytes": 75030400000.0,
+    "kv_share_of_bytes": 0.128967
+   },
+   {
+    "context": 1048576,
+    "kv_sliding_bytes": 86507500.0,
+    "kv_full_bytes": 17716700000.0,
+    "kv_draft_bytes": 4311740000.0,
+    "weight_bytes": 75030400000.0,
+    "kv_share_of_bytes": 0.227648
+   }
+  ],
+  "s_over_a": {
+   "at_8k": 3.77448,
+   "at_1m": 2.88186
+  },
+  "s_over_g0": {
+   "at_8k": 5.38359,
+   "at_1m": 3.43581
+  },
+  "g0_1m_over_8k": 0.83068
+ },
+ "designs": {
+  "s": {
+   "label": "S \u00b7 MDS-1, reloadable weights on-die (proposed)",
+   "area": {
+    "storage": 187626.0,
+    "mac_lanes": 134274.0,
+    "attention_engines": 2064.97,
+    "kv_window_sram": 10560.0,
+    "kv_phy": 312.0,
+    "link_phy": 8536.4,
+    "control": 10420.0,
+    "tiles": 66,
+    "dies_per_tile": 7.89394,
+    "dies_per_layer": 10.6327,
+    "tile_frac": 1.0,
+    "kv_stacks": 26,
+    "kv_window_sessions": 256,
+    "kv_window_gb": 22.1459,
+    "dies": 521,
+    "die_mm2": 800.0,
+    "silicon_mm2": 416800.0,
+    "repairable_share": 0.475494,
+    "lanes": {
+     "fp4": 1911030000.0,
+     "fp8": 382206000.0,
+     "bf16": 116242000.0
+    },
+    "resident_gb": 393.48,
+    "gb_per_die": 0.75524
+   },
+   "cost": {
+    "dies": 204933.0,
+    "package_test": 374700.0,
+    "kv_memory": 14040.0,
+    "system": 275500.0,
+    "nre_share": 512923.0,
+    "at_cost": 1382100.0,
+    "total": 1382100.0,
+    "manufacturing": 869173.0,
+    "die_usd": 393.346,
+    "yield": 0.667007,
+    "dies_per_wafer": 64.7953,
+    "systems": 623.875,
+    "unique_mask_usd": 0.0,
+    "nre_usd": 320000000.0,
+    "distinct_die_designs": 3,
+    "capacity_tok_s": 92759.6,
+    "demand_tok_s": 57870400.0
+   },
+   "static_w_managed": {
+    "storage_leakage": 70.7108,
+    "logic_and_clock": 2084.0,
+    "links_idle": 843.05,
+    "kv_memory": 78.0,
+    "host": 500.0,
+    "total": 3575.76
+   },
+   "static_w_unmanaged": {
+    "storage_leakage": 274.313,
+    "logic_and_clock": 6252.0,
+    "links_idle": 843.05,
+    "kv_memory": 78.0,
+    "host": 500.0,
+    "total": 7947.36
+   },
+   "t_scan_us": 0.830204,
+   "scan_rows": 512,
+   "f_clk": 616716000.0,
+   "cost_vs_volume": [
+    {
+     "tokens_per_day": 500000000000.0,
+     "systems": 62.3875,
+     "total_usd": 5998410.0,
+     "nre_share_usd": 5129230.0,
+     "unique_mask_usd_per_system": 0.0
+    },
+    {
+     "tokens_per_day": 1000000000000.0,
+     "systems": 124.775,
+     "total_usd": 3433790.0,
+     "nre_share_usd": 2564620.0,
+     "unique_mask_usd_per_system": 0.0
+    },
+    {
+     "tokens_per_day": 2000000000000.0,
+     "systems": 249.55,
+     "total_usd": 2151480.0,
+     "nre_share_usd": 1282310.0,
+     "unique_mask_usd_per_system": 0.0
+    },
+    {
+     "tokens_per_day": 5000000000000.0,
+     "systems": 623.875,
+     "total_usd": 1382100.0,
+     "nre_share_usd": 512923.0,
+     "unique_mask_usd_per_system": 0.0
+    },
+    {
+     "tokens_per_day": 10000000000000.0,
+     "systems": 1247.75,
+     "total_usd": 1125630.0,
+     "nre_share_usd": 256462.0,
+     "unique_mask_usd_per_system": 0.0
+    },
+    {
+     "tokens_per_day": 20000000000000.0,
+     "systems": 2495.5,
+     "total_usd": 997404.0,
+     "nre_share_usd": 128231.0,
+     "unique_mask_usd_per_system": 0.0
+    }
+   ],
+   "busy": {
+    "batch": 256,
+    "context": 32768,
+    "watts": 9103.6,
+    "w_per_die": 17.4733,
+    "w_per_cm2": 2.18416
+   },
+   "reload_seconds_at_10_gb_s": 39.348
+  },
+  "f": {
+   "label": "F \u00b7 MDF-1, fixed weights (comparison point)",
+   "area": {
+    "storage": 47657.0,
+    "mac_lanes": 0.0,
+    "attention_engines": 849.0,
+    "kv_window_sram": 10560.0,
+    "kv_phy": 312.0,
+    "link_phy": 1534.8,
+    "control": 1860.0,
+    "tiles": 12,
+    "dies_per_tile": 7.75,
+    "dies_per_layer": 1.89796,
+    "tile_frac": 0.244898,
+    "kv_stacks": 26,
+    "kv_window_sessions": 256,
+    "kv_window_gb": 22.1459,
+    "dies": 93,
+    "die_mm2": 800.0,
+    "silicon_mm2": 74400.0,
+    "repairable_share": 0.141935,
+    "lanes": {
+     "fp4": 1911030000.0,
+     "fp8": 382206000.0,
+     "bf16": 116242000.0
+    },
+    "resident_gb": 393.48,
+    "gb_per_die": 4.23097
+   },
+   "cost": {
+    "dies": 46614.7,
+    "package_test": 75100.0,
+    "kv_memory": 14040.0,
+    "system": 61500.0,
+    "nre_share": 647783.0,
+    "at_cost": 845037.0,
+    "total": 845037.0,
+    "manufacturing": 197255.0,
+    "die_usd": 501.233,
+    "yield": 0.523438,
+    "dies_per_wafer": 64.7953,
+    "systems": 580.133,
+    "unique_mask_usd": 55800000.0,
+    "nre_usd": 320000000.0,
+    "distinct_die_designs": 95,
+    "capacity_tok_s": 99753.7,
+    "demand_tok_s": 57870400.0
+   },
+   "static_w_managed": {
+    "storage_leakage": 14.6163,
+    "logic_and_clock": 372.0,
+    "links_idle": 152.85,
+    "kv_memory": 78.0,
+    "host": 500.0,
+    "total": 1117.47
+   },
+   "static_w_unmanaged": {
+    "storage_leakage": 14.6163,
+    "logic_and_clock": 1116.0,
+    "links_idle": 152.85,
+    "kv_memory": 78.0,
+    "host": 500.0,
+    "total": 1861.47
+   },
+   "t_scan_us": 0.341333,
+   "scan_rows": 512,
+   "f_clk": 1500000000.0,
+   "cost_vs_volume": [
+    {
+     "tokens_per_day": 500000000000.0,
+     "systems": 58.0133,
+     "total_usd": 6675080.0,
+     "nre_share_usd": 6477830.0,
+     "unique_mask_usd_per_system": 961849.0
+    },
+    {
+     "tokens_per_day": 1000000000000.0,
+     "systems": 116.027,
+     "total_usd": 3436170.0,
+     "nre_share_usd": 3238910.0,
+     "unique_mask_usd_per_system": 480924.0
+    },
+    {
+     "tokens_per_day": 2000000000000.0,
+     "systems": 232.053,
+     "total_usd": 1816710.0,
+     "nre_share_usd": 1619460.0,
+     "unique_mask_usd_per_system": 240462.0
+    },
+    {
+     "tokens_per_day": 5000000000000.0,
+     "systems": 580.133,
+     "total_usd": 845037.0,
+     "nre_share_usd": 647783.0,
+     "unique_mask_usd_per_system": 96184.9
+    },
+    {
+     "tokens_per_day": 10000000000000.0,
+     "systems": 1160.27,
+     "total_usd": 521146.0,
+     "nre_share_usd": 323891.0,
+     "unique_mask_usd_per_system": 48092.4
+    },
+    {
+     "tokens_per_day": 20000000000000.0,
+     "systems": 2320.53,
+     "total_usd": 359200.0,
+     "nre_share_usd": 161946.0,
+     "unique_mask_usd_per_system": 24046.2
+    }
+   ],
+   "busy": {
+    "batch": 256,
+    "context": 32768,
+    "watts": 7282.48,
+    "w_per_die": 78.3063,
+    "w_per_cm2": 9.78828
+   },
+   "reload_seconds_at_10_gb_s": 39.348
+  },
+  "s_over_f": {
+   "dies": 5.60215,
+   "silicon": 5.60215,
+   "manufacturing_usd": 4.40635
+  }
+ },
+ "power_management": {
+  "managed": {
+   "tok_s_user": 2963.3,
+   "watts": 4231.51,
+   "tokens_per_joule": 0.700295,
+   "over_g0_batch1": 2.67781,
+   "over_g0_best_batch": 0.289784
+  },
+  "unmanaged": {
+   "tok_s_user": 2963.3,
+   "watts": 9203.83,
+   "tokens_per_joule": 0.321964,
+   "over_g0_batch1": 1.23114,
+   "over_g0_best_batch": 0.13323
+  }
+ },
+ "ladder": {
+  "inkling2_small": {
+   "name": "Inkling 2 Small",
+   "hypothetical": false,
+   "params": 594050641920,
+   "active_params": 17032034304,
+   "resident_gb": 393.48,
+   "n_gpu": 4,
+   "platforms": {
+    "G0": {
+     "label": "G0 \u00b7 best B300 layout for each metric, today's engines (calibrated)",
+     "layout": {
+      "batch1": "x8",
+      "batch1_energy": "x4",
+      "batch1_cost": "x4",
+      "best_energy": "x4",
+      "best_cost": "x4"
+     },
+     "layout_names": {
+      "batch1": "8x B300",
+      "batch1_energy": "4x B300",
+      "batch1_cost": "4x B300",
+      "best_energy": "4x B300",
+      "best_cost": "4x B300"
+     },
+     "batch1": {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 721.085,
+      "tok_s": 721.085,
+      "step_ms": 4.85379,
+      "watts": 4284.0,
+      "tokens_per_joule": 0.230114,
+      "usd_per_mtok": 3.58423,
+      "system_usd": 480000,
+      "chips": 8
+     },
+     "best_energy": {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 101,
+      "context": 32768,
+      "tok_s_user": 100.292,
+      "tok_s": 10129.5,
+      "step_ms": 34.898,
+      "watts": 4191.62,
+      "tokens_per_joule": 2.41661,
+      "usd_per_mtok": 0.200083,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     "best_cost": {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 101,
+      "context": 32768,
+      "tok_s_user": 100.292,
+      "tok_s": 10129.5,
+      "step_ms": 34.898,
+      "watts": 4191.62,
+      "tokens_per_joule": 2.41661,
+      "usd_per_mtok": 0.200083,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     "batch_max_at_sla": null,
+     "energy_parts_batch1": null,
+     "time_by_cause_batch1_ms": null,
+     "energy_parts_best": null
+    },
+    "G1": {
+     "batch1": {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 925.451,
+      "tok_s": 925.451,
+      "step_ms": 3.78194,
+      "watts": 2392.0,
+      "tokens_per_joule": 0.386894,
+      "usd_per_mtok": 2.1318,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     "best_energy": {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 153,
+      "context": 32768,
+      "tok_s_user": 100.262,
+      "tok_s": 15340.1,
+      "step_ms": 34.9085,
+      "watts": 4284.0,
+      "tokens_per_joule": 3.58079,
+      "usd_per_mtok": 0.132301,
+      "system_usd": 240000,
+      "chips": 4
+     },
+     "best_cost": {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 153,
+      "context": 32768,
+      "tok_s_user": 100.262,
+      "tok_s": 15340.1,
+      "step_ms": 34.9085,
+      "watts": 4284.0,
+      "tokens_per_joule": 3.58079,
+      "usd_per_mtok": 0.132301,
+      "system_usd": 240000,
+      "chips": 4
+     }
+    },
+    "A": {
+     "batch1": {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 785.089,
+      "tok_s": 785.089,
+      "step_ms": 4.4581,
+      "watts": 2132.23,
+      "tokens_per_joule": 0.3682,
+      "usd_per_mtok": 1.37157,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     "best_energy": {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 128,
+      "context": 32768,
+      "tok_s_user": 100.212,
+      "tok_s": 12827.1,
+      "step_ms": 34.9261,
+      "watts": 2434.49,
+      "tokens_per_joule": 5.26891,
+      "usd_per_mtok": 0.0846527,
+      "system_usd": 127869.0,
+      "chips": 4
+     },
+     "best_cost": {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 128,
+      "context": 32768,
+      "tok_s_user": 100.212,
+      "tok_s": 12827.1,
+      "step_ms": 34.9261,
+      "watts": 2434.49,
+      "tokens_per_joule": 5.26891,
+      "usd_per_mtok": 0.0846527,
+      "system_usd": 127869.0,
+      "chips": 4
+     }
+    },
+    "S": {
+     "batch1": {
+      "platform": "s",
+      "family": "S",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 2963.3,
+      "tok_s": 2963.3,
+      "step_ms": 1.18111,
+      "watts": 4231.51,
+      "tokens_per_joule": 0.700295,
+      "usd_per_mtok": 3.7376,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     "best_energy": {
+      "platform": "s",
+      "family": "S",
+      "batch": 96,
+      "context": 32768,
+      "tok_s_user": 1051.89,
+      "tok_s": 100982.0,
+      "step_ms": 3.32733,
+      "watts": 9486.74,
+      "tokens_per_joule": 10.6445,
+      "usd_per_mtok": 0.111237,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     "best_cost": {
+      "platform": "s",
+      "family": "S",
+      "batch": 96,
+      "context": 32768,
+      "tok_s_user": 1051.89,
+      "tok_s": 100982.0,
+      "step_ms": 3.32733,
+      "watts": 9486.74,
+      "tokens_per_joule": 10.6445,
+      "usd_per_mtok": 0.111237,
+      "system_usd": 1382100.0,
+      "chips": 521
+     },
+     "dies": 521,
+     "tiles": 66,
+     "silicon_mm2": 416800.0
+    },
+    "F": {
+     "batch1": {
+      "platform": "f",
+      "family": "F",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 12318.6,
+      "tok_s": 12318.6,
+      "step_ms": 0.284123,
+      "watts": 2826.94,
+      "tokens_per_joule": 4.35756,
+      "usd_per_mtok": 0.550308,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     "best_energy": {
+      "platform": "f",
+      "family": "F",
+      "batch": 256,
+      "context": 32768,
+      "tok_s_user": 389.663,
+      "tok_s": 99753.7,
+      "step_ms": 8.98213,
+      "watts": 7282.48,
+      "tokens_per_joule": 13.6978,
+      "usd_per_mtok": 0.0692944,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     "best_cost": {
+      "platform": "f",
+      "family": "F",
+      "batch": 256,
+      "context": 32768,
+      "tok_s_user": 389.663,
+      "tok_s": 99753.7,
+      "step_ms": 8.98213,
+      "watts": 7282.48,
+      "tokens_per_joule": 13.6978,
+      "usd_per_mtok": 0.0692944,
+      "system_usd": 845037.0,
+      "chips": 93
+     },
+     "dies": 93,
+     "tiles": 12,
+     "silicon_mm2": 74400.0
+    }
+   },
+   "gain": {
+    "G1": {
+     "speed_batch1": 1.28341,
+     "tokens_per_joule_batch1": 1.68132,
+     "tokens_per_joule_best": 1.48174,
+     "cost_best": 1.51233
+    },
+    "A": {
+     "speed_batch1": 1.08876,
+     "tokens_per_joule_batch1": 1.60008,
+     "tokens_per_joule_best": 2.18029,
+     "cost_best": 2.36357
+    },
+    "S": {
+     "speed_batch1": 4.10951,
+     "tokens_per_joule_batch1": 3.04325,
+     "tokens_per_joule_best": 4.40473,
+     "cost_best": 1.7987
+    },
+    "F": {
+     "speed_batch1": 17.0834,
+     "tokens_per_joule_batch1": 18.9365,
+     "tokens_per_joule_best": 5.66816,
+     "cost_best": 2.88743
+    }
+   }
+  },
+  "rung_100b": {
+   "name": "Inkling-2-shaped, ~100B (hypothetical)",
+   "hypothetical": true,
+   "params": 93491527680,
+   "active_params": 2746644480,
+   "resident_gb": 63.2738,
+   "n_gpu": 1,
+   "platforms": {
+    "G0": {
+     "label": "G0 \u00b7 best B300 layout for each metric, today's engines (calibrated)",
+     "layout": {
+      "batch1": "x2",
+      "batch1_energy": "x1",
+      "batch1_cost": "x1",
+      "best_energy": "x2",
+      "best_cost": "x1"
+     },
+     "layout_names": {
+      "batch1": "2x B300",
+      "batch1_energy": "1x B300",
+      "batch1_cost": "1x B300",
+      "best_energy": "2x B300",
+      "best_cost": "1x B300"
+     },
+     "batch1": {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 1161.41,
+      "tok_s": 1161.41,
+      "step_ms": 3.01359,
+      "watts": 1446.0,
+      "tokens_per_joule": 0.932602,
+      "usd_per_mtok": 0.555909,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     "best_energy": {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 282,
+      "context": 32768,
+      "tok_s_user": 100.115,
+      "tok_s": 28232.5,
+      "step_ms": 34.9597,
+      "watts": 2392.0,
+      "tokens_per_joule": 11.8029,
+      "usd_per_mtok": 0.0362077,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     "best_cost": {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 162,
+      "context": 32768,
+      "tok_s_user": 100.361,
+      "tok_s": 16258.6,
+      "step_ms": 34.8739,
+      "watts": 1446.0,
+      "tokens_per_joule": 11.2438,
+      "usd_per_mtok": 0.0318971,
+      "system_usd": 60000,
+      "chips": 1
+     },
+     "batch_max_at_sla": null,
+     "energy_parts_batch1": null,
+     "time_by_cause_batch1_ms": null,
+     "energy_parts_best": null
+    },
+    "G1": {
+     "batch1": {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 1555.1,
+      "tok_s": 1555.1,
+      "step_ms": 2.25065,
+      "watts": 973.0,
+      "tokens_per_joule": 1.59826,
+      "usd_per_mtok": 0.32438,
+      "system_usd": 60000,
+      "chips": 1
+     },
+     "best_energy": {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 209,
+      "context": 32768,
+      "tok_s_user": 104.213,
+      "tok_s": 21780.4,
+      "step_ms": 33.5852,
+      "watts": 1446.0,
+      "tokens_per_joule": 15.0625,
+      "usd_per_mtok": 0.0238104,
+      "system_usd": 60000,
+      "chips": 1
+     },
+     "best_cost": {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 209,
+      "context": 32768,
+      "tok_s_user": 104.213,
+      "tok_s": 21780.4,
+      "step_ms": 33.5852,
+      "watts": 1446.0,
+      "tokens_per_joule": 15.0625,
+      "usd_per_mtok": 0.0238104,
+      "system_usd": 60000,
+      "chips": 1
+     }
+    },
+    "A": {
+     "batch1": {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 1381.71,
+      "tok_s": 1381.71,
+      "step_ms": 2.53309,
+      "watts": 930.406,
+      "tokens_per_joule": 1.48506,
+      "usd_per_mtok": 0.576117,
+      "system_usd": 96967.4,
+      "chips": 1
+     },
+     "best_energy": {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 172,
+      "context": 32768,
+      "tok_s_user": 100.473,
+      "tok_s": 17281.4,
+      "step_ms": 34.8351,
+      "watts": 1070.81,
+      "tokens_per_joule": 16.1386,
+      "usd_per_mtok": 0.0463057,
+      "system_usd": 96967.4,
+      "chips": 1
+     },
+     "best_cost": {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 172,
+      "context": 32768,
+      "tok_s_user": 100.473,
+      "tok_s": 17281.4,
+      "step_ms": 34.8351,
+      "watts": 1070.81,
+      "tokens_per_joule": 16.1386,
+      "usd_per_mtok": 0.0463057,
+      "system_usd": 96967.4,
+      "chips": 1
+     }
+    },
+    "S": {
+     "batch1": {
+      "platform": "s",
+      "family": "S",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 4645.7,
+      "tok_s": 4645.7,
+      "step_ms": 0.753385,
+      "watts": 1343.61,
+      "tokens_per_joule": 3.45762,
+      "usd_per_mtok": 1.19593,
+      "system_usd": 696252.0,
+      "chips": 97
+     },
+     "best_energy": {
+      "platform": "s",
+      "family": "S",
+      "batch": 64,
+      "context": 32768,
+      "tok_s_user": 1569.73,
+      "tok_s": 100463.0,
+      "step_ms": 2.22968,
+      "watts": 2771.86,
+      "tokens_per_joule": 36.2438,
+      "usd_per_mtok": 0.055729,
+      "system_usd": 696252.0,
+      "chips": 97
+     },
+     "best_cost": {
+      "platform": "s",
+      "family": "S",
+      "batch": 64,
+      "context": 32768,
+      "tok_s_user": 1569.73,
+      "tok_s": 100463.0,
+      "step_ms": 2.22968,
+      "watts": 2771.86,
+      "tokens_per_joule": 36.2438,
+      "usd_per_mtok": 0.055729,
+      "system_usd": 696252.0,
+      "chips": 97
+     },
+     "dies": 97,
+     "tiles": 13,
+     "silicon_mm2": 77600.0
+    },
+    "F": {
+     "batch1": {
+      "platform": "f",
+      "family": "F",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 21123.6,
+      "tok_s": 21123.6,
+      "step_ms": 0.165691,
+      "watts": 1286.06,
+      "tokens_per_joule": 16.4251,
+      "usd_per_mtok": 0.252992,
+      "system_usd": 669730.0,
+      "chips": 24
+     },
+     "best_energy": {
+      "platform": "f",
+      "family": "F",
+      "batch": 224,
+      "context": 32768,
+      "tok_s_user": 466.335,
+      "tok_s": 104459.0,
+      "step_ms": 7.50534,
+      "watts": 2539.97,
+      "tokens_per_joule": 41.1261,
+      "usd_per_mtok": 0.0515191,
+      "system_usd": 669730.0,
+      "chips": 24
+     },
+     "best_cost": {
+      "platform": "f",
+      "family": "F",
+      "batch": 160,
+      "context": 32768,
+      "tok_s_user": 654.369,
+      "tok_s": 104699.0,
+      "step_ms": 5.34866,
+      "watts": 2558.89,
+      "tokens_per_joule": 40.9158,
+      "usd_per_mtok": 0.0514064,
+      "system_usd": 669730.0,
+      "chips": 24
+     },
+     "dies": 24,
+     "tiles": 3,
+     "silicon_mm2": 19200.0
+    }
+   },
+   "gain": {
+    "G1": {
+     "speed_batch1": 1.33898,
+     "tokens_per_joule_batch1": 1.71376,
+     "tokens_per_joule_best": 1.27617,
+     "cost_best": 1.33963
+    },
+    "A": {
+     "speed_batch1": 1.18969,
+     "tokens_per_joule_batch1": 1.59238,
+     "tokens_per_joule_best": 1.36734,
+     "cost_best": 0.688838
+    },
+    "S": {
+     "speed_batch1": 4.00006,
+     "tokens_per_joule_batch1": 3.7075,
+     "tokens_per_joule_best": 3.07076,
+     "cost_best": 0.572361
+    },
+    "F": {
+     "speed_batch1": 18.188,
+     "tokens_per_joule_batch1": 17.6121,
+     "tokens_per_joule_best": 3.48441,
+     "cost_best": 0.620489
+    }
+   }
+  },
+  "rung_30b": {
+   "name": "Inkling-2-shaped, ~30B (hypothetical)",
+   "hypothetical": true,
+   "params": 33560143872,
+   "active_params": 1007078400,
+   "resident_gb": 23.3029,
+   "n_gpu": 1,
+   "platforms": {
+    "G0": {
+     "label": "G0 \u00b7 best B300 layout for each metric, today's engines (calibrated)",
+     "layout": {
+      "batch1": "x2",
+      "batch1_energy": "x1",
+      "batch1_cost": "x1",
+      "best_energy": "x1",
+      "best_cost": "x1"
+     },
+     "layout_names": {
+      "batch1": "2x B300",
+      "batch1_energy": "1x B300",
+      "batch1_cost": "1x B300",
+      "best_energy": "1x B300",
+      "best_cost": "1x B300"
+     },
+     "batch1": {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 1723.17,
+      "tok_s": 1723.17,
+      "step_ms": 2.03114,
+      "watts": 1446.0,
+      "tokens_per_joule": 1.56107,
+      "usd_per_mtok": 0.332106,
+      "system_usd": 120000,
+      "chips": 2
+     },
+     "best_energy": {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 263,
+      "context": 32768,
+      "tok_s_user": 100.135,
+      "tok_s": 26335.6,
+      "step_ms": 34.9527,
+      "watts": 1446.0,
+      "tokens_per_joule": 18.2127,
+      "usd_per_mtok": 0.019692,
+      "system_usd": 60000,
+      "chips": 1
+     },
+     "best_cost": {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 263,
+      "context": 32768,
+      "tok_s_user": 100.135,
+      "tok_s": 26335.6,
+      "step_ms": 34.9527,
+      "watts": 1446.0,
+      "tokens_per_joule": 18.2127,
+      "usd_per_mtok": 0.019692,
+      "system_usd": 60000,
+      "chips": 1
+     },
+     "batch_max_at_sla": null,
+     "energy_parts_batch1": null,
+     "time_by_cause_batch1_ms": null,
+     "energy_parts_best": null
+    },
+    "G1": {
+     "batch1": {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 3672.39,
+      "tok_s": 3672.39,
+      "step_ms": 0.953058,
+      "watts": 973.0,
+      "tokens_per_joule": 3.7743,
+      "usd_per_mtok": 0.137361,
+      "system_usd": 60000,
+      "chips": 1
+     },
+     "best_energy": {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 267,
+      "context": 32768,
+      "tok_s_user": 129.912,
+      "tok_s": 34686.6,
+      "step_ms": 26.9412,
+      "watts": 1446.0,
+      "tokens_per_joule": 23.988,
+      "usd_per_mtok": 0.014951,
+      "system_usd": 60000,
+      "chips": 1
+     },
+     "best_cost": {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 267,
+      "context": 32768,
+      "tok_s_user": 129.912,
+      "tok_s": 34686.6,
+      "step_ms": 26.9412,
+      "watts": 1446.0,
+      "tokens_per_joule": 23.988,
+      "usd_per_mtok": 0.014951,
+      "system_usd": 60000,
+      "chips": 1
+     }
+    },
+    "A": {
+     "batch1": {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 2722.65,
+      "tok_s": 2722.65,
+      "step_ms": 1.28551,
+      "watts": 887.895,
+      "tokens_per_joule": 3.06641,
+      "usd_per_mtok": 0.453867,
+      "system_usd": 152631.0,
+      "chips": 1
+     },
+     "best_energy": {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 267,
+      "context": 32768,
+      "tok_s_user": 111.842,
+      "tok_s": 29861.7,
+      "step_ms": 31.2942,
+      "watts": 1058.94,
+      "tokens_per_joule": 28.1998,
+      "usd_per_mtok": 0.0415528,
+      "system_usd": 152631.0,
+      "chips": 1
+     },
+     "best_cost": {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 267,
+      "context": 32768,
+      "tok_s_user": 111.842,
+      "tok_s": 29861.7,
+      "step_ms": 31.2942,
+      "watts": 1058.94,
+      "tokens_per_joule": 28.1998,
+      "usd_per_mtok": 0.0415528,
+      "system_usd": 152631.0,
+      "chips": 1
+     }
+    },
+    "S": {
+     "batch1": {
+      "platform": "s",
+      "family": "S",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 5661.47,
+      "tok_s": 5661.47,
+      "step_ms": 0.618214,
+      "watts": 959.21,
+      "tokens_per_joule": 5.90222,
+      "usd_per_mtok": 0.875736,
+      "system_usd": 622221.0,
+      "chips": 43
+     },
+     "best_energy": {
+      "platform": "s",
+      "family": "S",
+      "batch": 128,
+      "context": 32768,
+      "tok_s_user": 770.329,
+      "tok_s": 98602.2,
+      "step_ms": 4.54351,
+      "watts": 1827.58,
+      "tokens_per_joule": 53.9523,
+      "usd_per_mtok": 0.050546,
+      "system_usd": 622221.0,
+      "chips": 43
+     },
+     "best_cost": {
+      "platform": "s",
+      "family": "S",
+      "batch": 128,
+      "context": 32768,
+      "tok_s_user": 770.329,
+      "tok_s": 98602.2,
+      "step_ms": 4.54351,
+      "watts": 1827.58,
+      "tokens_per_joule": 53.9523,
+      "usd_per_mtok": 0.050546,
+      "system_usd": 622221.0,
+      "chips": 43
+     },
+     "dies": 43,
+     "tiles": 6,
+     "silicon_mm2": 34400.0
+    },
+    "F": {
+     "batch1": {
+      "platform": "f",
+      "family": "F",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 26422.3,
+      "tok_s": 26422.3,
+      "step_ms": 0.132464,
+      "watts": 1027.22,
+      "tokens_per_joule": 25.7222,
+      "usd_per_mtok": 0.20158,
+      "system_usd": 668450.0,
+      "chips": 14
+     },
+     "best_energy": {
+      "platform": "f",
+      "family": "F",
+      "batch": 224,
+      "context": 32768,
+      "tok_s_user": 482.758,
+      "tok_s": 108138.0,
+      "step_ms": 7.25,
+      "watts": 1813.81,
+      "tokens_per_joule": 59.6191,
+      "usd_per_mtok": 0.0494717,
+      "system_usd": 668450.0,
+      "chips": 14
+     },
+     "best_cost": {
+      "platform": "f",
+      "family": "F",
+      "batch": 256,
+      "context": 32768,
+      "tok_s_user": 422.586,
+      "tok_s": 108182.0,
+      "step_ms": 8.28233,
+      "watts": 1819.87,
+      "tokens_per_joule": 59.445,
+      "usd_per_mtok": 0.0494532,
+      "system_usd": 668450.0,
+      "chips": 14
+     },
+     "dies": 14,
+     "tiles": 2,
+     "silicon_mm2": 11200.0
+    }
+   },
+   "gain": {
+    "G1": {
+     "speed_batch1": 2.13118,
+     "tokens_per_joule_batch1": 2.41776,
+     "tokens_per_joule_best": 1.3171,
+     "cost_best": 1.3171
+    },
+    "A": {
+     "speed_batch1": 1.58002,
+     "tokens_per_joule_batch1": 1.96429,
+     "tokens_per_joule_best": 1.54836,
+     "cost_best": 0.473904
+    },
+    "S": {
+     "speed_batch1": 3.2855,
+     "tokens_per_joule_batch1": 3.78087,
+     "tokens_per_joule_best": 2.96235,
+     "cost_best": 0.389586
+    },
+    "F": {
+     "speed_batch1": 15.3335,
+     "tokens_per_joule_batch1": 16.4773,
+     "tokens_per_joule_best": 3.27349,
+     "cost_best": 0.398196
+    }
+   }
+  },
+  "rung_8b": {
+   "name": "Inkling-2-shaped, ~8B (hypothetical)",
+   "hypothetical": true,
+   "params": 8567514624,
+   "active_params": 274839552,
+   "resident_gb": 6.27569,
+   "n_gpu": 1,
+   "platforms": {
+    "G0": {
+     "label": "G0 \u00b7 best B300 layout for each metric, today's engines (calibrated)",
+     "layout": {
+      "batch1": "x1",
+      "batch1_energy": "x1",
+      "batch1_cost": "x1",
+      "best_energy": "x1",
+      "best_cost": "x1"
+     },
+     "layout_names": {
+      "batch1": "1x B300",
+      "batch1_energy": "1x B300",
+      "batch1_cost": "1x B300",
+      "best_energy": "1x B300",
+      "best_cost": "1x B300"
+     },
+     "batch1": {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 2069.16,
+      "tok_s": 2069.16,
+      "step_ms": 1.69151,
+      "watts": 973.0,
+      "tokens_per_joule": 2.12657,
+      "usd_per_mtok": 0.243792,
+      "system_usd": 60000,
+      "chips": 1
+     },
+     "best_energy": {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 284,
+      "context": 32768,
+      "tok_s_user": 107.659,
+      "tok_s": 30575.2,
+      "step_ms": 32.51,
+      "watts": 1446.0,
+      "tokens_per_joule": 21.1447,
+      "usd_per_mtok": 0.0169615,
+      "system_usd": 60000,
+      "chips": 1
+     },
+     "best_cost": {
+      "platform": "g0_x4",
+      "family": "G0",
+      "batch": 284,
+      "context": 32768,
+      "tok_s_user": 107.659,
+      "tok_s": 30575.2,
+      "step_ms": 32.51,
+      "watts": 1446.0,
+      "tokens_per_joule": 21.1447,
+      "usd_per_mtok": 0.0169615,
+      "system_usd": 60000,
+      "chips": 1
+     },
+     "batch_max_at_sla": null,
+     "energy_parts_batch1": null,
+     "time_by_cause_batch1_ms": null,
+     "energy_parts_best": null
+    },
+    "G1": {
+     "batch1": {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 9308.67,
+      "tok_s": 9308.67,
+      "step_ms": 0.375994,
+      "watts": 973.0,
+      "tokens_per_joule": 9.56698,
+      "usd_per_mtok": 0.0541907,
+      "system_usd": 60000,
+      "chips": 1
+     },
+     "best_energy": {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 284,
+      "context": 32768,
+      "tok_s_user": 146.473,
+      "tok_s": 41598.4,
+      "step_ms": 23.8951,
+      "watts": 1446.0,
+      "tokens_per_joule": 28.7679,
+      "usd_per_mtok": 0.0124668,
+      "system_usd": 60000,
+      "chips": 1
+     },
+     "best_cost": {
+      "platform": "g1_x4",
+      "family": "G1",
+      "batch": 284,
+      "context": 32768,
+      "tok_s_user": 146.473,
+      "tok_s": 41598.4,
+      "step_ms": 23.8951,
+      "watts": 1446.0,
+      "tokens_per_joule": 28.7679,
+      "usd_per_mtok": 0.0124668,
+      "system_usd": 60000,
+      "chips": 1
+     }
+    },
+    "A": {
+     "batch1": {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 4659.05,
+      "tok_s": 4659.05,
+      "step_ms": 0.751226,
+      "watts": 801.62,
+      "tokens_per_joule": 5.81205,
+      "usd_per_mtok": 0.363834,
+      "system_usd": 210947.0,
+      "chips": 1
+     },
+     "best_energy": {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 284,
+      "context": 32768,
+      "tok_s_user": 139.181,
+      "tok_s": 39527.5,
+      "step_ms": 25.1471,
+      "watts": 1023.87,
+      "tokens_per_joule": 38.6061,
+      "usd_per_mtok": 0.043053,
+      "system_usd": 210947.0,
+      "chips": 1
+     },
+     "best_cost": {
+      "platform": "a_x4",
+      "family": "A",
+      "batch": 284,
+      "context": 32768,
+      "tok_s_user": 139.181,
+      "tok_s": 39527.5,
+      "step_ms": 25.1471,
+      "watts": 1023.87,
+      "tokens_per_joule": 38.6061,
+      "usd_per_mtok": 0.043053,
+      "system_usd": 210947.0,
+      "chips": 1
+     }
+    },
+    "S": {
+     "batch1": {
+      "platform": "s",
+      "family": "S",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 5721.41,
+      "tok_s": 5721.41,
+      "step_ms": 0.611738,
+      "watts": 791.518,
+      "tokens_per_joule": 7.2284,
+      "usd_per_mtok": 0.832467,
+      "system_usd": 598230.0,
+      "chips": 20
+     },
+     "best_energy": {
+      "platform": "s",
+      "family": "S",
+      "batch": 256,
+      "context": 32768,
+      "tok_s_user": 377.502,
+      "tok_s": 96640.5,
+      "step_ms": 9.27147,
+      "watts": 1370.3,
+      "tokens_per_joule": 70.525,
+      "usd_per_mtok": 0.0494638,
+      "system_usd": 598230.0,
+      "chips": 20
+     },
+     "best_cost": {
+      "platform": "s",
+      "family": "S",
+      "batch": 256,
+      "context": 32768,
+      "tok_s_user": 377.502,
+      "tok_s": 96640.5,
+      "step_ms": 9.27147,
+      "watts": 1370.3,
+      "tokens_per_joule": 70.525,
+      "usd_per_mtok": 0.0494638,
+      "system_usd": 598230.0,
+      "chips": 20
+     },
+     "dies": 20,
+     "tiles": 3,
+     "silicon_mm2": 16000.0
+    },
+    "F": {
+     "batch1": {
+      "platform": "f",
+      "family": "F",
+      "batch": 1,
+      "context": 8192,
+      "tok_s_user": 27688.0,
+      "tok_s": 27688.0,
+      "step_ms": 0.126408,
+      "watts": 908.813,
+      "tokens_per_joule": 30.4661,
+      "usd_per_mtok": 0.192695,
+      "system_usd": 670050.0,
+      "chips": 11
+     },
+     "best_energy": {
+      "platform": "f",
+      "family": "F",
+      "batch": 224,
+      "context": 32768,
+      "tok_s_user": 490.791,
+      "tok_s": 109937.0,
+      "step_ms": 7.13134,
+      "watts": 1493.87,
+      "tokens_per_joule": 73.5922,
+      "usd_per_mtok": 0.0486902,
+      "system_usd": 670050.0,
+      "chips": 11
+     },
+     "best_cost": {
+      "platform": "f",
+      "family": "F",
+      "batch": 256,
+      "context": 32768,
+      "tok_s_user": 429.61,
+      "tok_s": 109980.0,
+      "step_ms": 8.14693,
+      "watts": 1495.5,
+      "tokens_per_joule": 73.5409,
+      "usd_per_mtok": 0.0486716,
+      "system_usd": 670050.0,
+      "chips": 11
+     },
+     "dies": 11,
+     "tiles": 2,
+     "silicon_mm2": 8800.0
+    }
+   },
+   "gain": {
+    "G1": {
+     "speed_batch1": 4.49878,
+     "tokens_per_joule_batch1": 4.49878,
+     "tokens_per_joule_best": 1.36053,
+     "cost_best": 1.36053
+    },
+    "A": {
+     "speed_batch1": 2.25167,
+     "tokens_per_joule_batch1": 2.73306,
+     "tokens_per_joule_best": 1.8258,
+     "cost_best": 0.393967
+    },
+    "S": {
+     "speed_batch1": 2.76509,
+     "tokens_per_joule_batch1": 3.39908,
+     "tokens_per_joule_best": 3.33535,
+     "cost_best": 0.342907
+    },
+    "F": {
+     "speed_batch1": 13.3813,
+     "tokens_per_joule_batch1": 14.3264,
+     "tokens_per_joule_best": 3.48041,
+     "cost_best": 0.348488
+    }
+   }
+  }
+ },
+ "prefill": {
+  "rows": {
+   "g0_x4": {
+    "label": "G0 \u00b7 4x B300, today's engines (calibrated)",
+    "prompts_in_flight": 16,
+    "ms_one_prompt": 66.5187,
+    "tok_s": 59652.8,
+    "tok_s_one_prompt": 46182.5,
+    "system_usd": 240000,
+    "tok_s_per_kusd": 248.553,
+    "usd_per_mtok_prefill": 0.0336152,
+    "usd_per_mtok_prefill_one_prompt": 0.0427192,
+    "j_per_prefill_token": 0.0582226
+   },
+   "g1_x4": {
+    "label": "G1 \u00b7 4x B300, dataflow-style software (projected)",
+    "prompts_in_flight": 4,
+    "ms_one_prompt": 49.7294,
+    "tok_s": 79922.6,
+    "tok_s_one_prompt": 61774.3,
+    "system_usd": 240000,
+    "tok_s_per_kusd": 333.011,
+    "usd_per_mtok_prefill": 0.0248873,
+    "usd_per_mtok_prefill_one_prompt": 0.0319369,
+    "j_per_prefill_token": 0.0366926
+   },
+   "a_x4": {
+    "label": "A \u00b7 4x MDA-1, HBM decode chip (proposed)",
+    "prompts_in_flight": 48,
+    "ms_one_prompt": 52.0324,
+    "tok_s": 65182.8,
+    "tok_s_one_prompt": 59040.1,
+    "system_usd": 127869.0,
+    "tok_s_per_kusd": 509.762,
+    "usd_per_mtok_prefill": 0.0165628,
+    "usd_per_mtok_prefill_one_prompt": 0.0184045,
+    "j_per_prefill_token": 0.0341518
+   },
+   "s": {
+    "label": "S \u00b7 MDS-1, reloadable weights on-die (proposed)",
+    "prompts_in_flight": 48,
+    "ms_one_prompt": 71.2768,
+    "tok_s": 313149.0,
+    "tok_s_one_prompt": 43099.6,
+    "system_usd": 1382100.0,
+    "tok_s_per_kusd": 226.575,
+    "usd_per_mtok_prefill": 0.0358174,
+    "usd_per_mtok_prefill_one_prompt": 0.257323,
+    "j_per_prefill_token": 0.0285063
+   },
+   "f": {
+    "label": "F \u00b7 MDF-1, fixed weights (comparison point)",
+    "prompts_in_flight": 48,
+    "ms_one_prompt": 51.6475,
+    "tok_s": 315078.0,
+    "tok_s_one_prompt": 59480.2,
+    "system_usd": 845037.0,
+    "tok_s_per_kusd": 372.856,
+    "usd_per_mtok_prefill": 0.0219059,
+    "usd_per_mtok_prefill_one_prompt": 0.114071,
+    "j_per_prefill_token": 0.02202
+   },
+   "g0_x8": {
+    "label": "G0 \u00b7 8x B300, today's engines (calibrated)",
+    "prompts_in_flight": 16,
+    "ms_one_prompt": 49.4258,
+    "tok_s": 75435.5,
+    "tok_s_one_prompt": 62153.8,
+    "system_usd": 480000,
+    "tok_s_per_kusd": 157.157,
+    "usd_per_mtok_prefill": 0.0529659,
+    "usd_per_mtok_prefill_one_prompt": 0.063243,
+    "j_per_prefill_token": 0.0854543
+   },
+   "g0": {
+    "label": "G0 \u00b7 best B300 layout for prefill",
+    "prompts_in_flight": 16,
+    "ms_one_prompt": 66.5187,
+    "tok_s": 59652.8,
+    "tok_s_one_prompt": 46182.5,
+    "system_usd": 240000,
+    "tok_s_per_kusd": 248.553,
+    "usd_per_mtok_prefill": 0.0336152,
+    "usd_per_mtok_prefill_one_prompt": 0.0427192,
+    "j_per_prefill_token": 0.0582226,
+    "layout": "g0_x4"
+   }
+  },
+  "new_tokens": 3072,
+  "context": 32768,
+  "prefill_tokens_per_output_token": 3.0,
+  "gpu_pool_adder_usd_per_mtok_output": 0.100845,
+  "s_over_g0_per_usd": 0.911575,
+  "f_over_g0_per_usd": 1.50011,
+  "a_over_g0_per_usd": 2.05091,
+  "s_over_g0_cost": 0.938513,
+  "a_over_g0_cost": 2.02955
+ },
+ "end_to_end": {
+  "prefill_tokens_per_output_token": 3.0,
+  "rows": {
+   "g0": {
+    "label": "G0 \u00b7 best B300 layout for each metric, today's engines (calibrated)",
+    "decode_usd_per_mtok": 0.200083,
+    "prefill_usd_per_mtok_output": 0.100845,
+    "decode_j_per_token": 0.413802,
+    "prefill_j_per_output_token": 0.174668,
+    "usd_per_mtok_output": 0.300928,
+    "tokens_per_joule_output": 1.69932,
+    "prefill_share_of_cost": 0.335115,
+    "cost_gain": 1.0,
+    "tokens_per_joule_gain": 1.0
+   },
+   "g1_x4": {
+    "label": "G1 \u00b7 4x B300, dataflow-style software (projected)",
+    "decode_usd_per_mtok": 0.132301,
+    "prefill_usd_per_mtok_output": 0.0746619,
+    "decode_j_per_token": 0.279268,
+    "prefill_j_per_output_token": 0.110078,
+    "usd_per_mtok_output": 0.206963,
+    "tokens_per_joule_output": 2.56841,
+    "prefill_share_of_cost": 0.360751,
+    "cost_gain": 1.45402,
+    "tokens_per_joule_gain": 1.51143
+   },
+   "a_x4": {
+    "label": "A \u00b7 4x MDA-1, HBM decode chip (proposed)",
+    "decode_usd_per_mtok": 0.0846527,
+    "prefill_usd_per_mtok_output": 0.0496885,
+    "decode_j_per_token": 0.189793,
+    "prefill_j_per_output_token": 0.102455,
+    "usd_per_mtok_output": 0.134341,
+    "tokens_per_joule_output": 3.42175,
+    "prefill_share_of_cost": 0.369868,
+    "cost_gain": 2.24003,
+    "tokens_per_joule_gain": 2.0136
+   },
+   "s": {
+    "label": "S \u00b7 MDS-1, reloadable weights on-die (proposed)",
+    "decode_usd_per_mtok": 0.111237,
+    "prefill_usd_per_mtok_output": 0.107452,
+    "decode_j_per_token": 0.093945,
+    "prefill_j_per_output_token": 0.0855189,
+    "usd_per_mtok_output": 0.21869,
+    "tokens_per_joule_output": 5.57215,
+    "prefill_share_of_cost": 0.491346,
+    "cost_gain": 1.37605,
+    "tokens_per_joule_gain": 3.27904
+   },
+   "f": {
+    "label": "F \u00b7 MDF-1, fixed weights (comparison point)",
+    "decode_usd_per_mtok": 0.0692944,
+    "prefill_usd_per_mtok_output": 0.0657177,
+    "decode_j_per_token": 0.0730047,
+    "prefill_j_per_output_token": 0.0660599,
+    "usd_per_mtok_output": 0.135012,
+    "tokens_per_joule_output": 7.1909,
+    "prefill_share_of_cost": 0.486754,
+    "cost_gain": 2.2289,
+    "tokens_per_joule_gain": 4.23163
+   },
+   "s_decode_gpu_prefill": {
+    "label": "S \u00b7 MDS-1 for decode, G0 \u00b7 best B300 layout for each metric for prefill",
+    "decode_usd_per_mtok": 0.111237,
+    "prefill_usd_per_mtok_output": 0.100845,
+    "decode_j_per_token": 0.093945,
+    "prefill_j_per_output_token": 0.174668,
+    "usd_per_mtok_output": 0.212083,
+    "tokens_per_joule_output": 3.72283,
+    "prefill_share_of_cost": 0.4755,
+    "cost_gain": 1.41892,
+    "tokens_per_joule_gain": 2.19077
+   },
+   "s_decode_a_prefill": {
+    "label": "S \u00b7 MDS-1 for decode, A \u00b7 4x MDA-1 for prefill",
+    "decode_usd_per_mtok": 0.111237,
+    "prefill_usd_per_mtok_output": 0.0496885,
+    "decode_j_per_token": 0.093945,
+    "prefill_j_per_output_token": 0.102455,
+    "usd_per_mtok_output": 0.160926,
+    "tokens_per_joule_output": 5.09164,
+    "prefill_share_of_cost": 0.308766,
+    "cost_gain": 1.86998,
+    "tokens_per_joule_gain": 2.99628
+   }
+  }
+ },
+ "thresholds": {
+  "rows": [
+   {
+    "tok_s_user_min": 25.0,
+    "gpu_batch": 578,
+    "gpu_meets": true,
+    "gpu_layout": "4x B300",
+    "a_x4": {
+     "batch": 578,
+     "meets": true,
+     "tokens_per_joule": 1.88184,
+     "cost": 2.01303
+    },
+    "s": {
+     "batch": 256,
+     "meets": true,
+     "tokens_per_joule": 2.57657,
+     "cost": 1.03088
+    },
+    "f": {
+     "batch": 256,
+     "meets": true,
+     "tokens_per_joule": 3.31563,
+     "cost": 1.65485
+    }
+   },
+   {
+    "tok_s_user_min": 50.0,
+    "gpu_batch": 311,
+    "gpu_meets": true,
+    "gpu_layout": "4x B300",
+    "a_x4": {
+     "batch": 364,
+     "meets": true,
+     "tokens_per_joule": 2.01256,
+     "cost": 2.1834
+    },
+    "s": {
+     "batch": 256,
+     "meets": true,
+     "tokens_per_joule": 2.92654,
+     "cost": 1.1709
+    },
+    "f": {
+     "batch": 256,
+     "meets": true,
+     "tokens_per_joule": 3.76598,
+     "cost": 1.87963
+    }
+   },
+   {
+    "tok_s_user_min": 100.0,
+    "gpu_batch": 101,
+    "gpu_meets": true,
+    "gpu_layout": "4x B300",
+    "a_x4": {
+     "batch": 128,
+     "meets": true,
+     "tokens_per_joule": 2.18029,
+     "cost": 2.36357
+    },
+    "s": {
+     "batch": 256,
+     "meets": true,
+     "tokens_per_joule": 4.40473,
+     "cost": 1.7987
+    },
+    "f": {
+     "batch": 256,
+     "meets": true,
+     "tokens_per_joule": 5.66816,
+     "cost": 2.88743
+    }
+   },
+   {
+    "tok_s_user_min": 150.0,
+    "gpu_batch": 78,
+    "gpu_meets": true,
+    "gpu_layout": "8x B300",
+    "a_x4": {
+     "batch": 48,
+     "meets": true,
+     "tokens_per_joule": 1.9991,
+     "cost": 2.30168
+    },
+    "s": {
+     "batch": 256,
+     "meets": true,
+     "tokens_per_joule": 6.95207,
+     "cost": 3.08214
+    },
+    "f": {
+     "batch": 256,
+     "meets": true,
+     "tokens_per_joule": 8.94618,
+     "cost": 4.94772
+    }
+   },
+   {
+    "tok_s_user_min": 200.0,
+    "gpu_batch": 42,
+    "gpu_meets": true,
+    "gpu_layout": "8x B300",
+    "a_x4": {
+     "batch": 14,
+     "meets": true,
+     "tokens_per_joule": 1.04614,
+     "cost": 1.25549
+    },
+    "s": {
+     "batch": 256,
+     "meets": true,
+     "tokens_per_joule": 9.05523,
+     "cost": 4.26843
+    },
+    "f": {
+     "batch": 256,
+     "meets": true,
+     "tokens_per_joule": 11.6526,
+     "cost": 6.85205
+    }
+   }
+  ]
+ },
+ "demand": {
+  "rows": [
+   {
+    "tokens_per_day": 250000000000.0,
+    "b300_equivalent": 1142.61,
+    "a_x4": {
+     "usd_per_mtok": 0.864778,
+     "cost_gain": 0.231369,
+     "systems": null
+    },
+    "s": {
+     "usd_per_mtok": 0.875775,
+     "cost_gain": 0.228464,
+     "systems": 31.1937
+    },
+    "f": {
+     "usd_per_mtok": 1.04673,
+     "cost_gain": 0.191149,
+     "systems": 29.0066
+    }
+   },
+   {
+    "tokens_per_day": 500000000000.0,
+    "b300_equivalent": 2285.22,
+    "a_x4": {
+     "usd_per_mtok": 0.454186,
+     "cost_gain": 0.440531,
+     "systems": null
+    },
+    "s": {
+     "usd_per_mtok": 0.473387,
+     "cost_gain": 0.422662,
+     "systems": 62.3875
+    },
+    "f": {
+     "usd_per_mtok": 0.532292,
+     "cost_gain": 0.375889,
+     "systems": 58.0133
+    }
+   },
+   {
+    "tokens_per_day": 1000000000000.0,
+    "b300_equivalent": 4570.43,
+    "a_x4": {
+     "usd_per_mtok": 0.24889,
+     "cost_gain": 0.803901,
+     "systems": null
+    },
+    "s": {
+     "usd_per_mtok": 0.272193,
+     "cost_gain": 0.735078,
+     "systems": 124.775
+    },
+    "f": {
+     "usd_per_mtok": 0.275071,
+     "cost_gain": 0.727385,
+     "systems": 116.027
+    }
+   },
+   {
+    "tokens_per_day": 2000000000000.0,
+    "b300_equivalent": 9140.86,
+    "a_x4": {
+     "usd_per_mtok": 0.146242,
+     "cost_gain": 1.36817,
+     "systems": null
+    },
+    "s": {
+     "usd_per_mtok": 0.171596,
+     "cost_gain": 1.16601,
+     "systems": 249.55
+    },
+    "f": {
+     "usd_per_mtok": 0.146461,
+     "cost_gain": 1.36612,
+     "systems": 232.053
+    }
+   },
+   {
+    "tokens_per_day": 5000000000000.0,
+    "b300_equivalent": 22852.2,
+    "a_x4": {
+     "usd_per_mtok": 0.0846527,
+     "cost_gain": 2.36357,
+     "systems": null
+    },
+    "s": {
+     "usd_per_mtok": 0.111237,
+     "cost_gain": 1.7987,
+     "systems": 623.875
+    },
+    "f": {
+     "usd_per_mtok": 0.0692944,
+     "cost_gain": 2.88743,
+     "systems": 580.133
+    }
+   },
+   {
+    "tokens_per_day": 10000000000000.0,
+    "b300_equivalent": 45704.3,
+    "a_x4": {
+     "usd_per_mtok": 0.0641231,
+     "cost_gain": 3.12029,
+     "systems": null
+    },
+    "s": {
+     "usd_per_mtok": 0.0911179,
+     "cost_gain": 2.19587,
+     "systems": 1247.75
+    },
+    "f": {
+     "usd_per_mtok": 0.0435723,
+     "cost_gain": 4.59197,
+     "systems": 1160.27
+    }
+   },
+   {
+    "tokens_per_day": 20000000000000.0,
+    "b300_equivalent": 91408.6,
+    "a_x4": {
+     "usd_per_mtok": 0.0538583,
+     "cost_gain": 3.71498,
+     "systems": null
+    },
+    "s": {
+     "usd_per_mtok": 0.0810582,
+     "cost_gain": 2.46838,
+     "systems": 2495.5
+    },
+    "f": {
+     "usd_per_mtok": 0.0307113,
+     "cost_gain": 6.51496,
+     "systems": 2320.53
+    }
+   },
+   {
+    "tokens_per_day": 50000000000000.0,
+    "b300_equivalent": 228522.0,
+    "a_x4": {
+     "usd_per_mtok": 0.0476994,
+     "cost_gain": 4.19466,
+     "systems": null
+    },
+    "s": {
+     "usd_per_mtok": 0.0750224,
+     "cost_gain": 2.66698,
+     "systems": 6238.75
+    },
+    "f": {
+     "usd_per_mtok": 0.0229946,
+     "cost_gain": 8.70128,
+     "systems": 5801.33
+    }
+   }
+  ],
+  "central_tokens_per_day": 5000000000000.0,
+  "breakeven_tokens_per_day": {
+   "a_x4": 1329140000000.0,
+   "s": 1587880000000.0,
+   "f": 1419140000000.0
+  },
+  "nre_usd_per_mtok_at_central_demand": 0.0410678
+ },
+ "attention_tile": {
+  "rows": [
+   {
+    "scale": 1,
+    "kv_stacks": 26,
+    "dies": 521,
+    "sessions": 256,
+    "system_usd": 1382100.0,
+    "batch": 96,
+    "tok_s": 100982.0,
+    "usd_per_mtok": 0.111237,
+    "tokens_per_joule": 10.6445,
+    "cost_gain": 1.7987,
+    "tokens_per_joule_gain": 4.40473
+   },
+   {
+    "scale": 2,
+    "kv_stacks": 52,
+    "dies": 538,
+    "sessions": 512,
+    "system_usd": 1795710.0,
+    "batch": 128,
+    "tok_s": 199532.0,
+    "usd_per_mtok": 0.0736421,
+    "tokens_per_joule": 12.9106,
+    "cost_gain": 2.71696,
+    "tokens_per_joule_gain": 5.34245
+   },
+   {
+    "scale": 4,
+    "kv_stacks": 104,
+    "dies": 574,
+    "sessions": 1024,
+    "system_usd": 2658920.0,
+    "batch": 256,
+    "tok_s": 396349.0,
+    "usd_per_mtok": 0.0551561,
+    "tokens_per_joule": 14.9646,
+    "cost_gain": 3.62757,
+    "tokens_per_joule_gain": 6.19237
+   },
+   {
+    "scale": 8,
+    "kv_stacks": 208,
+    "dies": 645,
+    "sessions": 2048,
+    "system_usd": 5245940.0,
+    "batch": 2048,
+    "tok_s": 729809.0,
+    "usd_per_mtok": 0.0586893,
+    "tokens_per_joule": 17.1525,
+    "cost_gain": 3.40919,
+    "tokens_per_joule_gain": 7.09775
+   }
+  ]
+ },
+ "margin": {
+  "rows": [
+   {
+    "gross_margin": 0.0,
+    "system_usd": 1382100.0,
+    "usd_per_mtok": 0.111237,
+    "cost_gain": 1.7987
+   },
+   {
+    "gross_margin": 0.3,
+    "system_usd": 1974420.0,
+    "usd_per_mtok": 0.157705,
+    "cost_gain": 1.26871
+   },
+   {
+    "gross_margin": 0.5,
+    "system_usd": 2764190.0,
+    "usd_per_mtok": 0.219663,
+    "cost_gain": 0.910863
+   }
+  ]
+ },
+ "routing": {
+  "cases": [
+   {
+    "case": "uniform, independent rows",
+    "top20_share": 0.2,
+    "zipf_skew": 0.0,
+    "locality": 0.0,
+    "platforms": {
+     "g0_x4": {
+      "tok_s_user_batch1": 550.433,
+      "tokens_per_joule_best": 2.41661
+     },
+     "g1_x4": {
+      "tok_s_user_batch1": 925.451,
+      "tokens_per_joule_best": 3.58079
+     },
+     "a_x4": {
+      "tok_s_user_batch1": 785.089,
+      "tokens_per_joule_best": 5.26891
+     },
+     "s": {
+      "tok_s_user_batch1": 2963.3,
+      "tokens_per_joule_best": 10.6445
+     },
+     "f": {
+      "tok_s_user_batch1": 12318.6,
+      "tokens_per_joule_best": 13.6978
+     },
+     "g0_x8": {
+      "tok_s_user_batch1": 721.085,
+      "tokens_per_joule_best": 1.86119
+     },
+     "g0": {
+      "tok_s_user_batch1": 721.085,
+      "tokens_per_joule_best": 2.41661
+     }
+    },
+    "step_gb": 75.3057,
+    "s_over_g0": {
+     "speed_batch1": 4.10951,
+     "tokens_per_joule_best": 4.40473
+    }
+   },
+   {
+    "case": "measured-mild: top 20% of experts get 47%",
+    "top20_share": 0.47,
+    "zipf_skew": 0.568607,
+    "locality": 0.0,
+    "platforms": {
+     "g0_x4": {
+      "tok_s_user_batch1": 565.357,
+      "tokens_per_joule_best": 2.41576
+     },
+     "g1_x4": {
+      "tok_s_user_batch1": 968.892,
+      "tokens_per_joule_best": 3.58063
+     },
+     "a_x4": {
+      "tok_s_user_batch1": 814.85,
+      "tokens_per_joule_best": 5.26831
+     },
+     "s": {
+      "tok_s_user_batch1": 2963.3,
+      "tokens_per_joule_best": 10.9769
+     },
+     "f": {
+      "tok_s_user_batch1": 12318.6,
+      "tokens_per_joule_best": 13.8151
+     },
+     "g0_x8": {
+      "tok_s_user_batch1": 734.927,
+      "tokens_per_joule_best": 1.86109
+     },
+     "g0": {
+      "tok_s_user_batch1": 734.927,
+      "tokens_per_joule_best": 2.41576
+     }
+    },
+    "step_gb": 71.5445,
+    "s_over_g0": {
+     "speed_batch1": 4.03211,
+     "tokens_per_joule_best": 4.54388
+    }
+   },
+   {
+    "case": "measured-mild plus neighbouring-token locality 0.3",
+    "top20_share": 0.47,
+    "zipf_skew": 0.568607,
+    "locality": 0.3,
+    "platforms": {
+     "g0_x4": {
+      "tok_s_user_batch1": 623.669,
+      "tokens_per_joule_best": 2.4142
+     },
+     "g1_x4": {
+      "tok_s_user_batch1": 1150.34,
+      "tokens_per_joule_best": 3.57977
+     },
+     "a_x4": {
+      "tok_s_user_batch1": 936.512,
+      "tokens_per_joule_best": 5.26621
+     },
+     "s": {
+      "tok_s_user_batch1": 2963.3,
+      "tokens_per_joule_best": 10.9081
+     },
+     "f": {
+      "tok_s_user_batch1": 12318.6,
+      "tokens_per_joule_best": 13.9861
+     },
+     "g0_x8": {
+      "tok_s_user_batch1": 787.594,
+      "tokens_per_joule_best": 1.8606
+     },
+     "g0": {
+      "tok_s_user_batch1": 787.594,
+      "tokens_per_joule_best": 2.4142
+     }
+    },
+    "step_gb": 58.7413,
+    "s_over_g0": {
+     "speed_batch1": 3.76248,
+     "tokens_per_joule_best": 4.51831
+    }
+   },
+   {
+    "case": "measured-strong: top 20% get 80%",
+    "top20_share": 0.8,
+    "zipf_skew": 1.11328,
+    "locality": 0.0,
+    "platforms": {
+     "g0_x4": {
+      "tok_s_user_batch1": 648.994,
+      "tokens_per_joule_best": 2.4547
+     },
+     "g1_x4": {
+      "tok_s_user_batch1": 1243.56,
+      "tokens_per_joule_best": 3.58084
+     },
+     "a_x4": {
+      "tok_s_user_batch1": 993.296,
+      "tokens_per_joule_best": 5.28044
+     },
+     "s": {
+      "tok_s_user_batch1": 2963.3,
+      "tokens_per_joule_best": 10.5108
+     },
+     "f": {
+      "tok_s_user_batch1": 12318.6,
+      "tokens_per_joule_best": 14.0966
+     },
+     "g0_x8": {
+      "tok_s_user_batch1": 809.827,
+      "tokens_per_joule_best": 1.85325
+     },
+     "g0": {
+      "tok_s_user_batch1": 809.827,
+      "tokens_per_joule_best": 2.4547
+     }
+    },
+    "step_gb": 53.9761,
+    "s_over_g0": {
+     "speed_batch1": 3.65918,
+     "tokens_per_joule_best": 4.2819
+    }
+   },
+   {
+    "case": "measured-strong plus locality 0.3",
+    "top20_share": 0.8,
+    "zipf_skew": 1.11328,
+    "locality": 0.3,
+    "platforms": {
+     "g0_x4": {
+      "tok_s_user_batch1": 693.046,
+      "tokens_per_joule_best": 2.51836
+     },
+     "g1_x4": {
+      "tok_s_user_batch1": 1412.8,
+      "tokens_per_joule_best": 3.62283
+     },
+     "a_x4": {
+      "tok_s_user_batch1": 1093.6,
+      "tokens_per_joule_best": 5.36159
+     },
+     "s": {
+      "tok_s_user_batch1": 2775.99,
+      "tokens_per_joule_best": 10.63
+     },
+     "f": {
+      "tok_s_user_batch1": 11044.8,
+      "tokens_per_joule_best": 13.9219
+     },
+     "g0_x8": {
+      "tok_s_user_batch1": 847.696,
+      "tokens_per_joule_best": 1.86004
+     },
+     "g0": {
+      "tok_s_user_batch1": 847.696,
+      "tokens_per_joule_best": 2.51836
+     }
+    },
+    "step_gb": 46.6249,
+    "s_over_g0": {
+     "speed_batch1": 3.27474,
+     "tokens_per_joule_best": 4.22101
+    }
+   }
+  ],
+  "note": "S places one expert's bank per expert, so skew does not change its speed at batch 1; at high batch the hottest experts need more passes."
+ },
+ "lora": {
+  "rank": 32,
+  "per_rank": {
+   "mlp": 128065536,
+   "attn": 2347008,
+   "unembed": 205632
+  },
+  "variants": {
+   "attention only": {
+    "params": 75104256,
+    "bytes": 150209000.0,
+    "share_of_model_params": 0.000126427,
+    "sram_mm2": 71.625,
+    "adapters_per_die": 9.49389,
+    "dies_per_adapter": 0.105331,
+    "gpu_extra_bytes_per_step_share": 0.00199465
+   },
+   "attention and output head": {
+    "params": 81684480,
+    "bytes": 163369000.0,
+    "share_of_model_params": 0.000137504,
+    "sram_mm2": 77.9004,
+    "adapters_per_die": 8.7291,
+    "dies_per_adapter": 0.114559,
+    "gpu_extra_bytes_per_step_share": 0.00216941
+   },
+   "attention, output head and experts": {
+    "params": 4179781632,
+    "bytes": 8359560000.0,
+    "share_of_model_params": 0.00703607,
+    "sram_mm2": 3986.15,
+    "adapters_per_die": 0.170591,
+    "dies_per_adapter": 5.86199,
+    "gpu_extra_bytes_per_step_share": 0.111008
+   }
+  },
+  "servable_on_quantized_checkpoint": "attention only",
+  "s_dies": 521,
+  "attention_only_100_adapters_extra_dies": 10.5331
+ },
+ "ladder_fit": {
+  "rows": [
+   {
+    "hidden": 768,
+    "layers": 12,
+    "params": 4438144512,
+    "dies": 12,
+    "tiles": 2
+   },
+   {
+    "hidden": 768,
+    "layers": 18,
+    "params": 6502829568,
+    "dies": 16,
+    "tiles": 2
+   },
+   {
+    "hidden": 768,
+    "layers": 24,
+    "params": 8567514624,
+    "dies": 20,
+    "tiles": 3
+   },
+   {
+    "hidden": 1152,
+    "layers": 12,
+    "params": 9736888320,
+    "dies": 17,
+    "tiles": 3
+   },
+   {
+    "hidden": 768,
+    "layers": 30,
+    "params": 10632199680,
+    "dies": 24,
+    "tiles": 3
+   },
+   {
+    "hidden": 768,
+    "layers": 36,
+    "params": 12696884736,
+    "dies": 28,
+    "tiles": 4
+   },
+   {
+    "hidden": 1152,
+    "layers": 18,
+    "params": 14373751680,
+    "dies": 23,
+    "tiles": 3
+   },
+   {
+    "hidden": 768,
+    "layers": 42,
+    "params": 14761569792,
+    "dies": 33,
+    "tiles": 5
+   },
+   {
+    "hidden": 768,
+    "layers": 48,
+    "params": 16826254848,
+    "dies": 37,
+    "tiles": 5
+   },
+   {
+    "hidden": 1152,
+    "layers": 24,
+    "params": 19010615040,
+    "dies": 30,
+    "tiles": 4
+   }
+  ],
+  "largest_on_8_dies_params": 0.0
+ },
+ "dense_8b": {
+  "label": "measured by others (published)",
+  "gpu_tok_s": 234.95,
+  "rows": {
+   "h200": {
+    "label": "NVIDIA H200, one GPU (HBM)",
+    "published": 234.95,
+    "over_gpu": 1.0,
+    "src": "nim-bench",
+    "who": "vendor",
+    "simulator_error": 0.654822
+   },
+   "cerebras": {
+    "label": "Cerebras WSE-3 (SRAM, one wafer)",
+    "published": 1981,
+    "over_gpu": 8.43158,
+    "src": "taalas-chart",
+    "who": "relayed",
+    "simulator_error": 0.864924
+   },
+   "groq": {
+    "label": "Groq LPU (SRAM, many chips)",
+    "published": 594,
+    "over_gpu": 2.5282,
+    "src": "taalas-chart",
+    "who": "relayed",
+    "simulator_error": 3.53446
+   },
+   "hc1": {
+    "label": "Taalas HC1 (fixed weights, one die)",
+    "published": 16960,
+    "over_gpu": 72.1856,
+    "src": "taalas-chart",
+    "who": "vendor",
+    "simulator_error": -0.412732
+   }
+  }
+ },
+ "kv_memory": {
+  "lpddr_pool_bytes_per_s": 1092220000000.0,
+  "hbm_pool_bytes_per_s": 26000000000000.0,
+  "rows": [
+   {
+    "context": 1024,
+    "s_hbm": 2981.51,
+    "s_lpddr": 2878.91,
+    "a_x4": 788.286,
+    "g0_x4": 551.207
+   },
+   {
+    "context": 2048,
+    "s_hbm": 2978.9,
+    "s_lpddr": 2821.98,
+    "a_x4": 787.942,
+    "g0_x4": 551.096
+   },
+   {
+    "context": 4096,
+    "s_hbm": 2973.68,
+    "s_lpddr": 2714.62,
+    "a_x4": 787.248,
+    "g0_x4": 550.875
+   },
+   {
+    "context": 8192,
+    "s_hbm": 2963.3,
+    "s_lpddr": 2522.66,
+    "a_x4": 785.089,
+    "g0_x4": 550.433
+   },
+   {
+    "context": 16384,
+    "s_hbm": 2942.77,
+    "s_lpddr": 2210.11,
+    "a_x4": 783.192,
+    "g0_x4": 549.551
+   },
+   {
+    "context": 32768,
+    "s_hbm": 2902.54,
+    "s_lpddr": 1771.2,
+    "a_x4": 777.632,
+    "g0_x4": 547.795
+   },
+   {
+    "context": 65536,
+    "s_hbm": 2825.29,
+    "s_lpddr": 1267.7,
+    "a_x4": 767.354,
+    "g0_x4": 544.317
+   },
+   {
+    "context": 131072,
+    "s_hbm": 2682.5,
+    "s_lpddr": 808.201,
+    "a_x4": 746.879,
+    "g0_x4": 537.493
+   },
+   {
+    "context": 262144,
+    "s_hbm": 2436.25,
+    "s_lpddr": 468.541,
+    "a_x4": 708.931,
+    "g0_x4": 524.344
+   },
+   {
+    "context": 524288,
+    "s_hbm": 2058.34,
+    "s_lpddr": 254.568,
+    "a_x4": 643.897,
+    "g0_x4": 499.887
+   },
+   {
+    "context": 1048576,
+    "s_hbm": 1570.97,
+    "s_lpddr": 133.048,
+    "a_x4": 545.123,
+    "g0_x4": 457.233
+   }
+  ],
+  "crossover_context_vs_a": 146449.0,
+  "crossover_context_vs_g0": 225658.0
+ },
+ "synthesis_effect": {
+  "available": true,
+  "assumed": {
+   "um2_per_mac_fp4": 12.0,
+   "pj_per_flop_fp4": 0.15,
+   "f_clk": 1500000000.0,
+   "t_scan_us": 0.341333,
+   "dies": 384,
+   "mac_lanes_mm2": 47520.0,
+   "system_usd": 1141120.0,
+   "tok_s_user_batch1": 2971.21,
+   "speed_batch1": 4.12047,
+   "tokens_per_joule_batch1": 3.77629,
+   "tokens_per_joule_best": 3.71206,
+   "cost_best": 2.1899
+  },
+  "synthesized": {
+   "um2_per_mac_fp4": 33.9077,
+   "pj_per_flop_fp4": 0.0503939,
+   "f_clk": 616716000.0,
+   "t_scan_us": 0.830204,
+   "dies": 521,
+   "mac_lanes_mm2": 134274.0,
+   "system_usd": 1382100.0,
+   "tok_s_user_batch1": 2963.3,
+   "speed_batch1": 4.10951,
+   "tokens_per_joule_batch1": 3.04325,
+   "tokens_per_joule_best": 4.40473,
+   "cost_best": 1.7987
+  }
+ },
+ "fleet": {
+  "demand_tokens_per_day": 5000000000000.0,
+  "demand_tok_s": 57870400.0,
+  "capacity_point": {
+   "batch": 128,
+   "context": 32768
+  }
+ }
+}

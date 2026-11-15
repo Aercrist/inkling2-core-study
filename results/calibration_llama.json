@@ -1,0 +1,145 @@
+{
+ "label": "modeled from public specs against published speeds",
+ "tolerance": 0.3,
+ "rows": {
+  "h200": {
+   "published": 234.95,
+   "predicted": 388.801,
+   "error": 0.654822,
+   "bf16_published": 140.14,
+   "bf16_predicted": 221.217,
+   "bf16_over_fp8_published": 0.596467,
+   "bf16_over_fp8_predicted": 0.568974,
+   "launches": 228,
+   "implied_hbm_eff": 0.582916,
+   "implied_fixed_ms": 1.48758,
+   "model_fixed_ms": 0.572522,
+   "how": "GPU engine; HBM efficiency and per-launch latency as fitted on Blackwell engines serving Inkling 2 Small",
+   "label": "NVIDIA H200, one GPU (HBM)",
+   "memory": "141 GB HBM3e at 4.8 TB/s",
+   "src": "nim-bench",
+   "who": "vendor",
+   "conditions": "NVIDIA NIM, FP8 weights, 1 request, 1,000 in / 1,000 out, inter-token latency 4.24 ms",
+   "within_30pct": false,
+   "other_published": [
+    {
+     "id": "nim_bf16",
+     "value": 140.14,
+     "conditions": "same, BF16 weights, inter-token latency 7.11 ms",
+     "who": "vendor",
+     "src": "nim-bench"
+    },
+    {
+     "id": "chart",
+     "value": 230,
+     "conditions": "as charted by a fixed-weight chip vendor, attributed to NVIDIA, 1k/1k",
+     "who": "relayed",
+     "src": "taalas-chart"
+    }
+   ]
+  },
+  "cerebras": {
+   "published": 1981,
+   "predicted": 3694.41,
+   "error": 0.864924,
+   "t_scan_us": 2.09524,
+   "published_over_bound": 0.536215,
+   "implied_us_per_layer": 15.7749,
+   "bound_us_per_layer": 8.45872,
+   "how": "weight-stationary engine; one pass = 44 GB / 21 PB/s; nothing else on the clock, so this is an upper bound",
+   "implied_extra_us_per_op": 1.81486,
+   "label": "Cerebras WSE-3 (SRAM, one wafer)",
+   "memory": "44 GB SRAM at 21 PB/s on one 46,225 mm2 wafer; 5 nm; 16-bit weights",
+   "src": "taalas-chart",
+   "who": "relayed",
+   "conditions": "Artificial Analysis as charted on 19 Feb 2026, about 1k input tokens",
+   "within_30pct": false,
+   "other_published": [
+    {
+     "id": "own",
+     "value": 1800,
+     "conditions": "Cerebras launch claim, August 2024, 16-bit weights",
+     "who": "vendor",
+     "src": "cerebras-launch"
+    }
+   ]
+  },
+  "groq": {
+   "published": 594,
+   "predicted": 2693.47,
+   "error": 3.53446,
+   "t_scan_us": 2.875,
+   "published_over_bound": 0.220533,
+   "implied_us_per_layer": 52.6094,
+   "bound_us_per_layer": 11.6021,
+   "how": "weight-stationary engine; one pass = 230 MB / 80 TB/s; chip-to-chip latency and chips per model are not published, so this is an upper bound",
+   "implied_extra_us_per_op": 10.1724,
+   "label": "Groq LPU (SRAM, many chips)",
+   "memory": "230 MB SRAM per chip at up to 80 TB/s; 14 nm; chips per model not published for this model",
+   "src": "taalas-chart",
+   "who": "relayed",
+   "conditions": "Artificial Analysis as charted on 19 Feb 2026, about 1k input tokens",
+   "within_30pct": false,
+   "other_published": [
+    {
+     "id": "aa_live",
+     "value": 630.1,
+     "conditions": "Artificial Analysis live page, 1k-input workload, includes time to first token",
+     "who": "independent",
+     "src": "aa-llama"
+    },
+    {
+     "id": "own",
+     "value": 560,
+     "conditions": "Groq documentation, no workload stated",
+     "who": "vendor",
+     "src": "groq-docs"
+    }
+   ]
+  },
+  "hc1": {
+   "published": 16960,
+   "predicted": 9960.07,
+   "error": -0.412732,
+   "measured_independently": 14150,
+   "error_vs_measured": -0.296108,
+   "implied_us_per_layer": 1.84257,
+   "model_us_per_layer": 3.13753,
+   "how": "weight-stationary engine with this study's own timing constants (bank depth, clock, hand-off), one die, KV on-die; HC1's internals are not published",
+   "implied_total_us_per_op": 0.457072,
+   "implied_total_us_per_op_measured": 0.54784,
+   "label": "Taalas HC1 (fixed weights, one die)",
+   "memory": "8B parameters of 3 and 6 bits in mask-programmed storage on one 815 mm2 N6 die",
+   "src": "taalas-chart",
+   "who": "vendor",
+   "conditions": "vendor's labs, batch 1, 1k in / 1k out",
+   "within_30pct": false,
+   "other_published": [
+    {
+     "id": "probe",
+     "value": 14150,
+     "conditions": "black-box probe of the public demo, generations above 100 tokens (14,000-14,300)",
+     "who": "independent",
+     "src": "hc1-probe"
+    },
+    {
+     "id": "analyst",
+     "value": 14357,
+     "conditions": "one query on the public demo by an analyst whose firm has the vendor as a client",
+     "who": "independent",
+     "src": "hc1-analyst"
+    }
+   ]
+  }
+ },
+ "n_within": 0,
+ "n": 4,
+ "context": 1500,
+ "bounds_hold": true,
+ "weight_ops_per_token": 129,
+ "latency_for_s_us": 1.81486,
+ "latency_for_f_total_us": 0.54784,
+ "latency_groq_us": 10.1724,
+ "op_total_s_us": 3.91314,
+ "op_total_groq_us": 13.0504
+}

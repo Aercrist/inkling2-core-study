@@ -1,0 +1,60 @@
+{
+ "label": "placed and routed on ASAP7 (measured in an open flow), scaled to N4P-class with stated factors",
+ "asap7": {
+  "area_per_mac_lane_um2": 31.942,
+  "energy_per_mac_pj": 0.122912,
+  "clock_mhz": 555.6,
+  "timing_closed": true,
+  "best_min_period_ps": 1616.63
+ },
+ "factors": {
+  "area": 0.69,
+  "speed": 1.11,
+  "energy": 0.82,
+  "utilization": 0.65
+ },
+ "n4p": {
+  "um2_per_mac_fp4": 33.9077,
+  "pj_per_flop_fp4": 0.0503939,
+  "f_clk": 616716000.0
+ },
+ "assumed_before": {
+  "um2_per_mac_fp4": 12.0,
+  "pj_per_flop_fp4": 0.15,
+  "f_clk": 1500000000.0
+ },
+ "measured_over_assumed": {
+  "area": 2.82564,
+  "energy": 0.335959,
+  "clock": 0.411144
+ },
+ "s": {
+  "um2_per_mac": {
+   "fp4": 33.9077,
+   "fp8": 113.026,
+   "bf16": 226.051
+  },
+  "pj_per_flop": {
+   "fp4": 0.0503939,
+   "fp8": 0.0839898,
+   "bf16": 0.16798,
+   "fp32": 1.5
+  },
+  "f_clk": 616716000.0
+ },
+ "reloadable_over_fixed": {
+  "hardwired_lane_area": 1.12643,
+  "hardwired_lane_energy": 1.11946,
+  "time_shared_row_area": 0.582034,
+  "time_shared_row_energy": 0.59585,
+  "time_shared_area_per_hardwired_weight_um2": 0.191584
+ },
+ "f": {
+  "pj_per_flop": {
+   "fp4": 0.0450161,
+   "fp8": 0.0750268,
+   "bf16": 0.16798,
+   "fp32": 1.5
+  }
+ }
+}

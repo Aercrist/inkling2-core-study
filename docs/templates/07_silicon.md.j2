@@ -1,0 +1,169 @@
+{% if SI %}
+{% set V = SI.verification %}{% set Z = SI.silicon %}{% set rel = Z.headline.reloadable %}{% set fix = Z.headline.fixed %}
+{% set k1 = Z.hardwired_row_length_sweep.blocks_per_row["1"] %}
+# 07 · One block in silicon: the NVFP4 dot product
+
+The system model needs three numbers for a multiplier lane: its area, its energy and its clock. For
+the first six phases they were assumptions. This page replaces them for the NVFP4 lane, which serves
+{{ pct(W.bytes.share_by_class_main.nvfp4, 0) }} of the weight bytes.
+
+One block was built: the inner loop of an expert's matrix product in layers 0 to 39, where both the
+weights and the activations are NVFP4 (4-bit codes with a shared scale per 16 values). It was
+generated as SystemVerilog from the model's config, checked bit for bit against a reference on real
+expert weights, and placed and routed on an open 7 nm predictive kit (ASAP7). The full engineering
+report, with every command, is [`rtl/nvfp4/REPORT.md`](../rtl/nvfp4/REPORT.md); every number is in
+[`results/silicon.json`](../results/silicon.json).
+
+**This is one block, not a chip.** No memory, no clock distribution beyond the block, no floorplan.
+
+## Two variants
+
+| | reloadable (`nvfp4_dot`) | fixed (`nvfp4_dot_const`) |
+|---|---|---|
+| weights | arrive on ports from a memory, 16 at a time | constants taken from a real expert row |
+| used for | S | F, as the comparison |
+
+## Verification
+
+| check | result |
+|---|---|
+| vectors compared against the bit-exact reference | {{ n(V.vectors.vectors_total) }} ({{ n(V.vectors.vectors_reloadable) }} reloadable, {{ n(V.vectors.vectors_fixed) }} fixed), **{{ V.vectors.mismatches_total }} mismatches** |
+| what the vectors are | real rows of a real expert (layer 0, expert 0, and row samples from other layers) against activations derived from the model's own embeddings, plus directed edge cases: zeros, signed zero, largest and smallest scales, cancellation, rounding ties, overflow |
+| simulators | {{ V.vectors.simulator }}; second simulator: {{ V.icarus.simulator }} |
+| reference against PyTorch on a whole real expert | {{ "pass" if V.torch.pass else "FAIL" }} (torch {{ V.torch.torch }}) |
+| stored format | checked against the checkpoint bytes and against a serving engine's own quantizer run from source: {{ "pass" if SI.layout.evidence.pass else "FAIL" }} |
+| batch invariance | {{ V.batch.probes }} probe requests, each placed in {{ V.batch.placements_per_probe }} different batch sizes, positions and idle patterns: {{ V.batch.distinct_results_per_probe_max }} distinct result per probe ({{ "pass" if V.batch.pass else "FAIL" }}) |
+| placed-and-routed netlist against the reference | reloadable: {{ "bit-exact" if rel.post_route_netlist_bit_exact else "MISMATCH" }}; fixed: {{ "bit-exact" if fix.post_route_netlist_bit_exact else "MISMATCH" }} |
+
+Batch invariance matters for this model's customers: a request's output must not depend on what else
+is in the batch. In this block it holds by construction (each row has its own accumulator and a fixed
+order of additions), and the test confirms it.
+
+## Placed and routed (measured in an open flow)
+
+{{ Z.library }}. Both variants at a {{ n(rel.clock_period_ps, 0) }} ps clock
+({{ n(rel.clock_mhz, 0) }} MHz), one 16-value block per clock. Power from gate-level activity on real tensors.
+
+| | reloadable | fixed, one whole row time-shared through the lanes | reloadable / fixed |
+|---|---|---|---|
+| cell area | {{ n(rel.cell_area_um2, 1) }} µm² | {{ n(fix.cell_area_um2, 1) }} µm² | {{ n(Z.ratios_reloadable_over_fixed.cell_area.median, 2) }} |
+| cells (flip-flops) | {{ n(rel.cells) }} ({{ rel.sequential_cells }}) | {{ n(fix.cells) }} ({{ fix.sequential_cells }}) | |
+| setup / hold slack | {{ n(rel.setup_wns_ps, 1) }} / {{ n(rel.hold_wns_ps, 1) }} ps | {{ n(fix.setup_wns_ps, 1) }} / {{ n(fix.hold_wns_ps, 1) }} ps | |
+| dynamic power | {{ n(rel.power_w.dynamic * 1e3, 3) }} mW | {{ n(fix.power_w.dynamic * 1e3, 3) }} mW | {{ n(Z.ratios_reloadable_over_fixed.dynamic_power.median, 2) }} |
+| leakage | {{ n(rel.power_w.leakage * 1e6, 2) }} µW | {{ n(fix.power_w.leakage * 1e6, 2) }} µW | |
+| energy per 16-value block | {{ n(rel.energy_per_block_pj, 2) }} pJ | {{ n(fix.energy_per_block_pj, 2) }} pJ | {{ n(Z.ratios_reloadable_over_fixed.energy_per_block.median, 2) }} |
+| energy per multiply-accumulate | {{ n(rel.energy_per_mac_pj, 3) }} pJ | {{ n(fix.energy_per_mac_pj, 3) }} pJ | |
+| area per multiplier lane | {{ n(rel.area_per_mac_lane_um2, 1) }} µm² | {{ n(fix.area_per_mac_lane_um2, 1) }} µm² | |
+| weights held in the module | none (they come from memory) | {{ n(fix.weights_in_module) }} hard-wired, {{ n(fix.area_per_weight_um2, 2) }} µm² each including the datapath | |
+
+The best clock period reached was {{ n(Z.fmax.rel.best_min_period_ps, 0) }} ps. The critical path in
+both variants is the single-cycle 32-bit floating-point accumulate.
+
+## What fixing the weights buys depends on how they are used
+
+We predicted a fixed-weight datapath would be {{ sig(PRD.P15.central) }}x smaller and use
+{{ sig(PRD.P16.central) }}x less energy. The synthesis says it depends:
+
+| how the fixed weights reach the lanes | reloadable / fixed, area | reloadable / fixed, energy |
+|---|---|---|
+| **a lane always sees the same weight** (the same 16 weights in every block of the row, so the constants fold into the multipliers) | **{{ n(k1.area_ratio_reloadable_over_fixed.median, 2) }}** ({{ n(k1.area_ratio_reloadable_over_fixed.min, 2) }} to {{ n(k1.area_ratio_reloadable_over_fixed.max, 2) }}, n={{ k1.area_ratio_reloadable_over_fixed.n }}) | **{{ n(k1.energy_ratio_reloadable_over_fixed.median, 2) }}** ({{ n(k1.energy_ratio_reloadable_over_fixed.min, 2) }} to {{ n(k1.energy_ratio_reloadable_over_fixed.max, 2) }}) |
+| **a whole row of {{ n(fix.weights_in_module) }} weights time-shared through 16 lanes** (the weights become a table in logic) | {{ n(Z.ratios_reloadable_over_fixed.cell_area.median, 2) }} | {{ n(Z.ratios_reloadable_over_fixed.energy_per_block.median, 2) }} |
+
+- When every lane has its own fixed weight, the block shrinks by {{ n(k1.area_ratio_reloadable_over_fixed.median, 2) }}x and
+  saves {{ n(k1.energy_ratio_reloadable_over_fixed.median, 2) }}x in energy. The multipliers fold away; the adder tree
+  and the 32-bit accumulator remain, and they are most of the block. That is the comparison the
+  predictions meant: area landed {{ PRD.P15.verdict }} the predicted range, energy {{ PRD.P16.verdict }} it.
+  (A first version of this test used rows one block long. Synthesis then removed the accumulator as
+  well and showed a larger saving; that result is kept in the JSON with a warning and is not used.)
+- When the fixed weights are time-shared, the fixed module is *larger* than the reloadable one,
+  because it contains its weights and the reloadable one does not. As storage it is dense:
+  {{ n(fix.area_per_weight_um2, 2) }} µm² per hard-wired weight in standard cells, datapath included.
+  For scale, the one shipped fixed-weight chip holds 8B weights on 815 mm², about
+  {{ n(815e6 / 8e9, 2) }} µm² per weight on an older process with custom cells (taalas-hc1).
+
+So fixing a lane's weight saves little in that lane. The reloadable design is still larger, for two
+reasons: an SRAM bit is larger than a mask-programmed one, and S has a multiplier lane on every bank,
+which is {{ pct(I.designs.s.area.mac_lanes / I.designs.s.area.silicon_mm2) }} of its silicon, while the fixed design's density figure comes from one shipped chip
+with its arithmetic folded in. How much of the difference is reloadability and how much is that chip's
+design cannot be separated from public data.
+
+![synthesized block](../results/fig_silicon.png)
+
+The middle bar (one weight per lane) was measured on its own one-block workload; on that same workload
+the reloadable block uses {{ n(k1.reloadable_energy_per_block_pj_same_workload.median, 2) }} pJ, which is where the
+{{ n(k1.energy_ratio_reloadable_over_fixed.median, 2) }} in the table comes from.
+
+## From the open kit to an N4P-class process
+
+ASAP7 is a predictive kit; its numbers are reliable relative to one another, not as predictions of a
+foundry process. Three factors carry them over, and all three are in the uncertainty sweep.
+
+| | on ASAP7 | factor | N4P-class value used | assumed before synthesis | new / old |
+|---|---|---|---|---|---|
+| area per NVFP4 lane | {{ n(SS.asap7.area_per_mac_lane_um2, 1) }} µm² of cells | × {{ SS.factors.area }} (cell pitches; asap7-scaling), ÷ {{ SS.factors.utilization }} placement utilization (assumption) | {{ n(SS.n4p.um2_per_mac_fp4, 1) }} µm² | {{ n(SS.assumed_before.um2_per_mac_fp4, 0) }} µm² | {{ x(SS.measured_over_assumed.area) }} |
+| energy per NVFP4 operation | {{ n(SS.asap7.energy_per_mac_pj / 2, 3) }} pJ | × {{ SS.factors.energy }} (N5 to N4P; n4p) | {{ n(SS.n4p.pj_per_flop_fp4, 3) }} pJ | {{ n(SS.assumed_before.pj_per_flop_fp4, 2) }} pJ | {{ x(SS.measured_over_assumed.energy, 2) }} |
+| clock | {{ n(SS.asap7.clock_mhz, 0) }} MHz, timing closed | × {{ SS.factors.speed }} (N5 to N4P; n4p) | {{ n(SS.n4p.f_clk / 1e6, 0) }} MHz | {{ n(SS.assumed_before.f_clk / 1e6, 0) }} MHz | {{ x(SS.measured_over_assumed.clock, 2) }} |
+
+Only the published N5-to-N4P step is applied to speed and energy; ASAP7 is otherwise treated as
+N5-class, which is conservative. Only the NVFP4 lane was built: the MXFP8 and BF16 lanes take the
+same area correction and keep their assumed energy.
+
+## What it changed
+
+{% if SE.available %}
+| S against the GPUs | with the assumed lane | with the synthesized lane |
+|---|---|---|
+| time for one pass over a weight bank | {{ n(SE.assumed.t_scan_us, 2) }} µs | {{ n(SE.synthesized.t_scan_us, 2) }} µs |
+| multiplier lanes | {{ n(SE.assumed.mac_lanes_mm2, -2) }} mm² | {{ n(SE.synthesized.mac_lanes_mm2, -2) }} mm² |
+| dies | {{ SE.assumed.dies }} | {{ SE.synthesized.dies }} |
+| system cost | {{ usd(SE.assumed.system_usd, -3) }} | {{ usd(SE.synthesized.system_usd, -3) }} |
+| speed for one user | {{ x(SE.assumed.speed_batch1) }} | {{ x(SE.synthesized.speed_batch1) }} |
+| tokens per joule, one user | {{ x(SE.assumed.tokens_per_joule_batch1) }} | {{ x(SE.synthesized.tokens_per_joule_batch1) }} |
+| tokens per joule, best point | {{ x(SE.assumed.tokens_per_joule_best) }} | {{ x(SE.synthesized.tokens_per_joule_best) }} |
+| cost per token, best point | {{ x(SE.assumed.cost_best) }} | {{ x(SE.synthesized.cost_best) }} |
+
+The lane is larger and slower-clocked than we assumed and uses less energy. The machine grew by
+{{ SE.synthesized.dies - SE.assumed.dies }} dies and its cost gain fell from {{ x(SE.assumed.cost_best) }} to {{ x(SE.synthesized.cost_best) }}. Speed barely moved: S's
+time per weight operation is taken whole from a published machine, and its own bank pass sits
+inside that figure either way. Every result in [04](04_results.md) uses the synthesized values.
+
+We did not re-tune the design afterwards. A lane this size argues for deeper weight banks or for
+sharing lanes between experts, since one request touches about {{ n(W.dspark_step.distinct_experts_per_layer_uniform_independent, 0) }} of
+{{ W.config.experts }} experts per layer per step and the other lanes sit idle. Either
+would cut the die count and is the obvious next step; neither is in these results.
+{% endif %}
+
+## For context
+
+A published NVFP4 multiply-accumulate block at 28 nm reports {{ Z.context_published_28nm.energy_per_16_element_block_pj }} pJ
+per 16-value block at {{ Z.context_published_28nm.clock_mhz }} MHz in {{ Z.context_published_28nm.area_mm2 }} mm²
+(nvfp4-mac-28nm). Ours on ASAP7: {{ n(rel.energy_per_block_pj, 2) }} pJ and {{ n(rel.cell_area_um2 / 1e6, 5) }} mm² of
+cells. Different node, library, design and method; it shows the two are in the range process scaling
+would explain, nothing more.
+
+## Not done
+
+- No memory was built. The reloadable lane's weights come from an SRAM that is costed from published
+  macros, not synthesized.
+- One block and one precision. The MXFP8 lane, the BF16 attention datapath, the router's top-8 select
+  (carried over from the previous study) and the softmax were not built here.
+- No pipelining of the accumulator. A carry-save accumulate would clock faster; it has to stay
+  bit-exact with the serving engines' arithmetic, which we did not attempt.
+- One corner (typical, 0.70 V, 25 °C). No signoff, no variation, no test logic.
+- ASAP7 only. Nothing was run on a foundry kit.
+- Power comes from gate-level activity without delays, so glitches are not counted and absolute power
+  is optimistic. The sweep covers the arithmetic energy from 0.2x to 2x.
+- The activations are realistic but not from a forward pass: real embedding rows through the real
+  layer-0 norm, and the outputs of the real first matrix. One expert was fetched whole.
+- One placement seed per design. Timing closes at {{ n(rel.clock_period_ps, 0) }} ps and misses at 1,600 ps.
+
+## Reproduce
+
+`make test` runs a short version of the verification if Icarus Verilog is installed. The full run
+(vectors, second simulator, PyTorch check, place and route in the OpenROAD flow's Docker image) is
+`python rtl/nvfp4/run_all.py`; see section 11 of the [report](../rtl/nvfp4/REPORT.md).
+{% else %}
+# 07 · One block in silicon
+
+The block's results are not in `results/silicon.json` yet.
+{% endif %}

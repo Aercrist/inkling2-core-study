@@ -1,0 +1,13 @@
+# 4 x GB300 (Blackwell Ultra GPU in a Grace-Blackwell node), TP4.
+extends: b300_base.yaml
+name: 4x GB300 (TP4)
+n_chips: 4
+hbm_bw: 8.0e12            # src: nv-bw-ultra
+peak:
+  fp4: 15.0e15            # src: nv-bw-ultra
+  fp8: 5.0e15
+  bf16: 2.5e15
+  fp32: 0.075e15
+tdp_w: 1400               # TGP up to 1,400 W; src: nv-bw-ultra
+cost:
+  rental_usd_per_gpu_hour: 9.50    # no public GB300 on-demand price; B300 median used; src: gpu-rental

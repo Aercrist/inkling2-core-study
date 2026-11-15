@@ -1,0 +1,12 @@
+# NVIDIA GB200 (Blackwell), per GPU: the hardware vLLM's published Inkling 2 Small speeds were
+# measured on. Used for calibration only. Peak throughput matters little at low batch.
+extends: gpu_b300.yaml
+name: GB200
+hbm_bw: 8.0e12            # src: stream-b200
+hbm_cap: 192.0e9          # src: sglang-recipe
+peak:                     # src: nv-blackwell (pending re-read; B200 dense = half the sparse figure)
+  fp4: 10.0e15
+  fp8: 5.0e15
+  bf16: 2.5e15
+  fp32: 0.075e15
+tdp_w: 1200               # src: nv-blackwell

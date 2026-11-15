@@ -1,0 +1,474 @@
+{
+ "label": "predictions frozen before simulation; observed values are modeled unless the row says otherwise",
+ "frozen_on": "2026-11-14",
+ "rows": [
+  {
+   "id": "P01",
+   "group": "baseline",
+   "claim": "G0 (2x B300), per-user decode speed at batch 1",
+   "unit": "tok/s per user",
+   "central": 380,
+   "low": 300,
+   "high": 470,
+   "observed": 378.154,
+   "verdict": "inside",
+   "note": ""
+  },
+  {
+   "id": "P02",
+   "group": "baseline",
+   "claim": "G1 / G0 per-user speed at batch 1 on 2x B300 (same GPUs, dataflow-style software)",
+   "unit": "ratio",
+   "central": 1.45,
+   "low": 1.15,
+   "high": 1.8,
+   "observed": 1.40296,
+   "verdict": "inside",
+   "note": ""
+  },
+  {
+   "id": "P03",
+   "group": "baseline",
+   "claim": "G1 / G0 per-user speed at batch 1 on 4x B300",
+   "unit": "ratio",
+   "central": 2.0,
+   "low": 1.5,
+   "high": 2.6,
+   "observed": 1.68132,
+   "verdict": "inside",
+   "note": ""
+  },
+  {
+   "id": "P04",
+   "group": "H1",
+   "claim": "A / G1 per-user speed at equal HBM bandwidth, batch 1",
+   "unit": "ratio",
+   "central": 1.0,
+   "low": 0.9,
+   "high": 1.15,
+   "observed": 0.848331,
+   "verdict": "below",
+   "note": "four packages against four GPUs"
+  },
+  {
+   "id": "P05",
+   "group": "H1",
+   "claim": "A / G1 tokens per joule, batch 1",
+   "unit": "ratio",
+   "central": 1.7,
+   "low": 1.2,
+   "high": 2.5,
+   "observed": 0.951683,
+   "verdict": "below",
+   "note": "four packages against four GPUs"
+  },
+  {
+   "id": "P06",
+   "group": "H1",
+   "claim": "G1 / A cost per million tokens (above 1 means A is cheaper), batch 1",
+   "unit": "ratio",
+   "central": 1.4,
+   "low": 0.9,
+   "high": 2.0,
+   "observed": 1.55428,
+   "verdict": "inside",
+   "note": "four packages against four GPUs"
+  },
+  {
+   "id": "P07",
+   "group": "H2",
+   "claim": "S: number of reticle-class dies holding every weight in SRAM, N4P-class, checkpoint precision",
+   "unit": "dies",
+   "central": 250,
+   "low": 160,
+   "high": 330,
+   "observed": 521,
+   "verdict": "above",
+   "note": ""
+  },
+  {
+   "id": "P08",
+   "group": "H2",
+   "claim": "S per-user decode speed at batch 1",
+   "unit": "tok/s per user",
+   "central": 4500,
+   "low": 2000,
+   "high": 9000,
+   "observed": 2963.3,
+   "verdict": "inside",
+   "note": ""
+  },
+  {
+   "id": "P09",
+   "group": "H2",
+   "claim": "S / G0 per-user speed at batch 1",
+   "unit": "ratio",
+   "central": 12,
+   "low": 5,
+   "high": 24,
+   "observed": 7.83624,
+   "verdict": "inside",
+   "note": "against the best B300 layout: 4.1x"
+  },
+  {
+   "id": "P10",
+   "group": "H2",
+   "claim": "S / G0 tokens per joule at batch 1, idle weight banks power-managed",
+   "unit": "ratio",
+   "central": 6,
+   "low": 2,
+   "high": 15,
+   "observed": 2.67781,
+   "verdict": "inside",
+   "note": "against the best B300 layout: 2.7x"
+  },
+  {
+   "id": "P11",
+   "group": "H2",
+   "claim": "S / G0 tokens per joule at batch 1, no power management (every bank at full voltage, clocks running)",
+   "unit": "ratio",
+   "central": 3.5,
+   "low": 1.0,
+   "high": 8,
+   "observed": 1.23114,
+   "verdict": "inside",
+   "note": "against the best B300 layout: 1.2x"
+  },
+  {
+   "id": "P12",
+   "group": "H2",
+   "claim": "S at batch 1, unmanaged, against G0 at its own best batch: tokens per joule",
+   "unit": "ratio",
+   "central": 1.0,
+   "low": 0.3,
+   "high": 2.0,
+   "observed": 0.445314,
+   "verdict": "inside",
+   "note": "against the best B300 layout, the study's lead baseline: 0.13x, below the range"
+  },
+  {
+   "id": "P13",
+   "group": "H2",
+   "claim": "S / G0 tokens per joule, each at its best operating point",
+   "unit": "ratio",
+   "central": 6,
+   "low": 3,
+   "high": 15,
+   "observed": 14.7226,
+   "verdict": "inside",
+   "note": "against the best B300 layout: 4.4x"
+  },
+  {
+   "id": "P14",
+   "group": "H2",
+   "claim": "G0 / S cost per million tokens, each at its best operating point, NRE included",
+   "unit": "ratio",
+   "central": 3,
+   "low": 1,
+   "high": 8,
+   "observed": 6.40122,
+   "verdict": "inside",
+   "note": "against the best B300 layout: 1.8x"
+  },
+  {
+   "id": "P15",
+   "group": "H3",
+   "claim": "Synthesis: reloadable / fixed-weight cell area of the dot-product datapath (logic only, same function)",
+   "unit": "ratio",
+   "central": 1.8,
+   "low": 1.3,
+   "high": 3.0,
+   "observed": 1.12643,
+   "verdict": "below",
+   "note": "ASAP7, placed and routed; a lane whose weight never changes. With a row's weights time-shared through one lane the fixed variant is larger"
+  },
+  {
+   "id": "P16",
+   "group": "H3",
+   "claim": "Synthesis: reloadable / fixed-weight dynamic energy per dot product",
+   "unit": "ratio",
+   "central": 2.0,
+   "low": 1.3,
+   "high": 3.5,
+   "observed": 1.11946,
+   "verdict": "below",
+   "note": "same designs, gate-level activity on real tensors"
+  },
+  {
+   "id": "P17",
+   "group": "H3",
+   "claim": "System: S die count / F die count",
+   "unit": "ratio",
+   "central": 4,
+   "low": 2.5,
+   "high": 6,
+   "observed": 5.60215,
+   "verdict": "inside",
+   "note": ""
+  },
+  {
+   "id": "P18",
+   "group": "H3",
+   "claim": "System: F / S tokens per joule at the best operating point",
+   "unit": "ratio",
+   "central": 1.8,
+   "low": 1.2,
+   "high": 3,
+   "observed": 1.28684,
+   "verdict": "inside",
+   "note": ""
+  },
+  {
+   "id": "P19",
+   "group": "H3",
+   "claim": "F: distinct die designs needed for one model version",
+   "unit": "designs",
+   "central": 60,
+   "low": 40,
+   "high": 100,
+   "observed": 93,
+   "verdict": "inside",
+   "note": ""
+  },
+  {
+   "id": "P20",
+   "group": "H4",
+   "claim": "Ladder, S / best GPU per-user speed at batch 1, at 594B",
+   "unit": "ratio",
+   "central": 12,
+   "low": 5,
+   "high": 24,
+   "observed": 4.10951,
+   "verdict": "below",
+   "note": "best GPU layout at batch 1: 8x B300"
+  },
+  {
+   "id": "P21",
+   "group": "H4",
+   "claim": "Ladder, S / best GPU per-user speed at batch 1, hypothetical ~100B rung",
+   "unit": "ratio",
+   "central": 15,
+   "low": 7,
+   "high": 30,
+   "observed": 4.00006,
+   "verdict": "below",
+   "note": ""
+  },
+  {
+   "id": "P22",
+   "group": "H4",
+   "claim": "Ladder, S / best GPU per-user speed at batch 1, hypothetical ~30B rung",
+   "unit": "ratio",
+   "central": 25,
+   "low": 10,
+   "high": 50,
+   "observed": 3.2855,
+   "verdict": "below",
+   "note": ""
+  },
+  {
+   "id": "P23",
+   "group": "H4",
+   "claim": "Ladder, S / best GPU per-user speed at batch 1, hypothetical ~8B rung",
+   "unit": "ratio",
+   "central": 40,
+   "low": 15,
+   "high": 80,
+   "observed": 2.76509,
+   "verdict": "below",
+   "note": ""
+  },
+  {
+   "id": "P24",
+   "group": "H4",
+   "claim": "Ladder: largest rung at which S fits on 8 dies or fewer",
+   "unit": "billion parameters",
+   "central": 16,
+   "low": 8,
+   "high": 30,
+   "observed": 0.0,
+   "verdict": "below",
+   "note": "Inkling-shaped rungs only"
+  },
+  {
+   "id": "P25",
+   "group": "H4",
+   "claim": "Ladder: step in S / GPU tokens per joule (best operating point) between the last multi-board rung and the first rung that fits one package",
+   "unit": "ratio",
+   "central": 1.8,
+   "low": 1.2,
+   "high": 3,
+   "observed": null,
+   "verdict": "untestable",
+   "note": "untestable: no rung fits on eight dies"
+  },
+  {
+   "id": "P26",
+   "group": "H5",
+   "claim": "S / A per-user speed at 8K context, batch 1",
+   "unit": "ratio",
+   "central": 8,
+   "low": 4,
+   "high": 15,
+   "observed": 3.77448,
+   "verdict": "below",
+   "note": ""
+  },
+  {
+   "id": "P27",
+   "group": "H5",
+   "claim": "S / A per-user speed at 1M context, batch 1, both with the same HBM bandwidth for KV",
+   "unit": "ratio",
+   "central": 2.3,
+   "low": 1.3,
+   "high": 4,
+   "observed": 2.88186,
+   "verdict": "inside",
+   "note": "S's attention tile has 26 HBM stacks; A's four packages have their own"
+  },
+  {
+   "id": "P28",
+   "group": "H5",
+   "claim": "Context above which S with LPDDR-only KV is slower per user than A",
+   "unit": "tokens of context",
+   "central": 65000,
+   "low": 30000,
+   "high": 150000,
+   "observed": 146449.0,
+   "verdict": "inside",
+   "note": "with an LPDDR pool of 1.09 TB/s, chosen after the prediction, which assumed about 0.5 TB/s"
+  },
+  {
+   "id": "P29",
+   "group": "H5",
+   "claim": "G0 per-user speed at 1M context / at 8K context",
+   "unit": "ratio",
+   "central": 0.3,
+   "low": 0.15,
+   "high": 0.5,
+   "observed": 0.781206,
+   "verdict": "above",
+   "note": "on 4x B300: 0.83"
+  },
+  {
+   "id": "P30",
+   "group": "limits",
+   "claim": "Prefill: S / G0 prefill tokens per second per dollar of hardware",
+   "unit": "ratio",
+   "central": 0.6,
+   "low": 0.2,
+   "high": 1.5,
+   "observed": 0.911575,
+   "verdict": "inside",
+   "note": ""
+  },
+  {
+   "id": "P31",
+   "group": "limits",
+   "claim": "S / G0 tokens per joule at batch 256 and above, 32K context",
+   "unit": "ratio",
+   "central": 4,
+   "low": 2,
+   "high": 10,
+   "observed": 2.40866,
+   "verdict": "inside",
+   "note": "batch 256; GPU at the better of its two layouts"
+  },
+  {
+   "id": "P32",
+   "group": "method",
+   "claim": "Llama 3.1 8B on four architectures: how many of the four published speeds the simulator reproduces within 30% on the first pass",
+   "unit": "of 4",
+   "central": 2,
+   "low": 1,
+   "high": 3,
+   "observed": 0,
+   "verdict": "below",
+   "note": ""
+  },
+  {
+   "id": "P33",
+   "group": "method",
+   "claim": "GPU model, leave-one-out on the published Inkling 2 Small speeds: median absolute error",
+   "unit": "percent",
+   "central": 20,
+   "low": 10,
+   "high": 35,
+   "observed": 12.9164,
+   "verdict": "inside",
+   "note": "largest 64%"
+  },
+  {
+   "id": "P34",
+   "group": "method",
+   "claim": "Largest change in any headline ratio caused by the two adversarial reviews",
+   "unit": "ratio",
+   "central": 1.5,
+   "low": 1.2,
+   "high": 3,
+   "observed": 5.26638,
+   "verdict": "above",
+   "note": "after both reviews"
+  },
+  {
+   "id": "P35",
+   "group": "baseline",
+   "claim": "G0 (2x B300) tokens per joule at batch 1, GPU power at 60% of TDP",
+   "unit": "tokens per joule",
+   "central": 0.29,
+   "low": 0.2,
+   "high": 0.5,
+   "observed": 0.261517,
+   "verdict": "inside",
+   "note": "GPU power from the measured batch curve, not a flat 60%"
+  },
+  {
+   "id": "P36",
+   "group": "baseline",
+   "claim": "G0 (2x B300) cost per million tokens at batch 1, owned, fully utilized",
+   "unit": "USD per million tokens",
+   "central": 2.0,
+   "low": 1.4,
+   "high": 3.0,
+   "observed": 2.62835,
+   "verdict": "inside",
+   "note": ""
+  }
+ ],
+ "inside": 21,
+ "scored": 35,
+ "by_group": {
+  "baseline": {
+   "inside": 5,
+   "scored": 5
+  },
+  "H1": {
+   "inside": 1,
+   "scored": 3
+  },
+  "H2": {
+   "inside": 7,
+   "scored": 8
+  },
+  "H3": {
+   "inside": 3,
+   "scored": 5
+  },
+  "H4": {
+   "inside": 0,
+   "scored": 6
+  },
+  "H5": {
+   "inside": 2,
+   "scored": 4
+  },
+  "limits": {
+   "inside": 2,
+   "scored": 2
+  },
+  "method": {
+   "inside": 1,
+   "scored": 3
+  }
+ }
+}

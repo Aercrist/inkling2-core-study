@@ -1,0 +1,494 @@
+{% set g4 = H["g0"] %}{% set g2 = H["g0_x2"] %}{% set s = H["s"] %}{% set f = H["f"] %}{% set a4 = H["a_x4"] %}{% set g1 = H["g1_x4"] %}
+{% set RS = R["s/g0"] %}{% set RA = R["a_x4/g0"] %}{% set RF = R["f/g0"] %}{% set RG = R["g1_x4/g0_x4"] %}
+{% set LEAD = ["g0_x4", "g0_x2", "g1_x4", "a_x4", "s", "f"] %}
+# 04 · Results
+
+Every number on this page is **modeled** unless it says measured. The GPU rows (G0) are calibrated to
+published speeds ([06](06_simulator.md)); the other platforms are designs on paper, costed on the same
+operation graph. Published figures are quoted with their source key ([sources](sources.md)).
+
+Two operating points are used throughout, fixed before any simulation ([00](00_hypotheses.md)):
+
+- **Batch 1**: one request, 8K context, text only, DSpark on, the NVFP4 checkpoint.
+- **Best interactive point**: each platform at its own best batch, subject to at least
+  {{ n(I.headline.sla_tok_s_user) }} tok/s per user, at 32K context.
+
+The lead GPU baseline is **the best B300 deployment for each metric**: 2x, 4x or 8x B300 (an HGX
+node), whichever does best on that metric. For one user that is {{ g4.layout_names.batch1 }}; at the best interactive
+point it is {{ g4.layout_names.best_cost }}. Results against 2x B300 alone (the smallest deployment the model card
+allows) are larger and are given in section 13.
+
+## 1 · Headline
+
+| platform | batch 1: tok/s per user | tokens/J | $/M tokens | best tokens/J (batch, tok/s per user) | best $/M tokens (batch, tok/s per user) |
+|---|---|---|---|---|---|
+{% for k in ["g0_x4", "g0_x8", "g0_x2", "g1_x4", "a_x4", "s", "f"] %}
+| {{ H[k].label }} | {{ n(H[k].batch1.tok_s_user, -1) }} | {{ n(H[k].batch1.tokens_per_joule, 2) }} | {{ usd(H[k].batch1.usd_per_mtok, 2) }} | {{ n(H[k].best_energy.tokens_per_joule, 2) }} ({{ H[k].best_energy.batch }}, {{ n(H[k].best_energy.tok_s_user, 0) }}) | {{ usd(H[k].best_cost.usd_per_mtok, 3) }} ({{ H[k].best_cost.batch }}, {{ n(H[k].best_cost.tok_s_user, 0) }}) |
+{% endfor %}
+
+Cost is for owned hardware over {{ G_HW.cost.lifetime_years }} years, fully used, with electricity at
+{{ usd(G_HW.cost.usd_per_kwh, 4) }}/kWh and a PUE of {{ G_HW.cost.pue }}; chips include their share of
+design cost (NRE). Section 12 varies all of it.
+
+Against G0, each metric against the best B300 layout for it (G1, the software counterfactual, against 4x B300):
+
+| | speed, batch 1 | tokens/J, batch 1 | tokens/J, best point | cost per token, best point |
+|---|---|---|---|---|
+| G1 · same 4x B300, dataflow software | {{ x(RG.speed_batch1) }} | {{ x(RG.tokens_per_joule_batch1) }} | {{ x(RG.tokens_per_joule_best) }} | {{ x(RG.cost_best) }} |
+| A · decode chip on HBM | {{ x(RA.speed_batch1) }} | {{ x(RA.tokens_per_joule_batch1) }} | {{ x(RA.tokens_per_joule_best) }} | {{ x(RA.cost_best) }} |
+| **S · reloadable weights on the chip** | **{{ x(RS.speed_batch1) }}** | **{{ x(RS.tokens_per_joule_batch1) }}** | **{{ x(RS.tokens_per_joule_best) }}** | **{{ x(RS.cost_best) }}** |
+| F · fixed weights (comparison point) | {{ x(RF.speed_batch1) }} | {{ x(RF.tokens_per_joule_batch1) }} | {{ x(RF.tokens_per_joule_best) }} | {{ x(RF.cost_best) }} |
+
+With every uncertain input varied together ({{ MC.n }} draws, section 12), S against the best B300 layout for each metric:
+
+| | 5th percentile | median | 95th percentile | share of draws above 1x |
+|---|---|---|---|---|
+| speed, batch 1 | {{ x(MC.speed_batch1.p05) }} | {{ x(MC.speed_batch1.median) }} | {{ x(MC.speed_batch1.p95) }} | {{ pct(MC.speed_batch1.share_above_1) }} |
+| tokens/J, batch 1 | {{ x(MC.tokens_per_joule_batch1.p05) }} | {{ x(MC.tokens_per_joule_batch1.median) }} | {{ x(MC.tokens_per_joule_batch1.p95) }} | {{ pct(MC.tokens_per_joule_batch1.share_above_1) }} |
+| tokens/J, best point | {{ x(MC.tokens_per_joule_best.p05) }} | {{ x(MC.tokens_per_joule_best.median) }} | {{ x(MC.tokens_per_joule_best.p95) }} | {{ pct(MC.tokens_per_joule_best.share_above_1) }} |
+| cost per token, best point | {{ x(MC.cost_best.p05) }} | {{ x(MC.cost_best.median) }} | {{ x(MC.cost_best.p95) }} | {{ pct(MC.cost_best.share_above_1) }} |
+
+**How to read this.**
+
+- **Lead with the medians.** The central case is one setting of {{ U.params | length }} uncertain inputs. The medians
+  of the joint draws are {{ x(MC.speed_batch1.median) }} in speed, {{ x(MC.tokens_per_joule_best.median) }} in tokens per joule and
+  {{ x(MC.cost_best.median) }} in cost.
+- **Speed and energy are the result. Cost is not.** At {{ n(I.headline.sla_tok_s_user) }} tok/s per user and
+  {{ n(I.fleet.demand_tokens_per_day / 1e12, 0) }} trillion tokens a day, S's decode cost is about level with the GPUs', and the simpler
+  HBM chip (A) is cheaper than both ({{ x(RA.cost_best) }}). S's cost case depends on demand (section 18), on how fast
+  "interactive" has to be (section 17) and on the size of its attention tile (section 19).
+- **These cost figures are decode only.** With prefill counted on the published agentic workload the
+  picture changes again (section 16).
+- **Against the best published number.** The modeled GPU baseline for one user ({{ g4.layout_names.batch1 }}) is {{ n(g4.batch1.tok_s_user, -1) }} tok/s. The best
+  published single-user figure on any GPU layout is {{ n(I.headline.best_published_single_user.tok_s, 0) }} tok/s on 4x GB200 (measured; vllm-blog);
+  against that, S is {{ x(I.headline.best_published_single_user.s_over_published) }}.
+- **Our prior** was a gain of about 2-10x for a model this size. Speed and energy are inside it; cost is below it.
+{% if RV %}
+- **Before the adversarial reviews** ([05](05_limitations.md)) the same row read {{ x(RV.headline_change["s/g0:speed_batch1"].before) }} in speed,
+  {{ x(RV.headline_change["s/g0:tokens_per_joule_best"].before) }} in tokens per joule and {{ x(RV.headline_change["s/g0:cost_best"].before) }} in cost.
+{% endif %}
+
+## 2 · Where the gain comes from
+
+Each step changes one thing.
+
+| step | lever | tok/s per user, batch 1 | speed against the step before | tokens/J at best point, against G0 | cost at best point, against G0 |
+|---|---|---|---|---|---|
+{% for st in U.ablation.steps %}
+| {{ st.step }} | {{ st.lever }} | {{ n(st.tok_s_user_batch1, -1) }} | {{ x(st.speed_vs_previous, 2) }} | {{ x(st.energy_best_vs_g0) }} | {{ x(st.cost_best_vs_g0) }} |
+{% endfor %}
+
+![ablation](../results/fig_ablation.png)
+
+- **Software alone is worth {{ x(RG.speed_batch1) }} at batch 1.** A single request on today's engines
+  spends {{ pct(g4.time_by_cause_batch1_ms.overhead / (g4.batch1.step_ms)) }} of each step waiting on
+  kernel launches (section 3). The same GPUs with a compiled dataflow schedule recover most of that.
+  This is the software counterfactual, and silicon is measured against it too.
+- **A chip on the same HBM is no faster than that software at batch 1
+  ({{ x(R["a_x4/g1_x4"].speed_batch1, 2) }}).** Both are bound by reading weights out of HBM, and the
+  chip is charged the same per-operation latency as S. Its gain is in tokens per joule and cost at
+  high batch ({{ x(RA.tokens_per_joule_best) }} and {{ x(RA.cost_best) }}), because it draws far less
+  power and costs less than a GPU for the same memory.
+- **Moving the weights onto the chip is the large step: {{ x(U.ablation.steps[3].speed_vs_previous) }}.**
+  Nothing is streamed; each weight sits next to its multiplier.
+- **Fixing the weights in the masks adds {{ x(U.ablation.steps[4].speed_vs_previous) }} more**, at the
+  price of a new mask set for every model version (section 7).
+
+A newer process is not where the gain comes from. Moving S from N4P-class to N3-class changes speed by
+{{ x(U.ablation.process_node.speed, 2) }}, tokens per joule by {{ x(U.ablation.process_node.tokens_per_joule_best, 2) }}
+and cost by {{ x(U.ablation.process_node.cost_best, 2) }} ({{ U.ablation.process_node.assumed }}). The
+B300 is built on TSMC 4NP, so N4P-class is the like-for-like comparison and is the one reported.
+
+## 3 · Where the time and the energy go at batch 1
+
+Time per decode step (a step emits {{ n(H.s.batch1.tok_s_user * H.s.batch1.step_ms / 1000, 1) }} tokens on average):
+
+| platform | step | kernel launches and waits | memory | arithmetic | collectives and hops |
+|---|---|---|---|---|---|
+| G0 · {{ g4.layout_names.batch1 }} | {{ n(g4.batch1.step_ms, 2) }} ms | {{ n(g4.time_by_cause_batch1_ms.overhead, 2) }} ms | {{ n(g4.time_by_cause_batch1_ms.memory, 2) }} ms | {{ n(g4.time_by_cause_batch1_ms.compute, 2) }} ms | {{ n(g4.time_by_cause_batch1_ms.collective, 2) }} ms |
+| A · 4 packages | {{ n(a4.batch1.step_ms, 2) }} ms | {{ n(a4.time_by_cause_batch1_ms.overhead, 2) }} ms | {{ n(a4.time_by_cause_batch1_ms.memory, 2) }} ms | {{ n(a4.time_by_cause_batch1_ms.compute, 2) }} ms | {{ n(a4.time_by_cause_batch1_ms.collective, 2) }} ms |
+
+| platform | step | weight operations (bank passes and per-operation time) | attention: KV fetch | attention: arithmetic | hops between tiles | fixed |
+|---|---|---|---|---|---|---|
+| S | {{ n(s.batch1.step_ms, 3) }} ms | {{ n(s.time_by_cause_batch1_ms.scan, 3) }} ms | {{ n(s.time_by_cause_batch1_ms.attn_fetch, 3) }} ms | {{ n(s.time_by_cause_batch1_ms.attn_compute, 3) }} ms | {{ n(s.time_by_cause_batch1_ms.hop, 3) }} ms | {{ n(s.time_by_cause_batch1_ms.fixed, 3) }} ms |
+
+On the GPU a single request is bound by launches and by streaming weights, not by arithmetic
+({{ pct(g4.time_by_cause_batch1_ms.compute / g4.batch1.step_ms, 1) }} of the step). TokenSpeed's own
+description agrees: "single-user decode is bound by kernel launches and dependency waits rather than
+math" (measured; tokenspeed-blog).
+
+Energy per token at batch 1:
+
+{% set se = s.energy_parts_batch1 %}{% set st_total = se.values() | sum %}
+| S, joules per token | |
+|---|---|
+| reading weight banks | {{ n(se.storage_read, 3) }} |
+| arithmetic | {{ n(se.compute, 3) }} |
+| KV memory, active | {{ n(se.kv_memory, 4) }} |
+| logic and clock, static | {{ n(se.static_logic_and_clock, 3) }} |
+| links, idle | {{ n(se.static_links_idle, 3) }} |
+| SRAM leakage (idle banks in retention) | {{ n(se.static_storage_leakage, 3) }} |
+| KV memory and host, static | {{ n(se.static_kv_memory + se.static_host, 3) }} |
+| power delivery loss | {{ n(se.power_delivery_loss, 3) }} |
+| **total** | **{{ n(st_total, 3) }}** ({{ n(1 / st_total, 2) }} tokens/J) |
+
+The GPU spends {{ n(g4.energy_parts_batch1.board + g4.energy_parts_batch1.host, 2) }} J per token at
+batch 1 ({{ n(g4.energy_parts_batch1.board, 2) }} J in the GPUs, {{ n(g4.energy_parts_batch1.host, 2) }} J
+in the host). At batch 1, S is dominated by static power: a machine of {{ I.designs.s.area.dies }} dies
+serving one request. That is why power management decides the batch-1 energy result (section 8).
+
+![where energy goes](../results/fig_energy.png)
+
+## 4 · The frontier: speed per user against throughput
+
+32K context, speculation on.
+
+{% set F32 = I.frontier.by_context["32768"] %}
+| batch | G0 · 4x B300: tok/s per user | total tok/s | A · 4 packages: per user | total | S: per user | total | F: per user | total |
+|---|---|---|---|---|---|---|---|---|
+{% for b in I.frontier.batches %}
+{% if b in [1, 8, 64, 256, 1024] %}
+{% set i = loop.index0 %}
+| {{ b }} | {{ n(F32.g0_x4[i].tok_s_user, 0) }} | {{ n(F32.g0_x4[i].tok_s, -2) }} | {{ n(F32.a_x4[i].tok_s_user, 0) }} | {{ n(F32.a_x4[i].tok_s, -2) }} | {{ n(F32.s[i].tok_s_user, 0) }} | {{ n(F32.s[i].tok_s, -2) }} | {{ n(F32.f[i].tok_s_user, 0) }} | {{ n(F32.f[i].tok_s, -2) }} |
+{% endif %}
+{% endfor %}
+
+![frontier](../results/fig_frontier.png)
+
+Three things to read from it.
+
+1. **The GPU's weak spot is the interactive point, not peak throughput.** Once more than a few dozen
+   requests are in flight, every step touches every expert, so every step streams the whole
+   {{ n(I.designs.s.area.resident_gb, 0) }} GB checkpoint through HBM. That sets a floor on the step
+   time, and a floor on step time is a ceiling on speed per user. At {{ n(I.headline.sla_tok_s_user) }}
+   tok/s per user the GPUs stop at batch {{ g4.best_cost.batch }}.
+2. **The model agrees with the published throughput once prefill is counted.** With nothing else on the
+   GPUs, G0 gives {{ n(g4.best_cost.tok_s / g4.best_cost.chips, -1) }} output tok/s per GPU at that point. vLLM publishes about
+   {{ n(M.vllm_gb200_tp8_32k.value) }} per GPU on GB200 at the same 32K and 100 tok/s per user (measured; vllm-blog), with every
+   session also prefilling about 3K new tokens a turn on the same GPUs. The fit includes that prefill
+   ([06](06_simulator.md)).
+3. **S and F run into attention, not weights.** Their total throughput flattens near
+   {{ n(F32.s[-1].tok_s, -3) }} tok/s because every request's full-attention layers share one attention
+   tile. Past that point more weight silicon buys nothing; more attention silicon would. At high batch
+   S and F deliver nearly the same throughput for that reason.
+
+## 5 · Long context
+
+One request, speculation on.
+
+| context | G0 · 4x B300 | A · 4 packages | S | F | S / A |
+|---|---|---|---|---|---|
+{% for c in I.context.contexts %}
+{% set i = loop.index0 %}
+| {{ n(c) }} | {{ n(I.context.rows.g0_x4[i].tok_s_user, 0) }} | {{ n(I.context.rows.a_x4[i].tok_s_user, 0) }} | {{ n(I.context.rows.s[i].tok_s_user, 0) }} | {{ n(I.context.rows.f[i].tok_s_user, 0) }} | {{ x(I.context.rows.s[i].tok_s_user / I.context.rows.a_x4[i].tok_s_user) }} |
+{% endfor %}
+
+![context sweep](../results/fig_context.png)
+
+The designs converge as context grows: S is {{ x(I.context.s_over_a.at_8k) }} faster than A at 8K and
+{{ x(I.context.s_over_a.at_1m) }} at 1M tokens. At 1M tokens a step reads
+{{ gb(I.context.kv[-1].kv_full_bytes + I.context.kv[-1].kv_draft_bytes, 0) }} of KV cache
+({{ pct(I.context.kv[-1].kv_share_of_bytes) }} of all bytes a GPU step moves), and that traffic is the
+same on every platform. A chip with its weights on-die still needs fast KV memory. With the KV cache
+in LPDDR instead of HBM (a pool of {{ n(I.kv_memory.lpddr_pool_bytes_per_s / 1e12, 2) }} TB/s against
+{{ n(I.kv_memory.hbm_pool_bytes_per_s / 1e12, 0) }} TB/s; pool size is an assumption), S falls behind A
+above about {{ n(I.kv_memory.crossover_context_vs_a, -3) }} tokens of context and behind the GPUs above
+about {{ n(I.kv_memory.crossover_context_vs_g0, -3) }}.
+
+The published GPU figures fall with context too: vLLM's throughput per GPU drops from about
+{{ n(M.vllm_gb200_tp8_32k.value) }} at 32K to about {{ n(M.vllm_gb200_tp8_256k.value) }} at 256K
+(measured; vllm-blog).
+
+## 6 · Prefill
+
+Prefill over {{ n(I.prefill.new_tokens) }} new tokens on top of a cached {{ n(I.prefill.context) }}-token prefix, each platform at the
+number of prompts in flight that makes its prefill cheapest (1, 4, 16 or 48 tried). A pipelined design
+like S needs several prompts in flight to use all its layers; with one prompt, all but one of its
+{{ I.designs.s.area.tiles }} tiles sit idle.
+
+| platform | prompts in flight | one prompt alone | prefill tok/s | $/M prefill tokens | one prompt alone: $/M |
+|---|---|---|---|---|---|
+{% for k in ["g0_x4", "g0_x8", "g1_x4", "a_x4", "s", "f"] %}
+| {{ I.prefill.rows[k].label }} | {{ I.prefill.rows[k].prompts_in_flight }} | {{ n(I.prefill.rows[k].ms_one_prompt, 0) }} ms | {{ n(I.prefill.rows[k].tok_s, -2) }} | {{ usd(I.prefill.rows[k].usd_per_mtok_prefill, 4) }} | {{ usd(I.prefill.rows[k].usd_per_mtok_prefill_one_prompt, 4) }} |
+{% endfor %}
+
+Prefill is where S's gain is smallest: at its best concurrency it prefills at {{ x(I.prefill.s_over_g0_cost, 2) }} the GPUs' cost per
+token. The HBM chip is the cheapest at prefill ({{ x(I.prefill.a_over_g0_cost, 1) }} the GPUs). Prefill is many tokens in parallel,
+which GPUs and HBM chips handle well. On the agentic workload the engines publish
+({{ n(I.prefill.prefill_tokens_per_output_token, 0) }} new prompt tokens per output token after cache hits), GPU prefill adds about
+{{ usd(I.prefill.gpu_pool_adder_usd_per_mtok_output, 2) }} per million output tokens. Our first version ran S's prefill one prompt at a time and
+concluded it should not prefill at all; the second review corrected that ([05](05_limitations.md)).
+
+## 7 · What reloadable weights cost: S against F
+
+| | S · reloadable | F · fixed | S / F |
+|---|---|---|---|
+| dies ({{ n(I.designs.s.area.die_mm2, 0) }} mm² each) | {{ I.designs.s.area.dies }} | {{ I.designs.f.area.dies }} | {{ x(I.designs.s_over_f.dies, 2) }} |
+| manufacturing cost per system | {{ usd(I.designs.s.cost.manufacturing, -3) }} | {{ usd(I.designs.f.cost.manufacturing, -3) }} | {{ x(I.designs.s_over_f.manufacturing_usd, 2) }} |
+| tok/s per user, batch 1 | {{ n(s.batch1.tok_s_user, -1) }} | {{ n(f.batch1.tok_s_user, -1) }} | {{ x(s.batch1.tok_s_user / f.batch1.tok_s_user, 2) }} |
+| tokens/J, batch 1 | {{ n(s.batch1.tokens_per_joule, 2) }} | {{ n(f.batch1.tokens_per_joule, 2) }} | {{ x(s.batch1.tokens_per_joule / f.batch1.tokens_per_joule, 2) }} |
+| tokens/J, best point | {{ n(s.best_energy.tokens_per_joule, 2) }} | {{ n(f.best_energy.tokens_per_joule, 2) }} | {{ x(s.best_energy.tokens_per_joule / f.best_energy.tokens_per_joule, 2) }} |
+| $/M tokens, best point | {{ usd(s.best_cost.usd_per_mtok, 3) }} | {{ usd(f.best_cost.usd_per_mtok, 3) }} | {{ x(s.best_cost.usd_per_mtok / f.best_cost.usd_per_mtok, 2) }} |
+| distinct die designs | {{ I.designs.s.cost.distinct_die_designs }} | {{ I.designs.f.cost.distinct_die_designs }} | |
+| masks to change for a new model version | none: load new weights | {{ usd(I.designs.f.cost.unique_mask_usd / 1e6, 1) }}M of unique mask layers | |
+
+Reloadability costs {{ x(I.designs.s_over_f.dies, 1) }} the silicon and {{ x(s.best_cost.usd_per_mtok / f.best_cost.usd_per_mtok, 1) }} in decode cost per token.
+At a busy operating point it costs {{ x(f.best_energy.tokens_per_joule / s.best_energy.tokens_per_joule, 2) }} in tokens per joule.
+
+**The speed difference in the table is not a cost of reloadability.** S takes its time per weight
+operation from a published wafer-scale SRAM machine; F takes its from a published fixed-weight chip. The
+synthesized fixed-weight datapath closes timing at the same clock as the reloadable one (its best period
+is slightly slower), so on S's own clock and latency F would be no faster. The {{ x(f.batch1.tok_s_user / s.batch1.tok_s_user, 1) }} is a difference
+between two vendors' machines.
+
+What it buys: one die design instead of {{ I.designs.f.cost.distinct_die_designs }}, and a new model
+version, a fine-tune or a different model of the same family by loading weights, not by taping out.
+The fixed design here also assumes that a published single-die result at 8B parameters (measured;
+taalas-hc1) carries to a model 74x larger on {{ I.designs.f.area.dies }} dies; the only public figure
+for a model of this class on that approach is the vendor's own simulation, not a measurement.
+[07](07_silicon.md) gives the synthesized datapath behind the area and energy ratio.
+
+## 8 · Power management decides the batch-1 energy result
+
+S holds {{ n(I.designs.s.area.resident_gb, 0) }} GB of weights and a single token touches
+{{ pct(W.touched_per_token.total / W.bytes.total_with_draft, 1) }} of them.
+
+| S at batch 1 | system power | tokens/J | against G0 at batch 1 | against G0 at its best batch |
+|---|---|---|---|---|
+| idle banks in retention, idle lanes clock-gated | {{ n(I.power_management.managed.watts, -1) }} W | {{ n(I.power_management.managed.tokens_per_joule, 2) }} | {{ x(I.power_management.managed.over_g0_batch1) }} | {{ x(I.power_management.managed.over_g0_best_batch, 2) }} |
+| everything at full voltage, clocks running | {{ n(I.power_management.unmanaged.watts, -1) }} W | {{ n(I.power_management.unmanaged.tokens_per_joule, 2) }} | {{ x(I.power_management.unmanaged.over_g0_batch1) }} | {{ x(I.power_management.unmanaged.over_g0_best_batch, 2) }} |
+
+Serving one request, S draws kilowatts to keep {{ I.designs.s.area.dies }} dies ready. With power management it
+reaches {{ x(I.power_management.managed.over_g0_best_batch, 2) }} of the tokens per joule of a GPU cluster running at its best batch,
+while serving that request {{ x(RS.speed_batch1) }} faster; without it, {{ x(I.power_management.unmanaged.over_g0_best_batch, 2) }}.
+The efficient way to run S is busy (section 4).
+The managed figure assumes a {{ n(S_HW.wake_latency * 1e9, 0) }} ns
+wake from retention (assumption); SRAM leakage at operating temperature has no public source at this node and is
+swept over a 20x range (section 12).
+
+## 9 · Down the ladder
+
+Thinking Machines describes Inkling 2 Small as "part of a ladder of models" (tml-news). No smaller
+rung is public, so the middle rungs here are **hypothetical**: Inkling 2 Small's architecture and
+ratios, scaled down. Each rung is compared against the best published GPU setup for its size.
+
+| rung | parameters | GPUs | G0 tok/s per user | S dies | S tok/s per user | S speed | S tokens/J, best | S cost, best | A speed | F speed |
+|---|---|---|---|---|---|---|---|---|---|---|
+{% for k, r in I.ladder.items() %}
+| {{ r.name }} | {{ bn(r.params, 1) }} | {{ r.n_gpu }} | {{ n(r.platforms.G0.batch1.tok_s_user, -1) }} | {{ r.platforms.S.dies }} | {{ n(r.platforms.S.batch1.tok_s_user, -1) }} | {{ x(r.gain.S.speed_batch1) }} | {{ x(r.gain.S.tokens_per_joule_best) }} | {{ x(r.gain.S.cost_best) }} | {{ x(r.gain.A.speed_batch1) }} | {{ x(r.gain.F.speed_batch1) }} |
+{% endfor %}
+
+![ladder](../results/fig_ladder.png)
+
+**This ran against our hypothesis.** We predicted the gain would grow as the model shrinks (H4). For
+Inkling-shaped rungs it shrinks: {{ x(I.ladder.inkling2_small.gain.S.speed_batch1) }} at 594B down to
+{{ x(I.ladder.rung_8b.gain.S.speed_batch1) }} at about 8B. The reason is the architecture. A sparse
+mixture-of-experts model with a draft model reads a small fraction of its weights per token, so a
+small rung leaves a GPU with very little to stream, and the GPU gets fast: G0 goes from
+{{ n(I.ladder.inkling2_small.platforms.G0.batch1.tok_s_user, -1) }} to
+{{ n(I.ladder.rung_8b.platforms.G0.batch1.tok_s_user, -1) }} tok/s per user. S gets faster too, but it
+is already near its per-operation floor.
+
+Cost runs the same way, more sharply. At the central demand, design cost alone is
+{{ usd(I.demand.nre_usd_per_mtok_at_central_demand, 3) }} per million tokens. A small model on GPUs already costs about that much to serve, so for the
+smaller rungs S's cost gain falls below 1 ({{ x(I.ladder.rung_8b.gain.S.cost_best, 2) }} at about 8B).
+
+For a **dense** model the published record points the other way. Llama 3.1 8B is the one model with
+published speeds on four memory architectures (measured by others; conditions differ, see [06](06_simulator.md)):
+
+| platform | published tok/s | against the GPU | source |
+|---|---|---|---|
+{% for k, r in I.dense_8b.rows.items() %}
+| {{ r.label }} | {{ n(r.published, 0) }} | {{ x(r.over_gpu) }} | {{ r.src }} ({{ r.who }}) |
+{% endfor %}
+
+A dense model reads every weight for every token, so the GPU has no sparsity to hide behind. The
+ladder answer therefore depends on what the small rungs look like: for sparse, speculative models like
+this one the gain narrows; for dense ones the published machines show it widening.
+
+## 10 · Routing skew
+
+No routing traces for Inkling 2 Small are public, so expert popularity is swept across the range
+measured on four open mixture-of-experts models (sources: routing-skew).
+
+| case | weights read per GPU step | G0 tok/s per user | S tok/s per user | S / G0 speed | S / G0 tokens/J, best |
+|---|---|---|---|---|---|
+{% for c in I.routing.cases %}
+| {{ c.case }} | {{ n(c.step_gb, 1) }} GB | {{ n(c.platforms.g0_x4.tok_s_user_batch1, -1) }} | {{ n(c.platforms.s.tok_s_user_batch1, -1) }} | {{ x(c.s_over_g0.speed_batch1) }} | {{ x(c.s_over_g0.tokens_per_joule_best) }} |
+{% endfor %}
+
+Skew and locality help the GPU (fewer distinct experts to stream per step) and leave S unchanged at
+batch 1. The headline uses uniform routing with no locality, the case least favourable to the GPU; the
+last row is the case most favourable to it.
+
+## 11 · Fine-tunes: many LoRA adapters on one base model
+
+Thinking Machines' fine-tuning service trains LoRA adapters; the recipes serve attention-only adapters
+on the quantized checkpoint (vllm-recipe). At rank {{ I.lora.rank }}:
+
+| adapter covers | parameters | bytes | share of the model | SRAM on S | adapters per die |
+|---|---|---|---|---|---|
+{% for k, v in I.lora.variants.items() %}
+| {{ k }} | {{ n(v.params / 1e6, 1) }}M | {{ mb(v.bytes) }} | {{ pct(v.share_of_model_params, 3) }} | {{ n(v.sram_mm2, 0) }} mm² | {{ n(v.adapters_per_die, 1) }} |
+{% endfor %}
+
+An attention-only adapter is {{ mb(I.lora.variants["attention only"].bytes) }}. One hundred of them
+resident at once add about {{ n(I.lora.attention_only_100_adapters_extra_dies, 0) }} dies to S's
+{{ I.lora.s_dies }}. On a fixed-weight design the base model is in the masks, so adapters need a
+reloadable side memory in any case. Adapters that also cover the experts are
+{{ n(I.lora.variants["attention, output head and experts"].bytes / 1e9, 1) }} GB each and are not
+servable on the quantized checkpoint today.
+
+## 12 · Uncertainty
+
+{{ U.params | length }} inputs each have a low and a high value with a reason ([06](06_simulator.md)).
+The tornado moves one at a time; the Monte Carlo draws all together.
+
+![tornado](../results/fig_tornado.png)
+
+Largest single movers of S against the GPUs:
+
+| headline | central | moved most by |
+|---|---|---|
+| speed, batch 1 | {{ x(TB.speed_batch1) }} | {{ TB.top_speed_batch1[:3] | join("; ") }} |
+| tokens/J, batch 1 | {{ x(TB.tokens_per_joule_batch1) }} | {{ TB.top_tokens_per_joule_batch1[:3] | join("; ") }} |
+| tokens/J, best point | {{ x(TB.tokens_per_joule_best) }} | {{ TB.top_tokens_per_joule_best[:3] | join("; ") }} |
+| cost per token, best point | {{ x(TB.cost_best) }} | {{ TB.top_cost_best[:3] | join("; ") }} |
+
+{% set tp = (U.tornado.rows | selectattr("parameter", "equalto", "S per-operation latency") | first) %}
+{% set ta = (U.tornado.rows | selectattr("parameter", "equalto", "S attention tile rate") | first) %}
+{% set td = (U.tornado.rows | selectattr("parameter", "equalto", "fleet demand (tokens per day)") | first) %}
+- **Speed rests on the time per weight operation.** We did not invent it: S takes the whole time per
+  operation that a published wafer-scale SRAM machine shows on Llama 3.1 8B ({{ n(CL.op_total_s_us, 2) }} µs;
+  [06](06_simulator.md)). With a published many-chip SRAM system's ({{ n(CL.op_total_groq_us, 1) }} µs) the speed gain is
+  {{ x(tp.speed_batch1_high) }}; with only half again S's own bank pass ({{ n(tp.low * 1e6, 1) }} µs) it is {{ x(tp.speed_batch1_low) }}.
+- **Cost rests on demand.** At {{ n(td.low / 1e12, 1) }} trillion tokens a day the cost gain is {{ x(td.cost_best_low, 2) }}; at
+  {{ n(td.high / 1e12, 0) }} trillion it is {{ x(td.cost_best_high, 2) }}.
+
+![Monte Carlo](../results/fig_monte_carlo.png)
+
+The cost gain is above 1 in {{ pct(MC.cost_best.share_above_1) }} of draws. The speed gain is above 10x in
+{{ pct(MC.speed_batch1.share_above_10) }} of them.
+
+## 13 · Against the smallest GPU deployment
+
+The model card's minimum is 2x B300. It is slower per user and has a weak interactive point (it reaches
+{{ n(I.headline.sla_tok_s_user) }} tok/s per user only up to batch {{ g2.best_cost.batch }}), so ratios
+against it are larger. We report them for completeness and do not lead with them.
+
+{% set RS2 = R["s/g0_x2"] %}
+| S against G0 on | speed, batch 1 | tokens/J, batch 1 | tokens/J, best point | cost per token, best point |
+|---|---|---|---|---|
+| best B300 layout per metric (lead) | {{ x(RS.speed_batch1) }} | {{ x(RS.tokens_per_joule_batch1) }} | {{ x(RS.tokens_per_joule_best) }} | {{ x(RS.cost_best) }} |
+| 2x B300 | {{ x(RS2.speed_batch1) }} | {{ x(RS2.tokens_per_joule_batch1) }} | {{ x(RS2.tokens_per_joule_best) }} | {{ x(RS2.cost_best) }} |
+
+## 14 · Where purpose-built silicon does not win
+
+- **Cost at ordinary interactive speed**: at {{ n(I.headline.sla_tok_s_user) }} tok/s per user S's decode cost gain is {{ x(RS.cost_best) }}
+  centrally and {{ x(MC.cost_best.median, 2) }} at the median; with a seller's margin of 50% it is {{ x(I.margin.rows[-1].cost_gain, 2) }} (section 19).
+- **Prefill**: at its best concurrency S prefills at {{ x(I.prefill.s_over_g0_cost, 2) }} the GPUs' cost per token, and the HBM chip at
+  {{ x(I.prefill.a_over_g0_cost, 1) }} (section 6).
+- **Low demand**: below about {{ n(I.demand.breakeven_tokens_per_day.s / 1e12, 1) }} trillion tokens a day S does not pay back its design cost (section 18).
+- **Small models**: the speed gain narrows to {{ x(I.ladder.rung_8b.gain.S.speed_batch1) }} at about 8B and the cost gain falls below 1 (section 9).
+- **Long context**: the lead over an HBM chip shrinks from {{ x(I.context.s_over_a.at_8k) }} to {{ x(I.context.s_over_a.at_1m) }}, and with cheap KV
+  memory S loses outright above about {{ n(I.kv_memory.crossover_context_vs_a, -3) }} tokens (section 5).
+- **A single request**: {{ x(I.power_management.managed.over_g0_best_batch, 2) }} of a busy GPU cluster's tokens per joule even with power
+  management, {{ x(I.power_management.unmanaged.over_g0_best_batch, 2) }} without (section 8).
+- **Software**: {{ x(RG.speed_batch1) }} of the batch-1 speed gain is available on the GPUs already installed (section 2).
+- **Anything this study did not model**: vision input, reasoning-length variation, failures, and the
+  years it takes to build a chip ([05](05_limitations.md)).
+
+## 15 · Predictions against results
+
+{{ PR.inside }} of {{ PR.scored }} scored predictions landed inside their pre-registered range. The
+full table is in [00](00_hypotheses.md). The misses that matter:
+
+{% for r in PR.rows if r.verdict in ["above", "below"] %}
+- **{{ r.id }}** {{ r.claim }}: predicted {{ sig(r.central) }} ({{ sig(r.low) }} to {{ sig(r.high) }}), observed {{ sig(r.observed) }}.{% if r.note %} ({{ r.note }}){% endif %}
+
+{% endfor %}
+
+## 16 · End to end: decode and prefill together
+
+The published agentic workload has about {{ n(I.end_to_end.prefill_tokens_per_output_token, 0) }} new prompt tokens for every output token, after cache hits
+(vllm-blog). Each platform's decode cost at its best interactive point, plus the prefill those output
+tokens need, at full use:
+
+{% set E = I.end_to_end.rows %}
+| | decode, $/M output | prefill, $/M output | **total** | prefill's share | cost against G0 | tokens/J against G0 |
+|---|---|---|---|---|---|---|
+{% for k in ["g0", "g1_x4", "a_x4", "s", "f", "s_decode_gpu_prefill", "s_decode_a_prefill"] %}
+| {{ E[k].label }} | {{ usd(E[k].decode_usd_per_mtok, 3) }} | {{ usd(E[k].prefill_usd_per_mtok_output, 3) }} | **{{ usd(E[k].usd_per_mtok_output, 3) }}** | {{ pct(E[k].prefill_share_of_cost) }} | {{ x(E[k].cost_gain, 2) }} | {{ x(E[k].tokens_per_joule_gain, 2) }} |
+{% endfor %}
+
+- **S can do its own prefill.** At {{ I.prefill.rows.s.prompts_in_flight }} prompts in flight it is {{ x(E.s.cost_gain, 2) }} lower in cost and {{ x(E.s.tokens_per_joule_gain, 2) }} better in
+  tokens per joule than GPUs end to end.
+- **The HBM chip is the cheapest whole system**: {{ x(E.a_x4.cost_gain, 2) }} lower cost than GPUs end to end.
+- **S for decode with HBM chips for prefill** is {{ x(E.s_decode_a_prefill.cost_gain, 2) }} lower in cost and {{ x(E.s_decode_a_prefill.tokens_per_joule_gain, 2) }} better in tokens
+  per joule than GPUs, and gives each user {{ n(H.s.best_cost.tok_s_user, -1) }} tok/s where the others give {{ n(I.headline.sla_tok_s_user) }}.
+
+Prefill-heavy workloads are where on-chip weights help least; pairing S with HBM chips for prefill
+is somewhat cheaper than S alone.
+
+## 17 · How fast is "interactive"?
+
+The headline uses {{ n(I.headline.sla_tok_s_user) }} tok/s per user, vLLM's convention. That threshold never binds S, which
+serves every user several times faster than that at any batch it can hold, and always binds the GPUs.
+The gain therefore depends on where the threshold is put:
+
+| every user gets at least | GPUs: best layout for cost, batch | A: tokens/J, cost | S: tokens/J, cost | F: tokens/J, cost |
+|---|---|---|---|---|
+{% for r in I.thresholds.rows %}
+| {{ n(r.tok_s_user_min, 0) }} tok/s | {{ r.gpu_layout }}, {{ r.gpu_batch }}{{ "" if r.gpu_meets else " (not reached)" }} | {{ x(r.a_x4.tokens_per_joule) }}, {{ x(r.a_x4.cost) }} | {{ x(r.s.tokens_per_joule) }}, {{ x(r.s.cost) }} | {{ x(r.f.tokens_per_joule) }}, {{ x(r.f.cost) }} |
+{% endfor %}
+
+At 25 to 100 tok/s per user S's decode cost is within a factor of two of the GPUs'. As the threshold
+rises the GPUs hold fewer users each, move to eight GPUs, and S's cost advantage grows to
+{{ x(I.thresholds.rows[-1].s.cost) }} at {{ n(I.thresholds.rows[-1].tok_s_user_min, 0) }} tok/s per user. **S is a chip for fast tokens at scale, not for cheap tokens at
+ordinary speed.** One caution: the GPU model is least constrained at small batches, which is where the
+GPUs sit at the higher thresholds. A published figure of {{ n(M.tokenspeed_b300_c8_dspark.value) }} tok/s per user at eight concurrent
+sessions on 4x B300 (measured; tokenspeed-blog) is consistent with the model only if fewer than eight were
+decoding at once, so the GPUs may do somewhat better at the top of this table than it says.
+
+## 18 · Demand and break-even
+
+Design cost is spread over the systems a token demand needs, the same demand for every chip. The
+central case is {{ n(I.demand.central_tokens_per_day / 1e12, 0) }} trillion tokens a day of this one model (assumption).
+
+| tokens a day | B300s that demand would need | A: cost gain | S: cost gain (systems) | F: cost gain |
+|---|---|---|---|---|
+{% for r in I.demand.rows %}
+| {{ n(r.tokens_per_day / 1e12, 2) }} trillion | {{ n(r.b300_equivalent, -2) }} | {{ x(r.a_x4.cost_gain, 2) }} | {{ x(r.s.cost_gain, 2) }} ({{ n(r.s.systems, 0) }}) | {{ x(r.f.cost_gain, 2) }} |
+{% endfor %}
+
+Break-even with the GPUs' decode cost: about {{ n(I.demand.breakeven_tokens_per_day.a_x4 / 1e12, 1) }} trillion tokens a day for A,
+{{ n(I.demand.breakeven_tokens_per_day.s / 1e12, 1) }} trillion for S and {{ n(I.demand.breakeven_tokens_per_day.f / 1e12, 1) }} trillion for F. At the central demand a
+{{ usd(S_HW.cost.nre_usd / 1e6, 0) }}M design cost is {{ usd(I.demand.nre_usd_per_mtok_at_central_demand, 3) }} per million tokens, against {{ usd(g4.best_cost.usd_per_mtok, 2) }} for GPU decode. Below
+about a trillion tokens a day no custom chip for a single model pays for itself on cost.
+
+## 19 · The attention tile, and a seller's margin
+
+**The attention tile sets S's cost.** Its {{ I.designs.s.area.kv_stacks }} HBM stacks and pooled engine are about 1% of
+the system's cost and cap its throughput; the {{ I.designs.s.area.dies }} dies of weights could serve many times more.
+The central design's tile was sized by assumption before any of this was known. Scaling the tile
+(HBM stacks, engine and the sessions' window cache together):
+
+| attention tile | HBM stacks | dies | sessions held | best batch | system tok/s | tokens/J against G0 | cost against G0 |
+|---|---|---|---|---|---|---|---|
+{% for r in I.attention_tile.rows %}
+| {{ r.scale }}x | {{ r.kv_stacks }} | {{ r.dies }} | {{ r.sessions }} | {{ r.batch }} | {{ n(r.tok_s, -3) }} | {{ x(r.tokens_per_joule_gain) }} | {{ x(r.cost_gain) }} |
+{% endfor %}
+
+A tile eight times larger roughly doubles the cost gain. We report the central design as it was
+specified and did not re-tune it after the reviews; a balanced design would have a larger tile. One
+system would then serve thousands of sessions, and its availability would matter more than this
+study models.
+
+**Margin.** The chips are costed to their owner (manufacturing plus design cost), as in our previous
+study; GPUs are at street price, which includes the seller's margin. If S were sold:
+
+| seller's gross margin | system price | decode cost against G0 |
+|---|---|---|
+{% for r in I.margin.rows %}
+| {{ pct(r.gross_margin) }} | {{ usd(r.system_usd, -4) }} | {{ x(r.cost_gain, 2) }} |
+{% endfor %}

@@ -1,0 +1,12 @@
+# NVIDIA H200, one GPU: used only to check the GPU engine on Llama 3.1 8B (experiments/calibration_llama.py).
+extends: gpu_b300.yaml
+name: H200
+n_chips: 1
+hbm_bw: 4.8e12            # src: h200-specs
+hbm_cap: 141.0e9          # src: h200-specs
+peak:                     # the published figures are "with sparsity"; dense is half; src: h200-specs
+  fp4: 1.98e15
+  fp8: 1.98e15
+  bf16: 0.99e15
+  fp32: 0.05e15
+tdp_w: 700                # src: h200-specs
