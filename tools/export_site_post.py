@@ -85,7 +85,7 @@ def main(out: str) -> None:
              "line": f"{n(s['batch1']['tok_s_user'], -1)} against {n(g['batch1']['tok_s_user'], -1)} tokens a second · range {x(MC['speed_batch1']['p05'])} to {x(MC['speed_batch1']['p95'])}"},
             {"term": "Tokens per joule, busy and interactive", "value": f"About {MC['tokens_per_joule_best']['median']:.0f}x",
              "line": f"range {x(MC['tokens_per_joule_best']['p05'])} to {x(MC['tokens_per_joule_best']['p95'])}"},
-            {"term": "Decode cost at 100 tokens a second per user", "value": "On par",
+            {"term": "Decode cost at 100 tokens a second per user", "value": "Equal",
              "line": f"median {x(MC['cost_best']['median'], 2)} · range {x(MC['cost_best']['p05'], 2)} to {x(MC['cost_best']['p95'], 2)}"},
             {"term": f"Decode cost at {n(TH[-1]['tok_s_user_min'])} tokens a second per user", "value": f"About {TH[-1]['s']['cost']:.0f}x lower",
              "line": "where the GPU model is least certain"},
@@ -100,7 +100,7 @@ def main(out: str) -> None:
         ],
         "costBars": [{"name": f"{n(r['tok_s_user_min'])} tok/s", "sub": "per user", "value": r["s"]["cost"], "hi": r is TH[-1]} for r in TH],
         "endToEnd": [
-            {"term": "Weights on-die, doing its own prefill", "value": x(E["s"]["cost_gain"]),
+            {"term": "Weights on-die for decode and for prefill", "value": x(E["s"]["cost_gain"]),
              "line": f"lower cost per output token than GPUs · {x(E['s']['tokens_per_joule_gain'])} the tokens per joule"},
             {"term": "Weights on-die for decode, weights in HBM for prefill", "value": x(E["s_decode_a_prefill"]["cost_gain"]),
              "line": f"lower cost · {x(E['s_decode_a_prefill']['tokens_per_joule_gain'])} the tokens per joule"},

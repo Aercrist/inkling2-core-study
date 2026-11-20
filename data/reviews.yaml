@@ -10,116 +10,116 @@ reviews:
 findings:
   - review: 1
     severity: blocker
-    finding: "The GPU's high-batch decode was calibrated as if prefill took none of the GPUs' time, although the published throughput workload prefills about 3K new tokens per turn. Everything slow was absorbed into a low attention efficiency."
-    action: "Refitted with each session's prefill counted on the same GPUs. The GPU's attention efficiency rose about fourfold; the first reading is kept as an alternative in docs/06."
-    effect: "tokens per joule and cost at the best point fell; speed unchanged"
+    finding: "The calibration of the GPU's high-batch decode assumed that prefill took none of the GPUs' time. But the published throughput workload prefills about 3K new tokens per turn. A low attention efficiency absorbed everything slow."
+    action: "We refitted with each session's prefill counted on the same GPUs. The GPU's attention efficiency increased about fourfold. docs/06 keeps the first reading as an alternative."
+    effect: "tokens per joule and cost at the best point decreased; speed did not change"
   - review: 1
     severity: blocker
-    finding: "The cost headline was decode-only. On the published agentic workload prefill is a large share of the cost per output token and was never added."
-    action: "Added the end-to-end cost and energy per output token with prefill, for each platform and for S paired with GPUs or HBM chips for prefill (docs/04). The decode-only figure is labeled as such everywhere."
-    effect: "end to end, S alone is worse than GPUs on cost; S for decode with HBM chips for prefill is ahead"
+    finding: "The cost headline was decode-only. On the published agentic workload, prefill is a large share of the cost per output token. We never added it."
+    action: "We added the end-to-end cost and energy per output token with prefill (docs/04). We give them for each platform, and for S paired with GPUs or HBM chips for prefill. All decode-only figures now have a decode-only label."
+    effect: "end to end, S alone is worse than GPUs on cost; S for decode with HBM chips for prefill is better than GPUs"
   - review: 1
     severity: major
-    finding: "S's packaging was an unsourced $300 a die while the HBM chip paid a sourced $2,500 for a two-die package; the attention tile's package was free; the sweep never reached the HBM chip's rate."
-    action: "Packaging rebuilt from the same sourced parts as the HBM chip's package ($700 a die), the attention tile's packages added, board and cooling cost raised, and the sweep widened to the HBM chip's per-die rate."
-    effect: "cost gain down"
+    finding: "S's packaging was $300 a die without a source, but the HBM chip paid a sourced $2,500 for a two-die package. The attention tile's package was free. The sweep never reached the HBM chip's rate."
+    action: "We rebuilt the packaging cost from the same sourced parts as the HBM chip's package ($700 a die). We added the attention tile's packages and raised the board and cooling cost. We widened the sweep to the HBM chip's per-die rate."
+    effect: "cost gain decreased"
   - review: 1
     severity: major
-    finding: "Design cost was spread over 2 million dies, which implied a fleet serving 35 trillion tokens a day of one model, and a different demand than the HBM chip's."
-    action: "Every chip's fleet is now sized for the same token demand (5 trillion a day, swept 0.5 to 20), with the break-even demand reported."
-    effect: "cost gain down; cost is now most sensitive to demand"
+    finding: "We spread the design cost over 2 million dies. That implied a fleet that serves 35 trillion tokens a day of one model, and a demand different from the HBM chip's."
+    action: "We now size every chip's fleet for the same token demand (5 trillion a day, swept 0.5 to 20). We report the break-even demand."
+    effect: "cost gain decreased; cost is now most sensitive to demand"
   - review: 1
     severity: major
-    finding: "S's per-operation latency subtracted a memory pass computed from the published machine's marketing bandwidth, then added S's own shorter pass."
-    action: "S now takes the published machine's whole time per weight operation, with its own bank pass inside it. The best published single-user GPU figure (630 tok/s) is shown beside the modeled baseline."
-    effect: "speed gain down"
+    finding: "S's per-operation latency subtracted a memory pass computed from the published machine's marketing bandwidth. It then added S's own shorter pass."
+    action: "S now takes the published machine's whole time per weight operation, with its own bank pass inside it. We show the best published single-user GPU figure (630 tok/s) beside the modeled baseline."
+    effect: "speed gain decreased"
   - review: 1
     severity: major
-    finding: "Lifetime and utilization were equal by fiat and not swept; the chips were at cost while GPUs are at street price."
-    action: "S's lifetime (2 to 5 years) and a seller's gross margin (0 to 50%) are in the sweep, and the margin's effect is reported on its own. Utilization stays equal and is listed as a limitation."
+    finding: "We set lifetime and utilization equal by decision and did not sweep them. The chips were at cost, but GPUs are at street price."
+    action: "S's lifetime (2 to 5 years) and a seller's gross margin (0 to 50%) are in the sweep. We report the margin's effect separately. Utilization stays equal, and we list it as a limitation."
     effect: "cost range wider and lower"
   - review: 1
     severity: major
-    finding: "The 100 tok/s per user threshold never binds S and always binds the GPU, and the batch grid skipped the GPU's true best batch."
-    action: "The best batch is now found exactly by bisection for every platform, and the gains are reported at five thresholds."
-    effect: "tokens per joule and cost at the best point down slightly; the dependence on the threshold is shown"
+    finding: "The threshold of 100 tok/s per user never binds S and always binds the GPU. The batch grid skipped the GPU's true best batch."
+    action: "Bisection now finds the exact best batch for every platform. We report the gains at five thresholds."
+    effect: "tokens per joule and cost at the best point decreased slightly; the results show the dependence on the threshold"
   - review: 1
     severity: major
-    finding: "The central values sat high in the study's own Monte Carlo."
-    action: "The write-up leads with the median and the 5th to 95th percentile; the latency range is centred on the published machine."
+    finding: "The central values were high in the range of the study's own Monte Carlo."
+    action: "The write-up starts with the median and the 5th to 95th percentile. The centre of the latency range is the published machine."
     effect: "presentation"
   - review: 1
     severity: major
-    finding: "The synthesized clock was applied to the multiplier lanes but the attention engines kept their area at 1.5 GHz."
-    action: "Attention engines' area now grows in proportion at the synthesized clock."
+    finding: "We applied the synthesized clock to the multiplier lanes, but the attention engines kept their area at 1.5 GHz."
+    action: "The area of the attention engines now grows in proportion at the synthesized clock."
     effect: "a few more dies"
   - review: 1
     severity: minor
-    finding: "A shallow merge of overrides made six rows of the tornado silently revert S to its pre-synthesis lanes."
-    action: "Overrides are deep-merged; the tornado was regenerated."
-    effect: "tornado figure corrected; Monte Carlo was not affected"
+    finding: "A shallow merge of overrides made six rows of the tornado revert S to its pre-synthesis lanes without a warning."
+    action: "We now deep-merge overrides. We regenerated the tornado."
+    effect: "tornado figure corrected; no effect on the Monte Carlo"
   - review: 1
     severity: minor
-    finding: "Yield and the text assumed 80% of the die was repairable memory; after synthesis it is about half."
-    action: "The repairable share is computed from the area model; the text is rendered from it."
-    effect: "die cost up"
+    finding: "Yield and the text assumed that 80% of the die was repairable memory. After synthesis, it is about half."
+    action: "We compute the repairable share from the area model. We render the text from it."
+    effect: "die cost increased"
   - review: 1
     severity: minor
-    finding: "No area or leakage for the sliding-window KV cache, KV PHY area outside the die count, KV capacity not enforced, tiles above their die limit, no queueing at the shared attention tile, router and busiest-expert passes simplified."
-    action: "Window-cache SRAM, KV PHY area, the tile limit and KV capacity checks added. Queueing at the attention tile and the two pass simplifications (under 2% by the reviewer's own patch) are listed as limitations."
+    finding: "The sliding-window KV cache had no area or leakage. KV PHY area was outside the die count. Nothing enforced KV capacity. Tiles were above their die limit. The shared attention tile had no queueing. The router and busiest-expert passes were simplified."
+    action: "We added window-cache SRAM, KV PHY area, the tile limit and KV capacity checks. We list queueing at the attention tile and the two pass simplifications as limitations. By the reviewer's own patch, the two simplifications change results by less than 2%."
     effect: "more dies; small"
   - review: 2
     severity: blocker
-    finding: "S's prefill ran one prompt through its 66-tile pipeline, so all but one tile sat idle. With prompts pipelined its prefill is about seven times cheaper, and the conclusions that S should not do its own prefill did not survive."
-    action: "Every platform's prefill is now costed at the number of prompts in flight that makes it cheapest. The prefill, end-to-end, README, claims and post text were rewritten."
-    effect: "end to end, S alone moved from 2.7x more expensive than GPUs to cheaper; decode headline unchanged"
+    finding: "S's prefill ran one prompt through its 66-tile pipeline, so all tiles but one were idle. With pipelined prompts, its prefill is about seven times cheaper. The conclusions that S must not do its own prefill did not hold."
+    action: "We now calculate every platform's prefill cost at the number of prompts in flight that makes it cheapest. We rewrote the prefill, end-to-end, README, claims and post text."
+    effect: "end to end, S alone moved from 2.7x more expensive than GPUs to cheaper; decode headline did not change"
   - review: 2
     severity: major
-    finding: "The GPU baseline compared only 2x and 4x B300, although an HGX node has eight GPUs and the fit itself uses 8-GPU figures. 8x B300 is faster for one user."
-    action: "The GPUs now get 2x, 4x or 8x B300, whichever is best for each metric, in the headline, the thresholds, the ladder and the uncertainty analysis."
-    effect: "speed gain down by about a quarter; gains at high per-user speed down"
+    finding: "The GPU baseline compared only 2x and 4x B300. But an HGX node has eight GPUs, and the fit itself uses 8-GPU figures. 8x B300 is faster for one user."
+    action: "The GPUs now get 2x, 4x or 8x B300, whichever is best for each metric. This applies in the headline, the thresholds, the ladder and the uncertainty analysis."
+    effect: "speed gain decreased by about a quarter; gains at high per-user speed decreased"
   - review: 2
     severity: major
-    finding: "Attention operations paid the borrowed per-weight-operation time on top of their own, although that time is a published machine's time per token divided by its weight operations and so already contains its attention. The router, a weight operation, did not pay it."
-    action: "Attention no longer pays it; the router does."
-    effect: "speed gain up"
+    finding: "Attention operations paid the borrowed per-weight-operation time in addition to their own time. But that time is a published machine's time per token divided by its weight operations. Thus it already contains that machine's attention. The router is a weight operation, and it did not pay that time."
+    action: "Attention no longer pays it. The router pays it."
+    effect: "speed gain increased"
   - review: 2
     severity: major
-    finding: "The claim that reloadable weights cost about 4x in speed compares two vendors' published latencies; the synthesized fixed-weight datapath closes at the same clock. The claim that the price is in memory and not in arithmetic ignored that multiplier lanes are a large share of S's silicon."
-    action: "The speed claim was withdrawn everywhere and replaced with a statement that the two speeds are not separable; the memory-versus-arithmetic sentence was rewritten."
+    finding: "The claim that reloadable weights cost about 4x in speed compares two vendors' published latencies. The synthesized fixed-weight datapath closes at the same clock. The claim that the cost is in memory and not in arithmetic ignored that multiplier lanes are a large share of S's silicon."
+    action: "We withdrew the speed claim everywhere. A statement that the two speeds are not separable replaces it. We rewrote the memory-versus-arithmetic sentence."
     effect: "presentation"
   - review: 2
     severity: major
-    finding: "The text claimed two adversarial reviews when only one had been run, and scored the prediction on their effect."
-    action: "That prediction stays pending until both reviews are logged; this log now has both."
+    finding: "The text claimed two adversarial reviews when only one was complete. It scored the prediction on their effect."
+    action: "That prediction stays pending until the log has both reviews. This log now has both."
     effect: "presentation"
   - review: 2
     severity: major
-    finding: "Prediction scoring: P25 was scored although no rung fits one package; P28 landed inside only with an LPDDR pool chosen after the prediction; P12 is inside only against 2x B300."
-    action: "P25 is scored untestable; the notes on P28 and P12 say so."
+    finding: "Prediction scoring: P25 had a score although no rung fits one package. P28 was inside only with an LPDDR pool chosen after the prediction. P12 is inside only against 2x B300."
+    action: "P25 now has the score untestable. The notes on P28 and P12 state these conditions."
     effect: "21 of 34 scorable predictions inside, from 21 of 35"
   - review: 2
     severity: major
-    finding: "Public wording: claims stronger than the results in places (a range rounded up, a cost figure at the least certain operating point stated without its range, 'built' for a block that was simulated and placed and routed, published figures miscounted), and the independence statement missing from some public text."
-    action: "All corrected in the public text, which is kept outside this repository."
+    finding: "Public wording: some claims were stronger than the results. A range was rounded up. A cost figure at the least certain operating point had no range. The text said 'built' for a block that we simulated, placed and routed. The count of published figures was incorrect. Some public text did not have the independence statement."
+    action: "We corrected all of these in the public text. The public text is outside this repository."
     effect: "presentation"
   - review: 2
     severity: minor
-    finding: "The headline table showed batch and per-user speed from the cost-optimal point beside tokens per joule from another batch; the best-batch search tried only three candidates; the attention-tile table labeled the batch as sessions."
-    action: "The table gives each metric with its own batch; the search tries seven candidates below the limit; the column was fixed."
+    finding: "The headline table showed batch and per-user speed from the cost-optimal point beside tokens per joule from another batch. The best-batch search tried only three candidates. The attention-tile table labeled the batch as sessions."
+    action: "The table gives each metric with its own batch. The search tries seven candidates below the limit. We corrected the column."
     effect: "small"
   - review: 2
     severity: minor
-    finding: "The tornado held the latency beyond the bank pass fixed while the Monte Carlo held the whole time per operation fixed, so bank depth and clock moved speed in one and not the other."
-    action: "Both now hold the whole time per operation fixed. That deeper banks would then be cheaper at no cost in speed is listed as a design not re-tuned."
-    effect: "tornado ranking changed; Monte Carlo immaterial"
+    finding: "The tornado held the latency beyond the bank pass fixed. The Monte Carlo held the whole time per operation fixed. Thus bank depth and clock moved speed in one and not in the other."
+    action: "Both now hold the whole time per operation fixed. Deeper banks are then cheaper at no cost in speed. We list that as a design that we did not tune again."
+    effect: "tornado ranking changed; no material effect on the Monte Carlo"
   - review: 2
     severity: minor
-    finding: "'Every die the same design' was untrue (weight, hub and attention-tile dies); the diagram said seven expert dies when a layer averages more than ten and spans tiles, while dispatch was charged on the die-to-die link; wake latency did not follow the clock; MXFP8 and BF16 lanes took the synthesized area penalty but not its energy ratio."
-    action: "Three die designs, each further one costing a mask set; experts on a second tile are reached over the serial link; wake latency is 15 cycles at the synthesized clock; the MXFP8 and BF16 lanes take both ratios."
+    finding: "'Every die the same design' was untrue (weight, hub and attention-tile dies). The diagram said seven expert dies, but a layer averages more than ten and spans tiles. The model charged dispatch on the die-to-die link. Wake latency did not follow the clock. MXFP8 and BF16 lanes took the synthesized area penalty but not its energy ratio."
+    action: "There are three die designs, and each design after the first costs a mask set. The serial link reaches experts on a second tile. Wake latency is 15 cycles at the synthesized clock. The MXFP8 and BF16 lanes take both ratios."
     effect: "small"
   - review: 2
     severity: minor
-    finding: "The packaging source key used by the first review's fix did not resolve in the sources page; a table of corrections quoted post-review numbers as if they were the pre-review state."
-    action: "Source added; the correction row now gives die counts only."
+    finding: "The packaging source key used by the first review's fix did not resolve in the sources page. A table of corrections quoted post-review numbers as the pre-review state."
+    action: "We added the source. The correction row now gives die counts only."
     effect: "none"
