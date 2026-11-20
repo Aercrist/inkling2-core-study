@@ -13,15 +13,15 @@
 {% endmacro %}
 # 00 · Hypotheses and pre-registered predictions
 
-**Frozen on {{ PRE.frozen_on }}, before any simulation of Inkling 2 Small.** The predictions below
-were written from the checkpoint headers, the published serving figures and first-order arithmetic
-([01 · Workload](01_workload.md)). They live in [`data/preregistration.yaml`](../data/preregistration.yaml)
-and have not been edited since the commit that added them (`make test` checks a hash). The
-"observed" column is filled from `results/predictions.json` by `experiments/predictions.py`.
+**Frozen on {{ PRE.frozen_on }}, before any simulation of Inkling 2 Small.** We wrote the predictions below
+from the checkpoint headers, the published serving figures and first-order arithmetic
+([01 · Workload](01_workload.md)). They are in [`data/preregistration.yaml`](../data/preregistration.yaml).
+We did not edit them after the commit that added them (`make test` checks a hash).
+`experiments/predictions.py` fills the "observed" column from `results/predictions.json`.
 
 ## Scorecard
 
-**{{ PR.inside }} of {{ PR.scored }} scored predictions landed inside their range**{% if PR.scored < PRE.predictions | length %}; {{ PRE.predictions | length - PR.scored }} are pending{% endif %}.
+**{{ PR.inside }} of {{ PR.scored }} scored predictions are inside their range**{% if PR.scored < PRE.predictions | length %}; {{ PRE.predictions | length - PR.scored }} are pending{% endif %}.
 
 | group | inside / scored |
 |---|---|
@@ -31,19 +31,19 @@ and have not been edited since the commit that added them (`make test` checks a 
 
 | hypothesis | verdict | in one line |
 |---|---|---|
-| H1 · same memory, better wiring | **held** | a chip on HBM is {{ x(R["a_x4/g1_x4"].speed_batch1, 2) }} the speed of good software on the same GPUs at batch 1; it wins on power and price, not speed |
-| H2 · moving the weights | **held for speed and energy, not for cost** | {{ x(R["s/g0"].speed_batch1) }} speed and {{ x(R["s/g0"].tokens_per_joule_best) }} tokens per joule against the GPUs' best layout; decode cost is about level at 100 tok/s per user ({{ x(R["s/g0"].cost_best) }} central, {{ x(MC.cost_best.median, 2) }} median) |
-| H3 · the price of reloadable weights | **held in silicon; not in a single lane** | {{ x(I.designs.s_over_f.dies) }} the dies; but fixing a multiplier's weight saves only {{ x(SS.reloadable_over_fixed.hardwired_lane_area, 2) }} in area ({{ PRD.P15.id }}): the price is in the memory |
-| H4 · the ladder | **failed** for Inkling-shaped rungs | the gain narrows from {{ x(I.ladder.inkling2_small.gain.S.speed_batch1) }} to {{ x(I.ladder.rung_8b.gain.S.speed_batch1) }} as the model shrinks; we predicted it would widen to {{ sig(PRD.P23.central) }}x |
-| H5 · long context | **held in part, as predicted** | S's lead over an HBM chip falls from {{ x(I.context.s_over_a.at_8k) }} to {{ x(I.context.s_over_a.at_1m) }} at 1M tokens |
+| H1 · same memory, better wiring | **held** | a chip on HBM has {{ x(R["a_x4/g1_x4"].speed_batch1, 2) }} the speed of good software on the same GPUs at batch 1; it is better on power and price, not speed |
+| H2 · moving the weights | **held for speed and energy, not for cost** | {{ x(R["s/g0"].speed_batch1) }} speed and {{ x(R["s/g0"].tokens_per_joule_best) }} tokens per joule against the best layout of the GPUs; decode cost is about equal at 100 tok/s per user ({{ x(R["s/g0"].cost_best) }} central, {{ x(MC.cost_best.median, 2) }} median) |
+| H3 · the price of reloadable weights | **held in silicon; not in a single lane** | {{ x(I.designs.s_over_f.dies) }} the dies; but a fixed weight in a multiplier saves only {{ x(SS.reloadable_over_fixed.hardwired_lane_area, 2) }} in area ({{ PRD.P15.id }}): the cost is in the memory |
+| H4 · the ladder | **failed** for Inkling-shaped rungs | the gain decreases from {{ x(I.ladder.inkling2_small.gain.S.speed_batch1) }} to {{ x(I.ladder.rung_8b.gain.S.speed_batch1) }} as the model becomes smaller; we predicted an increase to {{ sig(PRD.P23.central) }}x |
+| H5 · long context | **held in part, as predicted** | the lead of S over an HBM chip decreases from {{ x(I.context.s_over_a.at_8k) }} to {{ x(I.context.s_over_a.at_1m) }} at 1M tokens |
 
-The predictions named 2x B300 as G0 (the smallest deployment). The study leads with the best B300 layout for each metric, which is
-the GPUs' better layout, so several observed values carry both figures.
+The predictions named 2x B300 as G0 (the smallest deployment). The study gives first the best B300 layout for each metric, which is
+the better layout of the GPUs. Thus several observed values show both figures.
 
 ### Why the misses missed
 
-Several predictions were scored against results that two adversarial reviews later changed
-([05](05_limitations.md)); the verdicts below are against the final results.
+We scored several predictions against results that two adversarial reviews changed later
+([05](05_limitations.md)). The verdicts below are against the final results.
 
 {% for r in PR.rows if r.verdict in ["above", "below"] %}
 - **{{ r.id }}** {{ r.claim }}: predicted {{ sig(r.central) }} ({{ sig(r.low) }} to {{ sig(r.high) }}), observed {{ sig(r.observed) }}. {{ WHY[r.id] if r.id in WHY else "" }}
@@ -53,11 +53,11 @@ Several predictions were scored against results that two adversarial reviews lat
 
 | name | what it is |
 |---|---|
-| **G0** | GPUs running today's best published serving engine, calibrated to published speeds |
-| **G1** | the same GPUs running dataflow-style software: one persistent program, no per-kernel waits |
+| **G0** | GPUs that run the best serving engine published today, calibrated to published speeds |
+| **G1** | the same GPUs with dataflow-style software: one persistent program, no per-kernel waits |
 | **A** | a decode chip that keeps the weights in HBM, as MDA-1 did in our DeepSeek-V4.1 study |
 | **S** | a reloadable weight-stationary chip: every weight in on-die SRAM, loaded at boot or after a retrain |
-| **F** | a fixed-weight chip: weights in the masks. A comparison point for what reloadability costs |
+| **F** | a fixed-weight chip: weights in the masks. A comparison point for the cost of reloadability |
 
 ## Operating points
 
@@ -69,18 +69,18 @@ Several predictions were scored against results that two adversarial reviews lat
 
 ## What the predictions rest on
 
-Five facts from the workload page carry most of the weight. All are rendered from
+Five facts from the workload page are the most important. We render all of them from
 `results/phase0_workload.json`.
 
 1. One token reads {{ gb(T.total, 1) }} of weights at batch 1 (derived). Half is 16-bit attention
    weight, not 4-bit expert weight.
-2. One speculative step reads about {{ gb(DS.bytes_total, 0) }} and yields about
+2. One speculative step reads about {{ gb(DS.bytes_total, 0) }} and gives about
    {{ DS.acceptance_assumed }} tokens (napkin). Speculation saves latency, not memory traffic.
-3. Published engines reach {{ n(G.vs_published.tokenspeed_b300_x4_dspark.measured_tok_s) }} to
-   {{ n(G.vs_published.vllm_gb200_x4_dspark.measured_tok_s) }} tok/s per user on four GPUs (measured, source), which is
+3. Published engines get {{ n(G.vs_published.tokenspeed_b300_x4_dspark.measured_tok_s) }} to
+   {{ n(G.vs_published.vllm_gb200_x4_dspark.measured_tok_s) }} tok/s per user on four GPUs (measured, source). That is
    {{ pct(G.vs_published.tokenspeed_b300_x4_dspark.measured_over_ceiling) }} to {{ pct(G.vs_published.vllm_gb200_x4_dspark.measured_over_ceiling) }}
    of the bandwidth ceiling (napkin).
-4. Holding every weight in SRAM takes {{ n(Z.array_only_bound.dies, -1) }} to {{ n(Z.with_periphery.dies, -1) }}
+4. To hold every weight in SRAM, a chip needs {{ n(Z.array_only_bound.dies, -1) }} to {{ n(Z.with_periphery.dies, -1) }}
    reticle-class dies at N4P-class density (napkin). One token uses
    {{ pct(Z.share_of_weight_bytes_used_per_token, 1) }} of those bytes.
 5. At full context a step reads {{ gb(KV.at_max_context_bytes.target_mxfp8 + KV.at_max_context_bytes.draft_bf16, 0) }}
@@ -100,7 +100,7 @@ We expect H1 to hold, as it did for DeepSeek-V4.1.
 *Keeping the weights on the chip multiplies per-user speed. At low batch it loses on energy, unless
 idle weight storage is power-managed.*
 
-We expect the first sentence to hold and the second to be **too pessimistic as worded**. See
+We expect the first sentence to hold. We expect the second sentence to be **too pessimistic as worded**. Refer to
 "Where we expect to differ" below.
 
 {{ table("H2") }}
@@ -110,7 +110,7 @@ We expect the first sentence to hold and the second to be **too pessimistic as w
 *Fixed weights beat reloadable ones on datapath area and energy by a bounded factor. The gap is
 smaller at system level.*
 
-We expect H3 to hold, with a smaller datapath factor than 8-bit intuition suggests, because a 4-bit
+We expect H3 to hold. We expect a smaller datapath factor than 8-bit intuition suggests, because a 4-bit
 floating-point multiply is already tiny.
 
 {{ table("H3") }}
@@ -119,8 +119,8 @@ floating-point multiply is already tiny.
 
 *The gain grows as models shrink. It jumps where the whole model fits on a handful of dies.*
 
-The smaller rungs are hypothetical models with Inkling 2 Small's ratios. We expect the per-user speed
-gain to grow smoothly, and the jump to show in energy and cost, not in speed.
+The smaller rungs are hypothetical models with the ratios of Inkling 2 Small. We expect the per-user speed
+gain to increase smoothly. We expect the jump to show in energy and cost, not in speed.
 
 {{ table("H4") }}
 
@@ -129,11 +129,11 @@ gain to grow smoothly, and the jump to show in energy and cost, not in speed.
 *Near 1M tokens, KV traffic in the global-attention layers dominates, and the architectures converge.*
 
 We expect H5 to hold **only in part**. With speculation on, an HBM-based design reads about
-{{ gb(DS.bytes_total, 0) }} of weights per step, and KV traffic does not match that until about
-{{ n(DS.context_where_kv_equals_weights.dspark_mxfp8_target_bf16_draft / 1e6, 1) }}M tokens, beyond the
-{{ n(KV.max_context / 1e6, 0) }}M limit. Without speculation and with a BF16 cache the crossover is at
-about {{ n(DS.context_where_kv_equals_weights.no_speculation_bf16, -4) }} tokens. So KV traffic dominates
-the weight-stationary design at long context, and the designs converge, but not to parity.
+{{ gb(DS.bytes_total, 0) }} of weights per step. KV traffic does not match that until about
+{{ n(DS.context_where_kv_equals_weights.dspark_mxfp8_target_bf16_draft / 1e6, 1) }}M tokens, which is beyond the
+{{ n(KV.max_context / 1e6, 0) }}M limit. Without speculation and with a BF16 cache, the crossover is at
+about {{ n(DS.context_where_kv_equals_weights.no_speculation_bf16, -4) }} tokens. Thus KV traffic dominates
+the weight-stationary design at long context. The designs converge, but not to parity.
 
 {{ table("H5") }}
 
@@ -141,7 +141,7 @@ the weight-stationary design at long context, and the designs converge, but not 
 
 {{ table("baseline") }}
 
-## Where purpose-built silicon should not win
+## Where we expect that purpose-built silicon is not better
 
 {{ table("limits") }}
 
@@ -151,23 +151,24 @@ the weight-stationary design at long context, and the designs converge, but not 
 
 ## Where we expect to differ from the hypotheses as first written
 
-* **H2, energy at low batch.** Our DeepSeek-V4.1 study put an SRAM-only system 12-13x worse on energy
-  than GPUs at batch 1. That bound took the wall power of existing SRAM-based products and scaled it
-  by capacity. Counting bitcells instead gives about a kilowatt of leakage for this model, so we
-  predict that S does not lose to a batch-1 GPU even without power management ({{ P.P11.id }}), and
-  loses only against a GPU running at its own best batch ({{ P.P12.id }}). If the simulator, with
-  sourced leakage and link power, says otherwise, the DeepSeek bound was right and this prediction
+- **H2, energy at low batch.** Our DeepSeek-V4.1 study found that an SRAM-only system was 12-13x worse on energy
+  than GPUs at batch 1. That bound used the wall power of current SRAM-based products and scaled it
+  by capacity. A count of bitcells gives about a kilowatt of leakage for this model.
+
+  Thus we predict that S does not lose to a batch-1 GPU, even without power management ({{ P.P11.id }}). We
+  predict that S loses only against a GPU that runs at its own best batch ({{ P.P12.id }}). If the simulator, with
+  sourced leakage and link power, shows a different result, the DeepSeek bound was right and this prediction
   was wrong.
-* **H5, convergence.** See above: partial.
-* **Above the prior.** Every central value above 10x is per-user speed at batch 1, where a GPU is
-  furthest from its own best operating point: S at full size ({{ P.P09.id }}, central {{ P.P09.central }}x)
+- **H5, convergence.** Refer to the text above: partial.
+- **Above the prior.** Every central value above 10x is per-user speed at batch 1, where a GPU is
+  furthest from its own best operating point. These values are S at full size ({{ P.P09.id }}, central {{ P.P09.central }}x)
   and the smaller rungs of the ladder ({{ P.P21.id }} to {{ P.P23.id }}). The central energy and cost
-  predictions for the full-size model sit inside the prior, though their ranges reach
-  {{ P.P10.high }}x. Any result above 10x for the full-size model will be checked twice before it is
-  written up.
+  predictions for the full-size model are inside the prior, but their ranges go up to
+  {{ P.P10.high }}x. We will check any result above 10x for the full-size model two times before we
+  write it in a report.
 
 ## How this page is scored
 
-For each prediction: the observed value, whether it fell inside the range, and above why not if it
-did not. A prediction that misses is reported as a miss. The ranges are wide on purpose; a study in
-which every central value landed would mean the ranges were not doing any work.
+For each prediction, the page gives the observed value and tells if it was inside the range. If it was not,
+the reason is above. We report a prediction that misses as a miss. The ranges are wide on purpose. If every
+central value is correct in a study, its ranges do no work.

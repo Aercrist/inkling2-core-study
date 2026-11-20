@@ -47,7 +47,7 @@ PARAMS = {
     "S wafer price": ("s", "abs:cost.wafer_usd", 16000.0, 21300.0, "analyst band"),
     "S package and test per die": ("s", "abs:cost.package_test_usd_per_die", 400.0, 1250.0, "area-scaled substrate only, to the HBM chip's own per-die rate"),
     "S boards, power, cooling per die": ("s", "abs:cost.system_usd_per_die", 150.0, 1000.0, "assumption"),
-    "S lifetime (years)": ("s", "abs:cost.lifetime_years", 2.0, 5.0, "a chip laid out for one architecture may be retired before a GPU is, or serve its successors longer"),
+    "S lifetime (years)": ("s", "abs:cost.lifetime_years", 2.0, 5.0, "a chip laid out for one architecture can be retired before a GPU, or can serve its successors longer"),
     "S seller's gross margin": ("s", "abs:cost.gross_margin", 0.0, 0.5, "costed to its owner in the central case; GPUs are at street price"),
     "S design NRE": ("s", "abs:cost.nre_usd", 30e6, 436e6, "a fixed-weight start-up's total to the IBS 5 nm estimate"),
     "fleet demand (tokens per day)": ("demand", "abs:demand", 0.5e12, 20e12, "assumption: design cost is spread over the systems this demand needs"),
