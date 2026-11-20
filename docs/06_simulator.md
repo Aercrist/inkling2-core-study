@@ -3,10 +3,11 @@
 
 ## What it is
 
-An operation-level simulator. A model builder turns a checkpoint into the list of operations of one
-decode step; an engine costs that list on a hardware description. Every platform sees the same list.
+The simulator works at the level of operations. A model builder changes a checkpoint into the list
+of operations of one decode step. An engine calculates the cost of that list on a hardware
+description. Every platform gets the same list.
 
-| piece | file | what it does |
+| piece | file | function |
 |---|---|---|
 | operation vocabulary | `sim/ops.py` | one record per operation: weight bytes, KV bytes, arithmetic, rows, kernel launches, dependencies |
 | Inkling 2 builder | `sim/models/inkling2.py` | the step's operations from the checkpoint; parameter and byte counts equal the checkpoint's for every layer (tested) |
@@ -14,27 +15,29 @@ decode step; an engine costs that list on a hardware description. Every platform
 | dense builder | `sim/models/dense.py` | Llama 3.1 8B, for the cross-architecture check |
 | DeepSeek-V4.1 builder | `sim/models/dsv41/` | the previous study's model, unchanged |
 | HBM engine | `sim/engine.py`, `sim/fast.py` | GPUs and HBM chips: memory streams, kernel launches, collectives |
-| weight-stationary engine | `sim/stationary.py` | S and F: bank passes, lanes, tiles, hops, the shared attention tile, pipelining of requests across layers |
+| weight-stationary engine | `sim/stationary.py` | S and F: bank passes, lanes, tiles, hops, the shared attention tile, pipeline of requests across layers |
 | energy, cost | `sim/energy.py`, `sim/cost.py`, `sim/stationary.py` | joules by cause; owned cost with NRE, yield, power |
 
-The HBM engine is the DeepSeek-V4.1 study's, generalized so that models are builders. That study's
-five result files still regenerate byte for byte (`tests/test_dsv41_unchanged.py`).
+The HBM engine comes from the DeepSeek-V4.1 study. We generalized it so that models are builders.
+The five result files of that study still regenerate byte for byte
+(`tests/test_dsv41_unchanged.py`).
 
 ## The GPU model has four free constants
 
 | constant | meaning | fitted | prior (DeepSeek study or assumption) | range across alternative readings |
 |---|---|---|---|---|
-| HBM efficiency | share of peak HBM bandwidth a weight stream gets | 0.802 | 0.838 | 0.66 to 1.00 |
+| HBM efficiency | share of peak HBM bandwidth that a weight stream gets | 0.802 | 0.838 | 0.66 to 1.00 |
 | per-launch latency | wait per dependent kernel launch | 2.50 µs | 4.2 µs | 2.22 to 2.61 µs |
-| attention efficiency | share of peak arithmetic the attention kernel reaches | 0.219 | 0.05 | 0.015 to 0.56 |
+| attention efficiency | share of peak arithmetic that the attention kernel reaches | 0.219 | 0.05 | 0.015 to 0.56 |
 | per-row cost | extra time per row in flight | 0.055 µs | 0.3 µs | up to 0.06 µs |
 
-Kernel launch counts are not fitted. They are counted in the serving engine's source: 17 launches per
-NVFP4 layer, 16 per MXFP8 layer (tokenspeed-src, commit `a439df4`); 937 per speculative step in our operation graph for one request.
+We did not fit the kernel launch counts. We counted them in the source of the serving engine
+(tokenspeed-src, commit `a439df4`). There are 17 launches per NVFP4 layer and 16 per MXFP8 layer.
+Our operation graph has 937 launches per speculative step for one request.
 
 ## Fit: 9 published figures, 4 constants
 
-All published figures are **measured by their publishers**; we ran none of them.
+All published figures are **measured by their publishers**. We ran none of them.
 
 | published figure | hardware, engine | batch | context | unit | published | model | error | with the prior constants |
 |---|---|---|---|---|---|---|---|---|
@@ -50,25 +53,26 @@ All published figures are **measured by their publishers**; we ran none of them.
 
 ![GPU calibration](../results/fig_calibration_gpu.png)
 
-- RMS error 8.0%. With the DeepSeek study's constants and no fitting, errors
+- The RMS error is 8.0%. With the constants of the DeepSeek study and no fit, the errors
   were 14% to 30%.
-- **Prefill is counted at the four throughput points.** That workload has about 3K new prompt tokens
-  and 1,024 generated per turn. Each session's prefill is one forward on the same GPUs, once per
-  turn, and takes 35% to 34% of the GPUs' time in the fit. Our first fit ignored it,
-  which made the GPUs' decode look about four times worse at attention than it is; an adversarial
-  review caught it ([05](05_limitations.md)).
-- **Leave one out**: refit without each figure and predict it. Median error
-  12.9%, largest 63.8% (the only figure without the draft model, which alone
-  separates launch time from memory time). Predicted in advance for the median:
-  20% (10 to 35).
-- **Held out entirely**: TokenSpeed's two concurrency-8 figures, because the number of requests
-  actually in flight at a step is not published.
-  tokenspeed_b300_c8_dspark: published 325; the model gives 203 with 8 in flight and 541 with 1, so the published figure is inside the range.
-  tokenspeed_b300_c8_target_only: published 195; the model gives 152 with 8 in flight and 274 with 1, so the published figure is inside the range.
+- **We count prefill at the four throughput points.** That workload has about 3K new prompt tokens
+  and 1,024 generated tokens per turn. Each session's prefill is one forward on the same GPUs, once
+  per turn. It takes 35% to 34% of the GPUs' time in the fit. Our first fit ignored
+  prefill, and thus the GPUs' decode looked about four times worse at attention than it is. An
+  adversarial review found the error ([05](05_limitations.md)).
+- **Leave one out.** We refit without each figure and predict it. The median error is
+  12.9%. The largest error is 63.8%, for the only figure without the draft model.
+  Only that figure separates launch time from memory time. Our prediction for the median, made in
+  advance, was 20% (10 to 35).
+- **Held out fully.** We held out TokenSpeed's two concurrency-8 figures. TokenSpeed does not publish the
+  number of requests in flight at a step.
+  - tokenspeed_b300_c8_dspark: published 325. The model gives 203 with 8 in flight and 541 with 1, so the published figure is inside the range.
+  - tokenspeed_b300_c8_target_only: published 195. The model gives 152 with 8 in flight and 274 with 1, so the published figure is inside the range.
 
 ### A check the model fails
 
-The engine's source comments give the time of one full-attention kernel on B300. This was not in the fit.
+The comments in the engine source give the time of one full-attention kernel on B300. This time was
+not in the fit.
 
 | context | published kernel time | model | error |
 |---|---|---|---|
@@ -76,15 +80,15 @@ The engine's source comments give the time of one full-attention kernel on B300.
 | 32,768 keys | 14.6 µs | 7.4 µs | -49% |
 | 131,072 keys | 36.7 µs | 20.6 µs | -44% |
 
-The model's attention kernel is faster than the engine's own timing at every context. So the fitted
-GPU is, if anything, better at attention than the real one: the comparison at long context and high
-batch leans towards the GPU. Putting these timings in the fit pins the HBM efficiency at its bound
-and worsens every speed point, so they stay a held-out check. The sweep covers the gap: "GPU
-attention kernel efficiency, 0.5x to 1.8x".
+The model's attention kernel is faster than the engine's own timing at every context. Thus the
+fitted GPU is not worse at attention than the real GPU, and is probably better. The comparison at
+long context and high batch favours the GPU. If we put these timings in the fit, the HBM efficiency
+goes to its bound and every speed point gets worse. Thus they stay a held-out check. The sweep
+covers the difference: "GPU attention kernel efficiency, 0.5x to 1.8x".
 
 ### Alternative readings of the published figures
 
-Some published conditions are ambiguous. Each alternative reading was refitted:
+Some published conditions are ambiguous. We refitted each alternative reading.
 
 | reading | HBM efficiency | per-launch | attention efficiency | RMS error |
 |---|---|---|---|---|
@@ -103,16 +107,16 @@ Some published conditions are ambiguous. Each alternative reading was refitted:
 | single-user decode points only | 1.00 | 2.55 µs | 0.015 | 2.1% |
 | vLLM points only | 1.00 | 2.54 µs | 0.146 | 0.2% |
 
-The attention efficiency is the constant these readings move most: it follows how much prefill is
-assumed to sit on the GPUs. It sets the GPUs' throughput at high batch, and so the energy and cost
-comparison at the best interactive point.
+The attention efficiency is the constant that these readings move most. It follows the quantity of
+prefill that we assume is on the GPUs. It sets the GPUs' throughput at high batch. Thus it also
+sets the energy and cost comparison at the best interactive point.
 
 ## The cross-architecture check: Llama 3.1 8B on four machines
 
 Llama 3.1 8B is the one model with published speeds on a GPU, two SRAM machines and a fixed-weight
-chip. We ran the simulator on each from public specifications only, with no fitting.
+chip. We ran the simulator on each machine from public specifications only, with no fit.
 
-| machine | memory | published tok/s | simulator | error | within 30% |
+| machine | memory | published tok/s | simulator | error | error 30% or less |
 |---|---|---|---|---|---|
 | NVIDIA H200, one GPU (HBM) | 141 GB HBM3e at 4.8 TB/s | 235 (vendor; nim-bench) | 389 | +65% | no |
 | Cerebras WSE-3 (SRAM, one wafer) | 44 GB SRAM at 21 PB/s on one 46,225 mm2 wafer; 5 nm; 16-bit weights | 1,981 (relayed; taalas-chart) | 3,694 | +86% | no |
@@ -121,48 +125,50 @@ chip. We ran the simulator on each from public specifications only, with no fitt
 
 ![Llama calibration](../results/fig_calibration_llama.png)
 
-**0 of 4 within 30%.** We predicted 2
+**0 of 4 have an error of 30% or less.** We predicted 2
 (1 to 3). Public specifications are not enough to predict
-these machines, and the direction of each miss is informative:
+these machines. The direction of each miss gives information:
 
-- **GPU**: the simulator is +65% fast. The vendor's own
-  pair of figures (FP8 235 and BF16 140 tok/s)
-  implies an HBM efficiency of 0.58 and
-  1.49 ms of fixed time per token on that stack, against
-  0.80 and 0.57 ms carried over from the
-  Blackwell engines. A general-purpose serving stack on an older GPU is slower than a tuned engine.
-- **Both SRAM machines run well below their memory bound.** The wafer-scale machine reaches
-  54% of the speed its memory bandwidth allows; the
-  many-chip machine 22%. Memory bandwidth does not set their
-  speed. Something per operation does.
-- **The fixed-weight chip is faster than this study's own timing constants predict**
-  (-41% against the vendor's figure,
+- **GPU.** The simulator is +65% fast. The vendor gives a
+  pair of figures (FP8 235 and BF16 140 tok/s).
+  The pair implies an HBM efficiency of 0.58 and
+  1.49 ms of fixed time per token on that stack. The values
+  carried over from the Blackwell engines are 0.80 and 0.57 ms.
+  A general-purpose serving stack on an older GPU is slower than a tuned engine.
+- **The two SRAM machines run much below their memory bound.** The wafer-scale machine reaches
+  54% of the speed that its memory bandwidth permits. The
+  many-chip machine reaches 22%. Memory bandwidth does not set their
+  speed. A cost per operation sets it.
+- **The fixed-weight chip is faster than this study's own timing constants predict.** The error is
+  -41% against the vendor's figure. It is
   -30% against an independent probe of
-  14,150 tok/s).
+  14,150 tok/s.
 
 ### What we took from it
 
-The check failed as a prediction and we used it as a measurement. Dividing each machine's published
-time per token by the 129 weight operations a token needs gives a time per weight operation,
-with nothing subtracted:
+The check failed as a prediction, and we used it as a measurement. A token needs 129 weight
+operations. We divide each machine's published time per token by that number. The result is a time
+per weight operation, with nothing subtracted.
 
 | machine | time per weight operation | used for |
 |---|---|---|
-| wafer-scale SRAM | 3.91 µs | **S**, central value: its own bank pass is inside this figure. A pays the part beyond S's pass |
+| wafer-scale SRAM | 3.91 µs | **S**, central value. Its own bank pass is inside this figure. A pays the part beyond the pass of S |
 | many-chip SRAM | 13.1 µs | S, pessimistic end of the sweep |
-| fixed-weight die | 0.55 µs, from the independently probed speed | **F** |
+| fixed-weight die | 0.55 µs, from the speed of the independent probe | **F** |
 
-Our first pass gave S an assumed 0.3 µs beyond its pass and came out near 8,000 tok/s per user, about
-15x the GPUs and above our prior. A second pass subtracted the published machine's memory pass,
-computed from its stated bandwidth, and added S's own shorter one; a reviewer pointed out that the
-subtraction rested on a marketing figure. S now takes the published machine's whole time per
-operation: 2,960 tok/s. The inference from one model on someone else's machine to another model
-on ours is the weakest link in the speed result, and it is swept across the range in the table.
+Our first calculation gave S an assumed 0.3 µs beyond its bank pass. The result was near
+8,000 tok/s per user, about 15x the GPUs and above our prior. A second calculation subtracted the
+published machine's memory pass, computed from its stated bandwidth, and added S's own shorter
+pass. A reviewer showed that the subtraction used a marketing figure. S now takes the published
+machine's whole time per operation, which gives 2,960 tok/s.
+
+We infer from one model on another company's machine to a different model on our machine. This
+inference is the weakest part of the speed result. We sweep it across the range in the table.
 
 ## Uncertain inputs
 
-30 inputs, each with a low and a high value. The Monte Carlo draws each
-independently between its bounds.
+There are 30 inputs, and each has a low and a high value. The Monte Carlo draws each
+input independently between its bounds.
 
 | input | low | high | why |
 |---|---|---|---|
@@ -192,21 +198,21 @@ independently between its bounds.
 | S wafer price | 16,000 | 21,300 | analyst band |
 | S package and test per die | 400 | 1,250 | area-scaled substrate only, to the HBM chip's own per-die rate |
 | S boards, power, cooling per die | 150 | 1,000 | assumption |
-| S lifetime (years) | 2 | 5 | a chip laid out for one architecture may be retired before a GPU is, or serve its successors longer |
+| S lifetime (years) | 2 | 5 | a chip laid out for one architecture can be retired before a GPU, or can serve its successors longer |
 | S seller's gross margin | 0 | 0.5 | costed to its owner in the central case; GPUs are at street price |
 | S design NRE | 30,000,000 | 436,000,000 | a fixed-weight start-up's total to the IBS 5 nm estimate |
 | fleet demand (tokens per day) | 500,000,000,000 | 20,000,000,000,000 | assumption: design cost is spread over the systems this demand needs |
 
-Rows without a unit are in the unit of `configs/hw/*.yaml` (mm² per MiB, pJ per bit, W per GB, W,
+Rows without a unit use the unit of `configs/hw/*.yaml` (mm² per MiB, pJ per bit, W per GB, W,
 USD, dies).
 
 ## Checks that run with `make test`
 
-- Parameter and byte counts from the builder equal the checkpoint's, layer by layer; the total equals
-  the Hub's 594,050,672,720.
+- Parameter and byte counts from the builder equal those of the checkpoint, layer by layer. The total
+  equals the Hub's 594,050,672,720.
 - KV bytes per token equal the engines' published figures.
-- The pre-registered predictions have not been edited (hash).
+- The pre-registered predictions did not change (hash).
 - The DeepSeek-V4.1 results regenerate byte for byte.
 - The GPU fit reproduces from the committed inputs.
-- The generated docs match the results.
-- The RTL block's vectors and batch-invariance test ([07](07_silicon.md)).
+- The generated docs agree with the results.
+- The RTL block passes its vectors and its batch-invariance test ([07](07_silicon.md)).
