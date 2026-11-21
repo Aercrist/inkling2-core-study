@@ -7,7 +7,7 @@ the condition that reverses it.
 ## Phase 0 · 2026-11-14
 
 **D1 · Clean room.** The inputs are public sources and our own DeepSeek-V4.1 study
-(`https://github.com/Aercrist/dsv41-accel-study` at `bc1e959a`), nothing else. We cloned that study read-only and ran it again
+(`https://github.com/Aercrist/dsv41-accel-study` at `04617dc1`), nothing else. We cloned that study read-only and ran it again
 before we reused anything. `make reproduce` and `make test` leave all 14 tracked
 result and doc files byte-identical (`results/phase0_dsv41_reproduction.json`).
 

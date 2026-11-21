@@ -48,7 +48,7 @@ That study's `docs/sources.md` defines these keys, with quotes. The rows below r
 | nv-bw-ultra | Blackwell Ultra: 288 GB HBM3E | developer.nvidia.com/blog/inside-nvidia-blackwell-ultra-the-chip-powering-the-ai-factory-era/ | V |
 | stream-b200 | B200: 8.0 TB/s peak memory bandwidth | arxiv.org/html/2512.02189v1 | P |
 | sram-density | N5-class HD SRAM: about 32 Mib/mm² of array | fuse.wikichip.org/news/3398/ | R |
-| dsv41-calibration | HBM efficiency 0.8375 of peak, as calibrated on two measured step times | github.com/Aercrist/dsv41-accel-study at `bc1e959`, `results/decode.json` → `calibration.hbm_eff` | own work |
+| dsv41-calibration | HBM efficiency 0.8375 of peak, as calibrated on two measured step times | github.com/Aercrist/dsv41-accel-study at `04617dc`, `results/decode.json` → `calibration.hbm_eff` | own work |
 | hbm3e | HBM3E: 36 GB per 12-high stack, more than 1.2 TB/s per stack (run here at 1.0 TB/s) | micron.com/products/memory/hbm/hbm3e | V |
 | ar-latency | best measured 4-GPU small all-reduce 2.37 µs; L2 round trip 0.306 µs | arxiv.org/pdf/2607.16100 | P |
 | serdes-energy | 112G long-reach SerDes below 5 pJ/bit | synopsys.com (112G bulletin); Hot Chips 2025 tutorial | V / R |
