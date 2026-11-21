@@ -8,15 +8,16 @@
 {% set A = W.active %}
 # 01 · Workload
 
-This page is the inference workload of Inkling 2 Small as read from the checkpoint headers, the model
-config and the public serving material, **before any simulation**. The simulator expands it into the per-op
-workload the simulator runs. Every number is rendered from `results/phase0_workload.json`.
+This page describes the inference workload of Inkling 2 Small. We read it from the checkpoint headers,
+the model config and the public serving material, **before any simulation**. The simulator expands it
+into the per-op workload that the simulator runs. We render each number from
+`results/phase0_workload.json`.
 
-Three labels are used throughout:
+This page uses three labels:
 
-* **derived**: exact arithmetic on the checkpoint headers and config.
-* **measured (source)**: quoted from a public source. We did not run it.
-* **napkin**: a first-order estimate. The simulator must later reproduce it or correct it.
+- **derived**: exact arithmetic on the checkpoint headers and config.
+- **measured (source)**: a quote from a public source. We did not run it.
+- **napkin**: a first-order estimate. Later, the simulator must reproduce it or correct it.
 
 ## 1. What was read
 
@@ -28,11 +29,12 @@ Three labels are used throughout:
 | Serving recipes and launch write-ups | vLLM, SGLang, TokenSpeed | `vllm-recipe`, `vllm-blog`, `sglang-recipe`, `tokenspeed-blog`, `tokenspeed-recipe` |
 | NVFP4 definition | NVIDIA | `nvfp4-blog` |
 
-Only headers were downloaded: {{ gb(W.source.file_bytes, 1) }} of weights stayed on the Hub.
+We downloaded only the headers. {{ gb(W.source.file_bytes, 1) }} of weights stayed on the Hub.
 
-TokenSpeed's main branch contains its Inkling 2 Small implementation (`tokenspeed-src`), which we
-read line by line (section 11); vLLM and SGLang ship theirs in development images, and their main
-branches hold only the earlier Inkling model, so those two were used through their published recipes.
+The main branch of TokenSpeed contains its Inkling 2 Small implementation (`tokenspeed-src`). We read
+it line by line (section 11). vLLM and SGLang ship their implementations in development images. Their
+main branches hold only the earlier Inkling model. Thus we used those two engines through their
+published recipes.
 
 ## 2. The model in numbers (derived)
 
@@ -59,21 +61,22 @@ branches hold only the earlier Inkling model, so those two were used through the
 | **total** | **{{ n(PA.total) }}** | | **{{ gb(BY.total_with_draft - BY.draft) }}** | |
 | speculative draft (not in the 594B) | {{ n(PA.draft) }} | | {{ gb(BY.draft, 2) }} | 16 |
 
-* **594B.** The Hub reports {{ n(PA.hub_total) }} parameters. The headers give exactly that number
-  under the Hub's convention, which counts each packed NVFP4 byte as two parameters, leaves out the
-  per-block scale tensors and the draft, and counts the {{ n(PA.second_level_scales) }} second-level
-  FP32 scales as parameters. Without those scales the weights number {{ n(PA.total) }}.
-* **17B active.** One token uses the attention and router weights of every layer plus
-  {{ C.top_k }} of {{ C.experts }} experts: {{ bn(A.decoder_layers, 2) }} parameters. That matches the
-  published 17B. Adding the output projection gives {{ bn(A.decoder_layers_plus_unembed, 2) }}; counting
-  every non-expert weight, including the embedding table and the vision encoder, gives
-  {{ bn(A.all_nonexpert_plus_routed, 2) }}.
-* **292M vision encoder.** The ViT backbone has {{ n(PA.vision_backbone) }} parameters.
-* The checkpoint on disk is {{ gb(BY.total_with_draft) }} including the draft.
+- **594B.** The Hub reports {{ n(PA.hub_total) }} parameters. The headers give exactly that number
+  under the convention of the Hub. This convention counts each packed NVFP4 byte as two parameters.
+  It does not count the per-block scale tensors or the draft, but it counts the
+  {{ n(PA.second_level_scales) }} second-level FP32 scales as parameters. Without those scales, the
+  parameter count of the weights is {{ n(PA.total) }}.
+- **17B active.** One token uses the attention weights and router weights of each layer and
+  {{ C.top_k }} of {{ C.experts }} experts. This is {{ bn(A.decoder_layers, 2) }} parameters. That
+  agrees with the published 17B. With the output projection, the count is
+  {{ bn(A.decoder_layers_plus_unembed, 2) }}. With each non-expert weight (the embedding table and the vision encoder
+  are two of these), the count is {{ bn(A.all_nonexpert_plus_routed, 2) }}.
+- **292M vision encoder.** The ViT backbone has {{ n(PA.vision_backbone) }} parameters.
+- The checkpoint on disk is {{ gb(BY.total_with_draft) }} with the draft.
 
 ## 4. Which tensors are which precision, and what the activations are (derived)
 
-From `hf_quant_config.json`, confirmed against the dtype of every tensor:
+This table comes from `hf_quant_config.json`. We confirmed it against the dtype of each tensor.
 
 | what | stored as | computed in |
 |---|---|---|
@@ -82,24 +85,26 @@ From `hf_quant_config.json`, confirmed against the dtype of every tensor:
 | attention projections (query, key, value, relative, gate, sink, output), router, convolutions, norms, embedding, output projection, vision, draft | BF16 | BF16; the output projection returns FP32 |
 | attention-residual queries, router bias | FP32 | FP32 |
 
-The activation format is the answer to "FP4 or FP8?": it follows the weights. The NVFP4 expert GEMMs
+The activation format answers the question "FP4 or FP8?". It follows the weights. The NVFP4 expert GEMMs
 quantize their inputs to `{{ W.quantization.nvfp4_weights.required_activation_quantization.format }}` in
 {{ W.quantization.nvfp4_weights.required_activation_quantization.block_size }}-value blocks with
-`{{ W.quantization.nvfp4_weights.required_activation_quantization.scale_dtype }}` block scales, a
-**{{ W.quantization.nvfp4_weights.required_activation_quantization.amax_type | replace("_", "-") }}** second-level scale, and the
-`{{ W.quantization.nvfp4_weights.required_activation_quantization.scale_selection_rule }}` rule: each block's
-maximum is scaled to 6 or to 4, whichever reconstructs the block with the lower mean absolute error
-(`vllm-blog`). Two consequences for hardware:
+`{{ W.quantization.nvfp4_weights.required_activation_quantization.scale_dtype }}` block scales. They use a
+**{{ W.quantization.nvfp4_weights.required_activation_quantization.amax_type | replace("_", "-") }}** second-level scale and the
+`{{ W.quantization.nvfp4_weights.required_activation_quantization.scale_selection_rule }}` rule. This rule
+scales the maximum of each block to 6 or to 4. It selects the value that reconstructs the block with
+the lower mean absolute error (`vllm-blog`).
 
-* The second-level scale is per token, so a token's quantization does not depend on what else is
-  in the batch. That is a precondition for the batch-invariance check in the silicon section.
-* The published engines keep expert parallelism equal to tensor parallelism because an NVFP4
-  expert cannot be split across devices: its activation scales must cover the expert's full input
-  width (`sglang-recipe`).
+There are two results for hardware:
 
-NVIDIA's definition of NVFP4 matches what the checkpoint stores: E2M1 values, one E4M3 scale per 16
-values, one FP32 scale per tensor, 4.5 bits per value (`nvfp4-blog`). In this checkpoint the "tensor"
-for the FP32 scale is one expert.
+- The second-level scale is per token. Thus the quantization of a token does not depend on the
+  other contents of the batch. The batch-invariance check in the silicon section needs this property.
+- The published engines keep expert parallelism equal to tensor parallelism. The cause is that an
+  engine cannot split an NVFP4 expert across devices. The activation scales of an expert must cover
+  its full input width (`sglang-recipe`).
+
+The NVIDIA definition of NVFP4 agrees with the contents of the checkpoint. The definition is E2M1
+values, one E4M3 scale per 16 values, one FP32 scale per tensor, and 4.5 bits per value
+(`nvfp4-blog`). In this checkpoint, the "tensor" for the FP32 scale is one expert.
 
 ## 5. The four kinds of layer (derived)
 
@@ -109,15 +114,15 @@ for the FP32 scale is one expert.
 | {{ k.attention }} | {{ k.expert_precision | upper }} | {{ k.layers | length }} | {{ n(k.dense_params / 1e6, 1) }}M, {{ mb(k.dense_bytes) }} | {{ mb(k.expert_bytes_each, 1) }} | {{ mb(k.routed_bytes_per_token) }} | {{ n(k.weight_macs_per_token / 1e6, 0) }}M | {{ gb(k.resident_bytes, 2) }} |
 {% endfor %}
 
-"Dense weights" are shared by every token: the attention projections and the router. "8 routed
-experts" is what one token reads from the MoE. Full-attention layers carry slightly more dense
-weight because their key and value convolutions depend on the input. The per-layer table for all
+Each token uses the "dense weights": the attention projections and the router. "8 routed
+experts" is the quantity that one token reads from the MoE. Full-attention layers have slightly more
+dense weight, because their key and value convolutions depend on the input. The per-layer table for all
 {{ C.layers }} layers is in `results/phase0_workload.json` under `layers`.
 
-Attention itself costs {{ n(W.attention.macs_per_row_per_layer_per_context_token) }} MACs per layer for
-every token of context it looks at. In the {{ C.full_layers }} full-attention layers that is
-{{ n(W.attention.full_macs_per_row_per_context_token) }} MACs per context token, so attention
-arithmetic overtakes weight arithmetic at about {{ n(W.attention.context_where_full_attention_macs_equal_weight_macs, -3) }}
+Attention costs {{ n(W.attention.macs_per_row_per_layer_per_context_token) }} MACs per layer for
+each token of context that it reads. In the {{ C.full_layers }} full-attention layers, that is
+{{ n(W.attention.full_macs_per_row_per_context_token) }} MACs per context token. Thus attention
+arithmetic becomes larger than weight arithmetic at about {{ n(W.attention.context_where_full_attention_macs_equal_weight_macs, -3) }}
 tokens of context.
 
 ## 6. What one decoded token touches (derived)
@@ -134,15 +139,15 @@ Batch 1, no speculation, text only:
 
 That is {{ n(T.weight_macs / 1e9, 2) }} billion weight MACs per token.
 
-**Half of the bytes a token reads are 16-bit attention weights, not 4-bit experts.** The experts are
+**Half of the bytes that a token reads are 16-bit attention weights, not 4-bit experts.** The experts are
 {{ pct((PA.by_class.nvfp4 + PA.by_class.mxfp8) / PA.total, 1) }} of the parameters but
-{{ pct(T.share.routed_experts_nvfp4 + T.share.routed_experts_mxfp8) }} of what one token reads. One token
+{{ pct(T.share.routed_experts_nvfp4 + T.share.routed_experts_mxfp8) }} of the bytes that one token reads. One token
 uses {{ pct(W.weights_on_chip_sizing.share_of_weight_bytes_used_per_token, 1) }} of the weight bytes and
 {{ pct(W.weights_on_chip_sizing.share_of_expert_bytes_used_per_token, 1) }} of the experts.
 
 ## 7. KV cache (derived, checked against three published figures)
 
-Every layer stores keys and values for {{ C.kv_heads }} heads of {{ C.head_dim }}:
+Each layer stores keys and values for {{ C.kv_heads }} heads of {{ C.head_dim }}:
 {{ n(KV.elements_per_token_per_layer) }} values per token per layer.
 
 | per token | BF16 | MXFP8 | NVFP4-style |
@@ -151,13 +156,13 @@ Every layer stores keys and values for {{ C.kv_heads }} heads of {{ C.head_dim }
 | the {{ C.full_layers }} full-attention layers | {{ n(KV.target_full_bytes_per_token.bf16) }} B | {{ n(KV.target_full_bytes_per_token.mxfp8) }} B | {{ n(KV.target_full_bytes_per_token.nvfp4_style) }} B |
 | at {{ n(KV.max_context) }} tokens | {{ gb(KV.at_max_context_bytes.target_bf16) }} | {{ gb(KV.at_max_context_bytes.target_mxfp8) }} | {{ gb(KV.at_max_context_bytes.target_nvfp4_style) }} |
 
-* **Full-attention ("global") layers** are the only ones whose cache grows with context.
-* **Sliding-window ("local") layers** keep the last {{ n(KV.window) }} tokens:
-  {{ mb(KV.sliding_bytes_per_request_bf16) }} per request in BF16, whatever the context.
-* **The draft** adds {{ C.draft_layers }} full-history layers that stay in BF16
-  (`tokenspeed-recipe`): {{ n(KV.draft_full_bytes_per_token_bf16) }} B per token,
+- **Full-attention ("global") layers** are the only layers with a cache that grows with context.
+- **Sliding-window ("local") layers** keep the last {{ n(KV.window) }} tokens. This is
+  {{ mb(KV.sliding_bytes_per_request_bf16) }} per request in BF16, for any context.
+- **The draft** adds {{ C.draft_layers }} full-history layers that stay in BF16
+  (`tokenspeed-recipe`). This is {{ n(KV.draft_full_bytes_per_token_bf16) }} B per token and
   {{ gb(KV.at_max_context_bytes.draft_bf16) }} at full context. With an MXFP8 cache for the target
-  model, the draft's cache is the larger of the two.
+  model, the cache of the draft is the larger of the two.
 
 Cross-checks against published figures (measured, source):
 
@@ -167,22 +172,22 @@ Cross-checks against published figures (measured, source):
 | MXFP8 cache over BF16 cache, draft included | {{ n(KV.cross_checks.mxfp8_over_bf16_with_draft.ours, 3) }} | {{ n(KV.cross_checks.mxfp8_over_bf16_with_draft.published, 2) }} | `{{ KV.cross_checks.mxfp8_over_bf16_with_draft.src }}` |
 | KV for one request at full context, BF16 | {{ n(KV.cross_checks.one_request_at_max_context_gib_bf16.ours, 1) }} GiB | {{ n(KV.cross_checks.one_request_at_max_context_gib_bf16.published, 2) }} GiB | `{{ KV.cross_checks.one_request_at_max_context_gib_bf16.src }}` |
 
-The first two agree. **The third does not**: vLLM reserves
-{{ x(KV.cross_checks.one_request_at_max_context_gib_bf16.ratio_published_over_ours, 2) }} what our count gives.
-We did not find the reason; see section 12.
+The first two agree. **The third does not agree.** vLLM reserves
+{{ x(KV.cross_checks.one_request_at_max_context_gib_bf16.ratio_published_over_ours, 2) }} the value that our count gives.
+We did not find the cause. Refer to section 12.
 
 The "NVFP4-style" column is hypothetical. The announcement mentions an NVFP4 KV-cache variant
-(`tml-news`), but the cache the public engines expose is MXFP8 (`sglang-recipe`, `tokenspeed-recipe`).
+(`tml-news`). But the cache that the public engines expose is MXFP8 (`sglang-recipe`, `tokenspeed-recipe`).
 
 ## 8. Speculative decoding changes the step (napkin)
 
-The checkpoint ships a draft model, and every published speed uses it. One step drafts 7 tokens and
-verifies {{ DS.verify_rows }} rows per request (`vllm-recipe`, `sglang-recipe`); {{ CONST.speculation.acceptance_published[0] }} to
-{{ CONST.speculation.acceptance_published[1] }} tokens are accepted (`vllm-blog`).
+The checkpoint includes a draft model, and each published speed uses it. One step drafts 7 tokens and
+verifies {{ DS.verify_rows }} rows per request (`vllm-recipe`, `sglang-recipe`). The step accepts {{ CONST.speculation.acceptance_published[0] }} to
+{{ CONST.speculation.acceptance_published[1] }} tokens (`vllm-blog`).
 
 The {{ DS.verify_rows }} rows share the dense weights but route separately. If rows route uniformly and
-independently, {{ DS.expert_picks_per_layer }} picks hit {{ n(DS.distinct_experts_per_layer_uniform_independent, 1) }}
-distinct experts per layer, and one step reads:
+independently, {{ DS.expert_picks_per_layer }} picks select {{ n(DS.distinct_experts_per_layer_uniform_independent, 1) }}
+distinct experts per layer. Then one step reads:
 
 | one speculative step | bytes |
 |---|---|
@@ -192,17 +197,20 @@ distinct experts per layer, and one step reads:
 | BF16 output projection | {{ gb(DS.bytes.unembed_bf16) }} |
 | **total** | **{{ gb(DS.bytes_total) }}** |
 
-At {{ DS.acceptance_assumed }} accepted tokens that is {{ gb(DS.bytes_per_accepted_token) }} per token,
-{{ x(DS.bytes_per_token_vs_no_speculation, 2) }} the bytes of decoding without speculation. **Speculation
-does not save memory traffic under independent routing; it saves fixed latency.** Real routing is
-correlated between neighbouring tokens, which lowers the expert bytes. We have no Inkling routing
-traces, so the routing sweep ([04](04_results.md), section 10) brackets this.
+At {{ DS.acceptance_assumed }} accepted tokens, that is {{ gb(DS.bytes_per_accepted_token) }} per token.
+This is {{ x(DS.bytes_per_token_vs_no_speculation, 2) }} the bytes of decode without speculation. **Under
+independent routing, speculation does not decrease memory traffic. It decreases fixed latency.**
+
+Real
+routing is correlated between adjacent tokens, and this decreases the expert bytes. We have no Inkling
+routing traces. Thus the routing sweep ([04](04_results.md), section 10) gives a low limit and a high
+limit for this effect.
 
 ## 9. Published speeds against the bandwidth ceiling (napkin on measured figures)
 
-The ceiling is the speed at which a step's bytes stream through HBM at
-{{ pct(G.hbm_eff, 1) }} of peak bandwidth (the efficiency calibrated in our DeepSeek-V4.1 study), with
-nothing else on the clock.
+The ceiling is the speed at which the bytes of a step stream through HBM at
+{{ pct(G.hbm_eff, 1) }} of peak bandwidth. The ceiling includes no other time. This efficiency is the
+value that we calibrated in our DeepSeek-V4.1 study.
 
 | published figure (measured, source) | speed | implied step | time to stream the step's weights | speed / ceiling |
 |---|---|---|---|---|
@@ -215,59 +223,70 @@ nothing else on the clock.
 | 4 × B300 | {{ n(G.b300_x4_no_speculation.tok_s_ceiling, -1) }} tok/s | {{ n(G.b300_x4_dspark.tok_s_ceiling, -1) }} tok/s |
 | 2 × B300 | {{ n(G.b300_x2_no_speculation.tok_s_ceiling, -1) }} tok/s | {{ n(G.b300_x2_dspark.tok_s_ceiling, -1) }} tok/s |
 
-Three cautions. The TokenSpeed figures come from long agentic sessions (prompts average 94k tokens),
-where attention adds work the ceiling leaves out. TokenSpeed does not publish its acceptance length,
-so its DSpark row assumes vLLM's {{ DS.acceptance_assumed }}. And the ceiling assumes independent routing.
+There are three cautions:
 
-Read with those cautions, the published engines run at {{ pct(G.vs_published.tokenspeed_b300_x4_no_speculation.measured_over_ceiling) }} to
+1. The TokenSpeed figures come from long agentic sessions (the average prompt is 94k tokens). In
+   such sessions, attention adds work that the ceiling does not include.
+2. TokenSpeed does not publish its acceptance length. Thus its DSpark row assumes the vLLM value of
+   {{ DS.acceptance_assumed }}.
+3. The ceiling assumes independent routing.
+
+With those cautions, the published engines run at {{ pct(G.vs_published.tokenspeed_b300_x4_no_speculation.measured_over_ceiling) }} to
 {{ pct(G.vs_published.vllm_gb200_x4_dspark.measured_over_ceiling) }} of the bandwidth ceiling on four GPUs. The
 TokenSpeed team says the same thing in words: "single-user decode is bound by kernel launches and
-dependency waits rather than math" (`tokenspeed-blog`). This is the same finding as our DeepSeek-V4.1
-study, from the engine's own authors, and it is why the same-GPU software counterfactual (G1) stays in
-this study.
+dependency waits rather than math" (`tokenspeed-blog`). Our DeepSeek-V4.1 study found the same
+result, and here the authors of the engine state it. For this reason, the same-GPU software
+counterfactual (G1) stays in this study.
 
 All published figures are in [`data/public_measurements.yaml`](../data/public_measurements.yaml).
 
 ## 10. What the checkpoint says that our starting notes did not
 
-We began with a list of facts to verify and two rough anchors. Most held. These did not:
+We started with a list of facts to verify and two approximate anchors. Most were correct. These were
+not correct:
 
 | starting note | what the sources say |
 |---|---|
-| The weights are NVFP4. An all-NVFP4 set would be about {{ n(W.starting_anchors.all_nvfp4_gb_noted) }} GB. | The checkpoint is **mixed**: NVFP4 experts in layers {{ W.expert_groups.nvfp4.layers[0] }}-{{ W.expert_groups.nvfp4.layers[-1] }}, MXFP8 experts in layers {{ W.expert_groups.mxfp8.layers[0] }}-{{ W.expert_groups.mxfp8.layers[-1] }}, BF16 everywhere else. It is {{ gb(W.starting_anchors.checkpoint_gb * 1e9) }}, {{ x(W.starting_anchors.checkpoint_over_noted, 2) }} the anchor. |
-| Batch-1 decode touches about {{ W.starting_anchors.touched_gb_noted }} GB of weights per token. | **{{ gb(T.total, 1) }}**, {{ x(W.starting_anchors.touched_over_noted, 1) }} the anchor, because the attention projections are BF16 and the last {{ W.expert_groups.mxfp8.n_layers }} layers' experts are MXFP8. |
-| No throughput or latency figures have been published. | **Several have**, on disclosed hardware: {{ n(M.tokenspeed_b300_c1_dspark.value) }} tok/s per user on 4 × B300 (`tokenspeed-blog`), about {{ n(M.vllm_gb200_tp4_single_user.value) }} on 4 × GB200 (`vllm-blog`), and throughput at four context lengths. The GPU model can be calibrated, not assumed. |
-| (not in the notes) | The model ships a **speculative draft** (DSpark, {{ DS.verify_rows }} rows per step). Every platform in this study must model it. |
-| Serving uses an NVFP4 KV-cache variant. | The announcement says so. The cache the public engines expose is **MXFP8**. Unresolved. |
-| The recommended deployment is 2 × B300. | The model card gives 2 × B300 as an example that meets the memory minimum. Every published speed is on **4 or 8 GPUs** at TP4 or TP8. |
+| The weights are NVFP4. An all-NVFP4 set is about {{ n(W.starting_anchors.all_nvfp4_gb_noted) }} GB. | The checkpoint is **mixed**: NVFP4 experts in layers {{ W.expert_groups.nvfp4.layers[0] }}-{{ W.expert_groups.nvfp4.layers[-1] }}, MXFP8 experts in layers {{ W.expert_groups.mxfp8.layers[0] }}-{{ W.expert_groups.mxfp8.layers[-1] }}, BF16 in all other weights. It is {{ gb(W.starting_anchors.checkpoint_gb * 1e9) }}, {{ x(W.starting_anchors.checkpoint_over_noted, 2) }} the anchor. |
+| Batch-1 decode touches about {{ W.starting_anchors.touched_gb_noted }} GB of weights per token. | **{{ gb(T.total, 1) }}**, {{ x(W.starting_anchors.touched_over_noted, 1) }} the anchor. The causes are that the attention projections are BF16 and the experts of the last {{ W.expert_groups.mxfp8.n_layers }} layers are MXFP8. |
+| No published throughput or latency figures exist. | **Several exist**, on disclosed hardware: {{ n(M.tokenspeed_b300_c1_dspark.value) }} tok/s per user on 4 × B300 (`tokenspeed-blog`), about {{ n(M.vllm_gb200_tp4_single_user.value) }} on 4 × GB200 (`vllm-blog`), and throughput at four context lengths. Thus we can calibrate the GPU model and do not assume it. |
+| (not in the notes) | The model includes a **speculative draft** (DSpark, {{ DS.verify_rows }} rows per step). Each platform in this study must model it. |
+| Serving uses an NVFP4 KV-cache variant. | The announcement says so. The cache that the public engines expose is **MXFP8**. Not resolved. |
+| The recommended deployment is 2 × B300. | The model card gives 2 × B300 as an example that meets the memory minimum. Each published speed is on **4 or 8 GPUs** at TP4 or TP8. |
 
-Confirmed as stated: {{ C.layers }} layers; {{ C.top_k }} of {{ C.experts }} experts; mixed local and global
-attention; context up to {{ n(C.max_context) }}; a 292M-parameter vision encoder; trained in NVFP4 at
-every stage, with the MXFP8 checkpoint 1-2 points better on evals; at least 500 GB and 800 GB of
-aggregate VRAM for the two checkpoints; open weights under Apache 2.0 since 12 Nov (the model was
-announced on 5 Nov with closed weights); and the seven API hosts.
+The sources confirmed these notes as stated:
+
+- {{ C.layers }} layers
+- {{ C.top_k }} of {{ C.experts }} experts
+- mixed local and global attention
+- context up to {{ n(C.max_context) }}
+- a 292M-parameter vision encoder
+- trained in NVFP4 at each stage, with the MXFP8 checkpoint 1-2 points better on evals
+- a minimum of 500 GB and 800 GB of aggregate VRAM for the two checkpoints
+- open weights under Apache 2.0 since 12 Nov (the announcement of the model was on 5 Nov, with closed weights)
+- the seven API hosts
 
 ## 11. What the serving engine's source adds (read at a pinned commit)
 
-TokenSpeed's Inkling 2 Small implementation was read line by line at commit `a439df4`
-(tokenspeed-src). What it changed in the workload model:
+We read the TokenSpeed implementation of Inkling 2 Small line by line at commit `a439df4`
+(tokenspeed-src). It changed these parts of the workload model:
 
-| finding | effect on the model |
+| what the source shows | effect on the model |
 |---|---|
-| Every layer runs 17 kernel launches in a fixed order when its experts are NVFP4, 16 when MXFP8. | Launch counts in the GPU model are counted, not fitted: {{ NK.kernels_per_step }} per speculative step for one request in our operation graph (the source reading gives about 977, good to about 15). |
-| One request with the draft on verifies at most 8 rows and skips both all-reduces in every layer: each producer writes its partial into every rank's mailbox. Two or more requests, or no draft, run two all-reduces per layer. | Three collective regimes in the builder. A single request without the draft runs 96 standalone all-reduces per step; with the draft it runs none inside the layers. |
-| Experts are placed whole on one rank (rank r owns experts 96r to 96r+95); inputs are replicated. | Expert parallelism with the load imbalance that uniform or skewed routing produces. |
-| The draft reads the output head a second time and runs 7 sequential rounds, each ending in a distributed argmax. | Draft operations in the step: a second head read and 7 serial rounds with a collective each. |
-| The KV cache is BF16 or MXFP8. There is no NVFP4 KV cache in the source. | The NVFP4 KV variant the announcement mentions stays a sensitivity. |
-| Source comments give measured times: one full-attention kernel at 8K, 32K and 128K keys, and a prefill forward at 2K and 3K tokens on 4x B300. | The prefill times are calibration points; the attention-kernel times are a held-out check, which the model fails at long context ([06](06_simulator.md)). |
+| Each layer runs 17 kernel launches in a fixed order when its experts are NVFP4, and 16 when they are MXFP8. | We count the launches in the GPU model and do not fit them. Our operation graph has {{ NK.kernels_per_step }} per speculative step for one request. Our count from the source is about 977, accurate to about 15. |
+| One request with the draft on verifies a maximum of 8 rows and skips the two all-reduces in each layer. Each producer writes its partial into the mailbox of each rank. Two or more requests, or no draft, run two all-reduces per layer. | The builder has three collective regimes. A single request without the draft runs 96 standalone all-reduces per step. With the draft, it runs none in the layers. |
+| The engine puts each expert whole on one rank (rank r owns experts 96r to 96r+95). It replicates the inputs. | Expert parallelism with the load imbalance that uniform or skewed routing causes. |
+| The draft reads the output head a second time and runs 7 sequential rounds. Each round ends in a distributed argmax. | Draft operations in the step: a second head read and 7 serial rounds, each with a collective. |
+| The KV cache is BF16 or MXFP8. There is no NVFP4 KV cache in the source. | The NVFP4 KV variant that the announcement mentions stays a sensitivity. |
+| Source comments give measured times: one full-attention kernel at 8K, 32K and 128K keys, and a prefill forward at 2K and 3K tokens on 4x B300. | The prefill times are calibration points. The attention-kernel times are a held-out check. The model fails this check at long context ([06](06_simulator.md)). |
 
 ## 12. What happened to the open items
 
-1. **Read the engine source.** Done for TokenSpeed (above). The vLLM and SGLang implementations were
-   used through their published recipes and blog figures only.
-2. **The {{ x(KV.cross_checks.one_request_at_max_context_gib_bf16.ratio_published_over_ours, 2) }} KV gap against vLLM.** Still unexplained. Our bytes per token match
-   TokenSpeed's published figure exactly.
-3. **An NVFP4 KV cache.** Not found in any public source.
-4. **Dequantize one real expert.** Done as part of the circuit block's reference model ([07](07_silicon.md)).
-5. **Routing correlation.** Bracketed with published statistics from four open models
-   ([04](04_results.md), section 10).
+1. **Read the engine source.** Done for TokenSpeed (above). We used the vLLM and SGLang
+   implementations only through their published recipes and blog figures.
+2. **The {{ x(KV.cross_checks.one_request_at_max_context_gib_bf16.ratio_published_over_ours, 2) }} KV gap against vLLM.** We did not find the cause. Our bytes per token agree
+   exactly with the published TokenSpeed figure.
+3. **An NVFP4 KV cache.** We did not find one in a public source.
+4. **Dequantize one real expert.** Done as part of the reference model of the circuit block ([07](07_silicon.md)).
+5. **Routing correlation.** We set a low limit and a high limit with published statistics from four
+   open models ([04](04_results.md), section 10).

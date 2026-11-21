@@ -57,8 +57,8 @@ def main() -> dict:
         ],
         "napkin": nap, "simulator": g["batch1"]["tok_s_user"], "unit": "tok/s per user",
         "published": "476 tok/s on 4x B300 at 94K context (tokenspeed-blog); about 630 on 4x GB200 (vllm-blog)",
-        "gap_reason": "The napkin leaves out collectives between GPUs and the uneven split of experts across the four GPUs "
-                      f"({g['time_by_cause_batch1_ms']['collective']:.2f} ms and about {g['time_by_cause_batch1_ms']['memory'] - 1e3 * t_mem:.2f} ms in the simulator).",
+        "gap_reason": "The napkin does not include collectives between GPUs and the uneven split of experts across the four GPUs. "
+                      f"These are {g['time_by_cause_batch1_ms']['collective']:.2f} ms and about {g['time_by_cause_batch1_ms']['memory'] - 1e3 * t_mem:.2f} ms in the simulator.",
     }
 
     # ---- 2. S speed at batch 1
@@ -76,13 +76,13 @@ def main() -> dict:
     out["s_batch1"] = {
         "title": "Reloadable weights on the chip (S), one request",
         "steps": [
-            f"About 5 weight operations in series per layer (query/key/value projection, output projection, router, expert up, expert down): "
-            f"5 x {n_layers} layers + 5 x {n_draft} draft layers + 4 for embedding and heads = {serial}.",
-            f"Each takes {1e6 * t_op:.2f} us: the whole time per weight operation that a published wafer-scale SRAM machine shows on Llama 3.1 8B "
-            f"(docs/06). S's own bank pass, {S['scan_rows']} cycles at {S['f_clk'] / 1e6:.0f} MHz = {1e6 * hs.t_scan:.2f} us, is inside that figure.",
+            f"Each layer has about 5 weight operations in series (query/key/value projection, output projection, router, expert up, expert down). "
+            f"The total is 5 x {n_layers} layers + 5 x {n_draft} draft layers + 4 for embedding and heads = {serial}.",
+            f"Each operation takes {1e6 * t_op:.2f} us. That is the whole time per weight operation that a published wafer-scale SRAM machine shows on Llama 3.1 8B "
+            f"(docs/06). The bank pass of S, {S['scan_rows']} cycles at {S['f_clk'] / 1e6:.0f} MHz = {1e6 * hs.t_scan:.2f} us, is inside that figure.",
             f"Weight operations: {serial} x {1e6 * t_op:.2f} us = {1e3 * serial * t_op:.3f} ms.",
-            f"Attention: {len(att)} attention operations pay a hand-off each ({1e3 * t_att_lat:.3f} ms), "
-            f"their arithmetic takes {1e3 * t_att_math:.3f} ms and the KV fetch {1e3 * t_att_kv:.3f} ms.",
+            f"Attention: {len(att)} attention operations each pay a hand-off ({1e3 * t_att_lat:.3f} ms). "
+            f"Their arithmetic takes {1e3 * t_att_math:.3f} ms and the KV fetch takes {1e3 * t_att_kv:.3f} ms.",
             f"Step = {1e3 * t_step:.3f} ms; {acc} tokens per step gives {nap:,.0f} tok/s per user.",
         ],
         "napkin": nap, "simulator": s["batch1"]["tok_s_user"], "unit": "tok/s per user", "published": "",
@@ -115,22 +115,22 @@ def main() -> dict:
     out["energy_best"] = {
         "title": "Tokens per joule at the best interactive point (32K context, at least 100 tok/s per user)",
         "steps": [
-            f"GPUs: at batch {bg['batch']} every step touches every expert, so it streams the whole {W['bytes']['total_with_draft'] / 1e9:.0f} GB: "
-            f"{1e3 * t_all:.1f} ms before attention and launches. The simulator's step is {bg['step_ms']:.1f} ms, {bg['tok_s']:,.0f} tok/s in total.",
+            f"GPUs: at batch {bg['batch']}, every step touches every expert. Thus the step streams the whole {W['bytes']['total_with_draft'] / 1e9:.0f} GB, which takes "
+            f"{1e3 * t_all:.1f} ms before attention and launches. The step of the simulator is {bg['step_ms']:.1f} ms, which gives {bg['tok_s']:,.0f} tok/s in total.",
             f"GPU power: 4 x {G['tdp_w']:.0f} W x {lf:.2f} (measured share of TDP at this batch, carried from H100) + 500 W host = {gw:,.0f} W. "
             f"{bg['tok_s']:,.0f} / {gw:,.0f} = {nap_g:.2f} tokens/J.",
-            f"S: throughput is capped by the shared attention tile. A token needs {att_flops_tok / 1e9:.1f} GFLOP of full attention at 32K, "
-            f"so {S['attn_peak_full'] / 1e15:.0f} PFLOP/s gives {cap_math:,.0f} tok/s; it reads {kv_bytes_tok / 1e9:.2f} GB of KV, "
-            f"so {stacks} HBM stacks at {eta:.2f} give {cap_kv:,.0f} tok/s. The lower: {s_tok_s:,.0f} tok/s.",
-            f"S energy per token: reading weights {1e3 * e_read:.1f} mJ ({step_bytes / acc / 1e9:.1f} GB at {S['power']['sram_read_pj_per_bit']} pJ/bit), "
-            f"weight arithmetic {1e3 * e_math:.1f} mJ, attention and KV {1e3 * e_att:.1f} mJ; with power-delivery loss {1e3 * e_dyn:.1f} mJ.",
+            f"S: the shared attention tile limits throughput. A token needs {att_flops_tok / 1e9:.1f} GFLOP of full attention at 32K, "
+            f"so {S['attn_peak_full'] / 1e15:.0f} PFLOP/s gives {cap_math:,.0f} tok/s. A token reads {kv_bytes_tok / 1e9:.2f} GB of KV, "
+            f"so {stacks} HBM stacks at {eta:.2f} give {cap_kv:,.0f} tok/s. The lower value is {s_tok_s:,.0f} tok/s.",
+            f"S energy per token: {1e3 * e_read:.1f} mJ to read weights ({step_bytes / acc / 1e9:.1f} GB at {S['power']['sram_read_pj_per_bit']} pJ/bit), "
+            f"{1e3 * e_math:.1f} mJ for weight arithmetic, {1e3 * e_att:.1f} mJ for attention and KV. With power-delivery loss, the total is {1e3 * e_dyn:.1f} mJ.",
             f"S power: {static:,.0f} W static + {s_tok_s:,.0f} tok/s x {1e3 * e_dyn:.1f} mJ = {sw:,.0f} W. {nap_s:.1f} tokens/J.",
             f"Ratio: {nap_s / nap_g:.1f}x.",
         ],
         "napkin": nap_s / nap_g, "simulator": s["best_energy"]["tokens_per_joule"] / bg["tokens_per_joule"], "unit": "x",
         "napkin_s": nap_s, "simulator_s": s["best_energy"]["tokens_per_joule"], "napkin_g": nap_g, "simulator_g": bg["tokens_per_joule"], "published": "",
-        "gap_reason": "The napkin takes the attention tile's limit as the throughput and ignores groups waiting for the tile; "
-                      "the simulator also lets one bank pass serve several rows of a group.",
+        "gap_reason": "The napkin uses the limit of the attention tile as the throughput and ignores groups that wait for the tile. "
+                      "The simulator also lets one bank pass serve several rows of a group.",
     }
 
     # ---- 4. cost per token at the best interactive point
@@ -146,13 +146,13 @@ def main() -> dict:
         "steps": [
             f"GPUs: 4 x ${G['cost']['purchase_usd_per_gpu']:,.0f} = ${g_cap:,.0f} over 4 years = ${g_cap / HOURS:.2f}/h, plus {gw / 1000:.1f} kW x "
             f"{G['cost']['pue']} x ${G['cost']['usd_per_kwh']}/kWh = ${g_h:.2f}/h. At {bc['tok_s']:,.0f} tok/s that is ${g_usd:.3f} per million tokens.",
-            f"S: {ds['area']['dies']} dies, ${ds['cost']['manufacturing']:,.0f} to build plus ${ds['cost']['nre_share']:,.0f} of design cost "
-            f"(${S['cost']['nre_usd'] / 1e6:,.0f}M over the {ds['cost']['systems']:,.0f} systems that {I['fleet']['demand_tokens_per_day'] / 1e12:.0f} trillion tokens a day need) = ${s_cap:,.0f}; "
-            f"${s_cap / HOURS:.2f}/h, plus {sw / 1000:.1f} kW of power = ${s_h:.2f}/h. At {s_tok_s:,.0f} tok/s (napkin 3) that is ${s_usd:.4f} per million tokens.",
+            f"S: {ds['area']['dies']} dies. The build cost is ${ds['cost']['manufacturing']:,.0f}. The share of design cost is ${ds['cost']['nre_share']:,.0f} "
+            f"(${S['cost']['nre_usd'] / 1e6:,.0f}M over the {ds['cost']['systems']:,.0f} systems that {I['fleet']['demand_tokens_per_day'] / 1e12:.0f} trillion tokens a day need). The total is ${s_cap:,.0f}. "
+            f"That is ${s_cap / HOURS:.2f}/h, plus {sw / 1000:.1f} kW of power = ${s_h:.2f}/h. At {s_tok_s:,.0f} tok/s (napkin 3) that is ${s_usd:.4f} per million tokens.",
             f"Ratio: {g_usd / s_usd:.1f}x.",
         ],
         "napkin": g_usd / s_usd, "simulator": bc["usd_per_mtok"] / sc["usd_per_mtok"], "unit": "x", "published": "",
-        "gap_reason": "Same throughput cap as napkin 3: the napkin lets the attention tile run at its limit; the simulator reaches "
+        "gap_reason": "The throughput cap is the same as in napkin 3. The napkin lets the attention tile run at its limit. The simulator gets "
                       f"{sc['tok_s']:,.0f} tok/s.",
     }
 
@@ -169,9 +169,9 @@ def main() -> dict:
         "title": "What reloadability costs in silicon",
         "steps": [
             f"The checkpoint is {W['bytes']['total_with_draft'] / 1e9:.1f} GB = {mib:,.0f} MiB.",
-            f"Both designs also keep {ds['area']['kv_window_sessions']} sessions' sliding-window KV cache in SRAM: {win:,.0f} mm2.",
+            f"The two designs also keep the sliding-window KV cache of {ds['area']['kv_window_sessions']} sessions in SRAM: {win:,.0f} mm2.",
             f"S: weights in SRAM at {a['mm2_per_mib_sram']} mm2/MiB = {s_store:,.0f} mm2, plus {s_lanes:,.0f} mm2 of multiplier lanes and the window cache. "
-            f"A die offers {usable:.0f} mm2 after pads, links and control: {s_d:.0f} dies.",
+            f"A die gives {usable:.0f} mm2 after pads, links and control: {s_d:.0f} dies.",
             f"F: mask-programmed storage with its arithmetic at {F['area']['mm2_per_mib_rom']} mm2/MiB (from one shipped chip, scaled) = {f_store:,.0f} mm2: {f_d:.0f} dies.",
             f"Ratio: {s_d / f_d:.1f}x.",
         ],

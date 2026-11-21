@@ -1,9 +1,10 @@
 {% set S = I.designs.s %}{% set F = I.designs.f %}{% set s = H["s"] %}{% set f = H["f"] %}
 # 03 · Architecture: MDS-1 (reloadable) and MDF-1 (fixed)
 
-Two designs on paper. Neither has been laid out; one block has been synthesized ([07](07_silicon.md)).
-Every figure here is **modeled** from the constants in `configs/hw/s_mds1.yaml` and `f_mdf1.yaml`,
-each of which cites a source or is marked *assumption*. MDF-1 is a comparison point, not a proposal.
+Two designs exist on paper. We did not lay out either design. We synthesized one block
+([07](07_silicon.md)). Each figure here is **modeled** from the constants in `configs/hw/s_mds1.yaml`
+and `f_mdf1.yaml`. Each constant cites a source or has the mark *assumption*. MDF-1 is a comparison
+point, not a proposal.
 
 ## MDS-1 in one picture
 
@@ -28,23 +29,23 @@ each of which cites a source or is marked *assumption*. MDF-1 is a comparison po
                                                         +------------------------+
 ```
 
-- **Layers over tiles.** {{ S.area.tiles }} tiles of at most {{ S_HW.tile_dies_max }} dies. A layer takes about {{ n(S.area.dies_per_layer, 1) }} dies on
-  average: one hub die for attention, routing and normalization, the rest holding that layer's 384
-  experts, so a layer spans more than one tile and the experts on the second tile are reached over the
-  serial link (modeled). {{ S.area.dies }} dies in all, of {{ S.cost.distinct_die_designs }} designs (weight die, hub die, attention-tile die),
-  each further design costing another mask set.
-- **Weights never move.** Each weight tensor is stored in SRAM banks {{ S.scan_rows }} rows deep with a
-  multiplier lane on the bank's output. A matrix-vector product is one pass over the bank:
-  {{ S.scan_rows }} cycles at {{ n(S.f_clk / 1e9, 1) }} GHz, {{ n(S.t_scan_us, 2) }} µs, whatever the
+- **Layers over tiles.** {{ S.area.tiles }} tiles of a maximum of {{ S_HW.tile_dies_max }} dies. A layer uses about {{ n(S.area.dies_per_layer, 1) }} dies on
+  average: one hub die for attention, routing and normalization, and other dies for its 384
+  experts. Thus a layer spans more than one tile. The hub die gets access to the experts on the
+  second tile through the serial link (modeled). There are {{ S.area.dies }} dies in all, of {{ S.cost.distinct_die_designs }} designs (weight die, hub die, attention-tile die),
+  and each added design costs one more mask set.
+- **Weights never move.** Each weight tensor is in SRAM banks {{ S.scan_rows }} rows deep, with a
+  multiplier lane on the output of the bank. A matrix-vector product is one pass over the bank:
+  {{ S.scan_rows }} cycles at {{ n(S.f_clk / 1e9, 1) }} GHz, {{ n(S.t_scan_us, 2) }} µs, for any
   matrix size.
-- **Tokens move.** A layer's hub die sends a row to the 8 experts the router picked, already quantized
-  to NVFP4 (4.5 bits per value), over die-to-die links inside the tile. The hidden state then hops to
-  the next tile over a serial link.
-- **One attention tile.** The 40 sliding-window layers attend inside their own hub die (window 1,024,
-  kept in on-die SRAM). The 8 full-attention layers and the draft model's 5 layers send their queries
-  to a shared attention tile that holds the whole KV cache in HBM.
-- **Reloadable.** Weights are written at boot. At 10 GB/s from storage (assumption) a full load takes
-  about {{ n(S.reload_seconds_at_10_gb_s, 0) }} seconds.
+- **Tokens move.** The hub die of a layer sends a row to the 8 experts that the router picked. The
+  row is already quantized to NVFP4 (4.5 bits per value). It goes through die-to-die links in the
+  tile. Then the hidden state goes to the next tile through a serial link.
+- **One attention tile.** The 40 sliding-window layers attend in their own hub die (window 1,024,
+  kept in on-die SRAM). The 8 full-attention layers and the 5 layers of the draft model send their
+  queries to a shared attention tile. This tile holds the whole KV cache in HBM.
+- **Reloadable.** The weight loader writes the weights at boot. At 10 GB/s from storage (assumption),
+  a full load takes about {{ n(S.reload_seconds_at_10_gb_s, 0) }} seconds.
 
 ## Area
 
@@ -60,14 +61,15 @@ each of which cites a source or is marked *assumption*. MDF-1 is a comparison po
 | **used** | **{{ n(core, -2) }}** | |
 | **silicon: {{ S.area.dies }} dies of {{ n(S.area.die_mm2, 0) }} mm²** | **{{ n(S.area.silicon_mm2, -2) }}** | |
 
-That is {{ n(S.area.silicon_mm2 / 70686, 1) }} wafers' worth of area per system, and
-{{ n(S.area.gb_per_die, 2) }} GB of weights per die. Memory is {{ pct(S.area.repairable_share) }} of the silicon and the
-multiplier lanes most of the rest. SRAM is costed at {{ S_HW.area.mm2_per_mib_sram }} mm² per
-MiB, twice the published macro density at this class of node, to cover error correction, routing and
-the power grid (sources: sram-density, sram-3nm-macro, vcache).
+That is the area of {{ n(S.area.silicon_mm2 / 70686, 1) }} wafers per system, and
+{{ n(S.area.gb_per_die, 2) }} GB of weights per die. Memory is {{ pct(S.area.repairable_share) }} of the silicon, and the
+multiplier lanes are most of the remainder. We set the area of SRAM at {{ S_HW.area.mm2_per_mib_sram }} mm² per
+MiB. This is two times the published macro density at this class of node. The margin is for error
+correction, routing and the power grid (sources: sram-density, sram-3nm-macro, vcache).
 
-We predicted {{ sig(PRD.P07.central) }} dies ({{ sig(PRD.P07.low) }} to {{ sig(PRD.P07.high) }}); the design
-came out at {{ S.area.dies }}. The prediction left out the multiplier lanes{% if SE.available %}, and the synthesized lane is {{ x(SS.measured_over_assumed.area) }} the area we had assumed ({{ SE.assumed.dies }} dies before synthesis){% endif %}.
+We predicted {{ sig(PRD.P07.central) }} dies ({{ sig(PRD.P07.low) }} to {{ sig(PRD.P07.high) }}). The design
+has {{ S.area.dies }} dies. The prediction did not include the multiplier lanes.{% if SE.available %} Also, the synthesized lane is {{ x(SS.measured_over_assumed.area) }} the area that we assumed ({{ SE.assumed.dies }} dies before synthesis).{% endif %}
+
 
 ## Timing of one step at batch 1
 
@@ -81,52 +83,53 @@ came out at {{ S.area.dies }}. The prediction left out the multiplier lanes{% if
 | step boundary, sampler | {{ n(t.fixed, 3) }} ms | {{ pct(t.fixed / s.batch1.step_ms) }} |
 | **step** | **{{ n(s.batch1.step_ms, 3) }} ms** | {{ n(s.batch1.tok_s_user, -1) }} tok/s per user |
 
-A weight operation takes {{ n(1e6 * (NK.s_op_time), 2) }} µs in all. That is not a design target: it is the whole
+A weight operation takes {{ n(1e6 * (NK.s_op_time), 2) }} µs in all. That is not a design target. It is the whole
 time per weight operation that a published wafer-scale SRAM machine shows on Llama 3.1 8B
-([06](06_simulator.md)). S's own bank pass ({{ n(S.t_scan_us, 2) }} µs) is inside it. A design that needed only
-half again its own pass would be
+([06](06_simulator.md)). This time includes the bank pass of S ({{ n(S.t_scan_us, 2) }} µs). A design that needs only
+one and a half times its own pass is
 {{ x((U.tornado.rows | selectattr("parameter", "equalto", "S per-operation latency") | first).speed_batch1_low / TB.speed_batch1, 1) }}
-faster than the figure reported.
+faster than the reported figure.
 
-Because every layer has its own tile, requests are pipelined: while one request is in layer 20,
-another can be in layer 3. That is why throughput scales with batch until the shared attention tile
-saturates ([04](04_results.md), section 4).
+Each layer has its own tile, and thus the design pipelines requests. While one request is in layer 20,
+a different request can be in layer 3. For this reason, throughput scales with batch until the shared
+attention tile saturates ([04](04_results.md), section 4).
 
 ## Power
 
 | state | weight banks | logic and clock | links, idle | KV memory | host | total |
 |---|---|---|---|---|---|---|
 | idle, managed (banks in retention, lanes clock-gated) | {{ n(S.static_w_managed.storage_leakage, 0) }} W | {{ n(S.static_w_managed.logic_and_clock, -1) }} W | {{ n(S.static_w_managed.links_idle, -1) }} W | {{ n(S.static_w_managed.kv_memory, 0) }} W | {{ n(S.static_w_managed.host, 0) }} W | **{{ n(S.static_w_managed.total, -1) }} W** |
-| idle, unmanaged (full voltage, clocks running) | {{ n(S.static_w_unmanaged.storage_leakage, 0) }} W | {{ n(S.static_w_unmanaged.logic_and_clock, -1) }} W | {{ n(S.static_w_unmanaged.links_idle, -1) }} W | {{ n(S.static_w_unmanaged.kv_memory, 0) }} W | {{ n(S.static_w_unmanaged.host, 0) }} W | **{{ n(S.static_w_unmanaged.total, -1) }} W** |
+| idle, unmanaged (full voltage, clocks on) | {{ n(S.static_w_unmanaged.storage_leakage, 0) }} W | {{ n(S.static_w_unmanaged.logic_and_clock, -1) }} W | {{ n(S.static_w_unmanaged.links_idle, -1) }} W | {{ n(S.static_w_unmanaged.kv_memory, 0) }} W | {{ n(S.static_w_unmanaged.host, 0) }} W | **{{ n(S.static_w_unmanaged.total, -1) }} W** |
 
 | serving | system power |
 |---|---|
 | one request, 8K context | {{ n(s.batch1.watts, -1) }} W |
 | {{ S.busy.batch }} requests, 32K context | {{ n(S.busy.watts, -2) }} W |
 
-- **SRAM leakage is small once managed.** Measured leakage of a 3 nm macro at 25 °C is 27.5 pW per bit
-  (sram-3nm-macro): {{ n(0.22 * S.area.resident_gb, 0) }} W for this model. We multiply by 3 for
-  operating temperature (assumption; no hot figure is public) and hold idle banks at a retention
-  voltage that cuts it to {{ pct(S_HW.power.retention_factor) }} (published range 5% to 31%;
+- **Managed SRAM leakage is small.** The measured leakage of a 3 nm macro at 25 °C is 27.5 pW per bit
+  (sram-3nm-macro). This is {{ n(0.22 * S.area.resident_gb, 0) }} W for this model. We multiply by 3 for
+  operating temperature (assumption; no hot figure is public). We hold idle banks at a retention
+  voltage that decreases the leakage to {{ pct(S_HW.power.retention_factor) }} (published range 5% to 31%;
   sram-retention).
 - **Idle logic is the larger term**: {{ S_HW.power.logic_static_w_per_die }} W per die managed,
   {{ S_HW.power.logic_static_w_per_die_unmanaged }} W unmanaged (assumptions, swept 1 to 15 W).
-- **Power density is low.** Fully busy, the system draws about {{ n(S.busy.w_per_die, 0) }} W per die,
-  {{ n(S.busy.w_per_cm2, 1) }} W/cm². A B300 is {{ n(G_HW.tdp_w, 0) }} W in one package. MDS-1
-  can be air-cooled; its difficulty is the number of dies, not heat.
+- **Power density is low.** When it is fully busy, the system uses about {{ n(S.busy.w_per_die, 0) }} W per die,
+  {{ n(S.busy.w_per_cm2, 1) }} W/cm². A B300 is {{ n(G_HW.tdp_w, 0) }} W in one package. Air
+  cooling is possible for MDS-1. Its difficulty is the number of dies, not heat.
 
 ## Packaging, power delivery, cooling
 
 - **Tiles.** About {{ n(S.area.dies_per_tile, 0) }} large dies on one fan-out or interposer tile
-  ({{ S_HW.tile_dies_max }} is the assumed limit; a layer spans more than one tile). Die-to-die links inside a
-  tile are short-reach, {{ S_HW.power.d2d_pj_per_bit }} pJ/bit (d2d-energy). Packaging and test are costed at
-  {{ usd(S_HW.cost.package_test_usd_per_die) }} per die, built from the same sourced parts as the HBM chip's
-  package (cowos-cost); the attention tile's HBM packages are costed as the HBM chip's.
+  ({{ S_HW.tile_dies_max }} is the assumed limit; a layer spans more than one tile). Die-to-die links in a
+  tile are short-reach, {{ S_HW.power.d2d_pj_per_bit }} pJ/bit (d2d-energy). We set the cost of packaging and test at
+  {{ usd(S_HW.cost.package_test_usd_per_die) }} per die. We built this cost from the same sourced parts as the
+  package of the HBM chip (cowos-cost). The HBM packages of the attention tile have the same cost as
+  those of the HBM chip.
 - **Between tiles.** 72 lanes of 112G serial links per neighbour, {{ n(S_HW.link_bw / 1e9, 0) }} GB/s,
-  {{ n(S_HW.hop_latency * 1e9, 0) }} ns per hop including error correction (ucie-targets, with margin;
+  {{ n(S_HW.hop_latency * 1e9, 0) }} ns per hop with error correction (ucie-targets, with margin;
   swept 0.1 to 2 µs).
-- **System.** {{ S.area.tiles }} tiles plus the attention tile: several chassis, not one board.
-  Boards, power delivery, cooling and chassis are costed at {{ usd(S_HW.cost.system_usd_per_die) }} per
+- **System.** {{ S.area.tiles }} tiles and the attention tile: several chassis, not one board.
+  We set the cost of boards, power delivery, cooling and chassis at {{ usd(S_HW.cost.system_usd_per_die) }} per
   die (assumption).
 - **Power delivery** at {{ pct(S_HW.power.vr_efficiency) }} efficiency (assumption, as MDA-1).
 
@@ -142,17 +145,17 @@ saturates ([04](04_results.md), section 4).
 | share of design cost (NRE) at {{ n(S.cost.systems, -1) }} / {{ n(F.cost.systems, -1) }} systems | {{ usd(S.cost.nre_share, -2) }} | {{ usd(F.cost.nre_share, -2) }} |
 | **total** | **{{ usd(S.cost.total, -3) }}** | **{{ usd(F.cost.total, -3) }}** |
 
-For scale: four B300 with networking are about {{ usd(4 * G_HW.cost.purchase_usd_per_gpu, -3) }}
+For comparison, four B300 with networking are about {{ usd(4 * G_HW.cost.purchase_usd_per_gpu, -3) }}
 (reseller range {{ usd(4 * 56000, -3) }} to {{ usd(4 * 76000, -3) }}; b300-price).
 
-Memory is repairable with spare rows, so only the {{ pct(1 - S.area.repairable_share) }} of an MDS-1 die
-that is logic must be defect-free. A fixed-weight die's storage has no spares.
+Memory is repairable with spare rows. Thus only the {{ pct(1 - S.area.repairable_share) }} of an MDS-1 die
+that is logic must be defect-free. The storage of a fixed-weight die has no spares.
 
-Vendor margin, spares, the yield of assembling a tile, and software and bring-up are not in these
-figures. GPUs are at street price, which includes all of them.
+These figures do not include vendor margin, spares, the yield of tile assembly, or software and
+bring-up. GPUs are at street price, which includes all of them.
 
-Design cost is spread over the systems a token demand needs (NRE of {{ usd(S_HW.cost.nre_usd / 1e6, 0) }}M; assumption, swept {{ usd(30) }}M to {{ usd(436) }}M).
-The central demand is {{ n(I.fleet.demand_tokens_per_day / 1e12, 0) }} trillion tokens a day for this one model, the same for every chip:
+We spread the design cost over the systems that a token demand needs (NRE of {{ usd(S_HW.cost.nre_usd / 1e6, 0) }}M; assumption, swept {{ usd(30) }}M to {{ usd(436) }}M).
+The central demand is {{ n(I.fleet.demand_tokens_per_day / 1e12, 0) }} trillion tokens a day for this one model, the same for each chip:
 
 | tokens a day | MDS-1 systems | per system | of which NRE | MDF-1 systems | per system | of which NRE and unique masks |
 |---|---|---|---|---|---|---|
@@ -161,34 +164,34 @@ The central demand is {{ n(I.fleet.demand_tokens_per_day / 1e12, 0) }} trillion 
 | {{ n(v.tokens_per_day / 1e12, 1) }} trillion | {{ n(v.systems, 0) }} | {{ usd(v.total_usd, -4) }} | {{ usd(v.nre_share_usd, -4) }} | {{ n(w.systems, 0) }} | {{ usd(w.total_usd, -4) }} | {{ usd(w.nre_share_usd, -4) }} |
 {% endfor %}
 
-Design cost alone is {{ usd(I.demand.nre_usd_per_mtok_at_central_demand, 3) }} per million tokens at the central demand, whatever the
-design. MDS-1 breaks even with the GPUs' decode cost at about {{ n(I.demand.breakeven_tokens_per_day.s / 1e12, 1) }} trillion tokens a day
-([04](04_results.md), section 18). This is a chip for a model served at very large scale.
+Design cost alone is {{ usd(I.demand.nre_usd_per_mtok_at_central_demand, 3) }} per million tokens at the central demand, for any
+design. The cost of MDS-1 becomes equal to the decode cost of the GPUs at about {{ n(I.demand.breakeven_tokens_per_day.s / 1e12, 1) }} trillion tokens a day
+([04](04_results.md), section 18). This is a chip for a model served at extremely large scale.
 
 ## MDF-1: what changes when the weights are fixed
 
 | | MDS-1 | MDF-1 |
 |---|---|---|
-| weight storage | SRAM, {{ S_HW.area.mm2_per_mib_sram }} mm²/MiB, plus multiplier lanes | mask-programmed, {{ F_HW.area.mm2_per_mib_rom }} mm²/MiB including arithmetic |
+| weight storage | SRAM, {{ S_HW.area.mm2_per_mib_sram }} mm²/MiB, plus multiplier lanes | mask-programmed, {{ F_HW.area.mm2_per_mib_rom }} mm²/MiB with arithmetic |
 | dies | {{ S.area.dies }} | {{ F.area.dies }} |
 | distinct die designs | {{ S.cost.distinct_die_designs }} | {{ F.cost.distinct_die_designs }} |
 | tiles | {{ S.area.tiles }} | {{ F.area.tiles }} |
-| time per weight operation | {{ n(1e6 * NK.s_op_time, 2) }} µs (a published SRAM wafer machine's) | {{ n(CL.latency_for_f_total_us, 2) }} µs (a shipped fixed-weight die's) |
+| time per weight operation | {{ n(1e6 * NK.s_op_time, 2) }} µs (from a published SRAM wafer machine) | {{ n(CL.latency_for_f_total_us, 2) }} µs (from a shipped fixed-weight die) |
 | idle weight storage power | {{ n(S.static_w_managed.storage_leakage, 0) }} W | {{ n(F.static_w_managed.storage_leakage, 0) }} W |
 | new model version | load weights | {{ F.cost.distinct_die_designs }} dies × {{ F_HW.cost.unique_mask_layers }} mask layers: {{ usd(F.cost.unique_mask_usd / 1e6, 1) }}M and a fab cycle |
 
-MDF-1's density comes from one shipped chip: 8B parameters at 3 and 6 bits on an 815 mm² N6 die
-(taalas-hc1), scaled by 1.5 to N4P-class (assumption). Its latency is what that chip's published
-speed implies. Both are single-die results at 8B parameters carried to {{ F.area.dies }} dies; nothing
-public confirms they carry. The vendor's own figure for a model of this class is labeled a simulation
-by the vendor.
+The density of MDF-1 comes from one shipped chip. That chip has 8B parameters at 3 and 6 bits on an
+815 mm² N6 die (taalas-hc1). We scaled its density by 1.5 to N4P-class (assumption). Its latency is
+the value that the published speed of that chip implies. The two values are single-die results at 8B
+parameters that we extend to {{ F.area.dies }} dies, and no public source confirms that they extend. The vendor labels its own
+figure for a model of this class a simulation.
 
-## What has not been validated
+## What is not validated
 
 - No floorplan, no place-and-route of a die, no timing closure of a {{ S.scan_rows }}-row bank at
   {{ n(S.f_clk / 1e9, 1) }} GHz.
-- The pooled attention engine ({{ n(S_HW.attn_peak_full / 1e15, 0) }} PFLOP/s) is sized by assumption, and it caps the system's throughput. Queueing in front of it is not modeled.
+- The size of the pooled attention engine ({{ n(S_HW.attn_peak_full / 1e15, 0) }} PFLOP/s) is an assumption, and this engine limits the throughput of the system. We did not model the queue in front of it.
 - A {{ S.area.dies }}-die system has {{ S.area.tiles }} tiles and their links to bring up, test and keep
-  running. Availability is not modeled.
+  in operation. We did not model availability.
 - Wake from retention in {{ n(S_HW.wake_latency * 1e9, 0) }} ns across a whole bank.
 - The weight loader, error correction and repair flow.
