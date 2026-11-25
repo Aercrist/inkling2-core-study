@@ -552,6 +552,22 @@ def render_exact_sum(d: dict) -> str:
         f"`{short(c['worst_setup_path']['endpoint'])}` ({c['worst_setup_path']['endpoint_stage']}) | {c['worst_setup_path']['cells_on_path']} | "
         f"{c['worst_setup_path']['of_which_buffers_and_inverters']} | {f(c['worst_setup_path']['launch_flip_flop_clock_pin_to_endpoint_ps'])} | {f(c['worst_setup_path']['slack_ps'], 2)} |"
         for (k, name), c in ((kn, cols[kn[0]]) for kn in have) if "worst_setup_path" in c)
+    staged = [(k, name) for k, name in have if "worst_setup_slack_by_stage_ps" in cols[k]]
+    stage_rows = "\n".join(
+        f"| {s} | " + " | ".join(f(cols[k]["worst_setup_slack_by_stage_ps"].get(s)) if s in cols[k]["worst_setup_slack_by_stage_ps"] else "-"
+                                 for k, _ in staged) + " |"
+        for s in sorted({s for k, _ in staged for s in cols[k]["worst_setup_slack_by_stage_ps"]}))
+    stage_head = "| registers of stage | " + " | ".join(f"{name}, {f(cols[k]['clock_period_ps'], 0)} ps" for k, name in staged) + " |\n|---|" + "---|" * len(staged)
+    fxb = cols.get("fx_at_best_clock", {}).get("worst_setup_slack_by_stage_ps")
+    if fxb:
+        lim = min(fxb, key=fxb.get)
+        stage_text = (f"In `nvfp4_dot_fx` at {f(cols['fx_at_best_clock']['clock_period_ps'], 0)} ps the loop (S4) has {f(fxb['S4'], 0)} ps of slack "
+                      f"and the two stages after it {f(fxb['S5'], 0)} and {f(fxb['S6'], 0)} ps, so a third stage after the loop was not needed. "
+                      f"The smallest slack is at the {lim} registers" +
+                      (": the clock of this block is set by a feed-forward stage that it shares, unchanged, with `nvfp4_dot`, not by its accumulator."
+                       if lim in ("S1", "S2") else "."))
+    else:
+        stage_text = ""
     grp_rows = "\n".join(f"| {k} | {g['vectors']:,} | {g['mismatches']} |" for k, g in vec["groups"].items())
     dir_rows = "\n".join(f"| {s['name'].split(': ', 1)[1]} | {s['vectors']} | {s['mismatches']} |"
                          for s in vec["sections"] if s["name"].startswith("directed, exact sum: "))
@@ -559,7 +575,8 @@ def render_exact_sum(d: dict) -> str:
     def_rows = "\n".join(
         f"| {k} | {s['outputs']:,} | {s['bit_identical']:,} | {s['bit_identical_fraction'] * 100:.2f}% | {s['worst_relative_difference']:.3g} | "
         f"{s['outputs_whose_exact_sum_is_a_binary32_number'] / s['outputs'] * 100:.2f}% |" for k, s in dfn["sets"].items())
-    mut_rows = "\n".join(f"| {k} | `{m['replaced']}` -> `{m['by']}` | {m['vectors']:,} | {m['mismatches']:,} |" for k, m in mut["mutants"].items())
+    bar = lambda s: " ".join(s.split()).replace("|", "\\|")      # noqa: E731  a pipe inside a table cell
+    mut_rows = "\n".join(f"| {k} | `{bar(m['replaced'])}` -> `{bar(m['by'])}` | {m['vectors']:,} | {m['mismatches']:,} |" for k, m in mut["mutants"].items())
     mut_rows += f"\n| unmodified RTL, same vectors | | {mut['unmodified']['vectors']:,} | {mut['unmodified']['mismatches']} |"
     clean = dfn["rows_where_no_per_block_addition_rounds"]
     fx_runs = {k: m for k, m in runs.items() if k.startswith("fx:")}
@@ -568,6 +585,27 @@ def render_exact_sum(d: dict) -> str:
     nd = sil.get("not_done") or {}
     nd_lines = "\n".join(f"* Not done: {k}: {v}." for k, v in nd.items())
     rr, rnd = dfn["real_rows"], dfn["random_rows"]
+    result = ""
+    if all(k in cols for k, _ in order):
+        a, ab, b, bb = (cols[k] for k, _ in order)
+        wp = bb.get("worst_setup_path", {})
+        result = f"""
+**Result.** At the common {f(a['clock_period_ps'], 0)} ps constraint `nvfp4_dot_fx` is {f(b['cell_area_um2'])} um2 against {f(a['cell_area_um2'])} um2
+for `nvfp4_dot` (x {b['cell_area_um2'] / a['cell_area_um2']:.2f}), with {b['sequential_cells']} flip-flops against {a['sequential_cells']}, and uses {b['energy_per_block_pj']:.3f} pJ per block
+against {a['energy_per_block_pj']:.3f} pJ (x {b['energy_per_block_pj'] / a['energy_per_block_pj']:.2f}). Its smallest closing constraint is {f(bb['clock_period_ps'], 0)} ps against {f(ab['clock_period_ps'], 0)} ps
+for `nvfp4_dot` (x {bb['clock_period_ps'] / ab['clock_period_ps']:.2f}); there it is {f(bb['cell_area_um2'])} um2 and {bb['energy_per_block_pj']:.3f} pJ per block, against {f(ab['cell_area_um2'])} um2
+and {ab['energy_per_block_pj']:.3f} pJ. The worst path of `nvfp4_dot_fx` runs from `{short(wp.get('startpoint', '?'))}` to `{short(wp.get('endpoint', '?'))}` ({wp.get('endpoint_stage', '?')}),
+{wp.get('cells_on_path', '?')} cells; that of `nvfp4_dot` stays in its accumulator ({ab.get('worst_setup_path', {}).get('cells_on_path', '?')} cells). On the real expert rows the two
+definitions give the same bits in {rr['bit_identical_fraction'] * 100:.2f}% of {rr['outputs']:,} outputs; on random codes with random finite scale
+bytes in {rnd['bit_identical_fraction'] * 100:.2f}% of {rnd['outputs']:,}.
+"""
+    tools_old = x["tools"].get("existing_runs") or {}
+    image_note = ("" if x["tools"].get("same_orfs_image_as_the_existing_runs") is not False else
+                  f"\n  This is a later build of `openroad/orfs` than the one sections 1 to 11 were run with ({tools_old.get('opensta')};"
+                  f"\n  {tools_old.get('orfs_image')}). The runs of section 8 were not repeated with it,"
+                  "\n  except `rel:1800` (previous bullet), which came out identical.")
+    uneven = any(q2["setup_wns_ps"] < q1["setup_wns_ps"] for s_ in srch.values()
+                 for q1, q2 in zip(s_["all_points"], s_["all_points"][1:]) if q1.get("setup_wns_ps") is not None and q2.get("setup_wns_ps") is not None)
     return f"""## 12. Exact-sum baseline: `nvfp4_dot_fx`
 
 Added after sections 1 to 11 ({x['generated_utc']}, `{x['generated_by']}`). Those sections put an IEEE binary32
@@ -576,7 +614,7 @@ same flow, with the same constraints and corner: block terms are multiples of 2^
 than 2^27, so a row can be summed exactly in fixed point and rounded once. Every number is in
 `results/silicon.json` under `exact_sum_variant`. Neither block was tuned for the comparison; the
 existing block's RTL and its results in sections 1 to 11 are unchanged.
-
+{result}
 ### 12.1 What was built
 
 `nvfp4_dot_fx` ([SPEC.md](SPEC.md), section 5): the ports and the protocol of `nvfp4_dot` with one
@@ -648,9 +686,11 @@ rounding per row (this section).
 
 * **Real rows** (the whole expert of the fixture, the token sets of `verify.py`): {rr['bit_identical']:,} of
   {rr['outputs']:,} outputs bit-identical ({rr['bit_identical_fraction'] * 100:.2f}%), worst relative difference {rr['worst_relative_difference']:.3g}.
-* **Random rows**: {rnd['bit_identical']:,} of {rnd['outputs']:,} ({rnd['bit_identical_fraction'] * 100:.2f}%) over the two random sets, worst relative
+* **Random codes and random finite scale bytes**: {rnd['bit_identical']:,} of {rnd['outputs']:,} ({rnd['bit_identical_fraction'] * 100:.2f}%), worst relative
   difference {rnd['worst_relative_difference']:.3g}. The relative difference is taken against the exact-sum result; it is large
   where a sum nearly cancels, which is where the per-block rounding errors are large against the result.
+  With random codes but scale bytes restricted to the range real weights use, the share is the
+  last row of the table.
 * On {clean['rows_examined']:,} random rows of 2 to 40 blocks, {clean['rows_without_an_inexact_addition']} had no inexact addition in the per-block
   accumulator; {clean['of_which_bit_identical']} of those are bit-identical in the two definitions.
 
@@ -685,21 +725,32 @@ inverters included; the stage is that of the logic in front of the end point.
 |---|---|---|---|---|---|---|---|
 {path_rows}
 
+Worst setup slack (ps) at the registers of each stage, from OpenSTA on the routed design with
+extracted parasitics. A stage's logic is in front of its registers (SPEC.md, sections 4 and 5.3);
+the S0 registers are fed by the input ports, which carry an input delay of 20% of the period. The
+smallest entry of a column is that run's setup slack.
+
+{stage_head}
+{stage_rows}
+
+{stage_text}
+
 ### 12.7 What was not done, and what to keep in mind
 
-* One placement seed per constraint. Closing at a constraint is a property of that run; the
-  spread over seeds was not measured, so the best clocks are good to about the slack scatter seen
-  between neighbouring points in 12.5, not to 10 ps of principle.
+* One placement seed per constraint. Whether a constraint closes is a property of that one run;
+  the spread over seeds was not measured{" and the slack does not rise evenly with the constraint (12.5)" if uneven else ""}. The
+  smallest closing constraints are those of these runs, not bounds.
 * The clock constraint also sets the input and output delays (20% of the period each), as in 8.1.
 * Power is from zero-delay gate-level activity, as in section 9: no glitches.
 * `nvfp4_dot_fx` was built once, as specified: no retiming, no carry-save accumulator, no
   leading-zero anticipation, no operand isolation in front of S5. `nvfp4_dot` was not changed.
 * Only the reloadable, one-row block has an exact-sum variant; no fixed-weight or 8-row version.
-* The existing run measured again here: {('`rel:1800` on disk gives the stored area, cells and timing (' + str(again['area_cells_and_timing_identical']) + ') and the stored power on every workload (' + str(again['all_workloads_identical']) + ').') if again else 'not available.'}
+* One run of section 8 is on disk, `rel:1800`, placed and routed again in this work directory: {('it has the stored area, cells and slacks (' + str(again['area_cells_and_timing_identical']) + ') and, measured again, the stored power on every workload (' + str(again['all_workloads_identical']) + ').') if again else 'not checked.'}
   The other 12 runs of section 8 are not on disk and were not rerun; PyTorch is not installed
   here, so section 6 was not recomputed.
-* Tools for this section: {x['tools'].get('orfs_yosys', 'n/a')}; {x['tools'].get('opensta', 'n/a')}; {x['tools']['verilator']}; {x['tools']['iverilog']};
-  Python {x['tools']['python']}, NumPy {x['tools']['numpy']}.
+* Tools for this section: {x['tools'].get('orfs_yosys', 'n/a')}; {x['tools'].get('opensta', 'n/a')};
+  {x['tools'].get('orfs_image', 'ORFS image n/a')};
+  {x['tools']['verilator']}; {x['tools']['iverilog']}; Python {x['tools']['python']}, NumPy {x['tools']['numpy']}.{image_note}
 {nd_lines}
 """
 
