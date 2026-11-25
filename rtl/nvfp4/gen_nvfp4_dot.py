@@ -7,6 +7,10 @@ Two tops share one datapath (`nvfp4_row_dp`, in nvfp4_common.sv):
 * `nvfp4_dot_const*` fixed: the weights and weight block scales of real expert rows are constants
                      selected by a block counter; only activations arrive on ports.
 
+A third top, `nvfp4_dot_fx`, has the ports of `nvfp4_dot` and its own datapath (`nvfp4_row_dp_fx`,
+in nvfp4_dot_fx.sv): the same stages S0 to S2, then an exact fixed-point row sum that is rounded to
+binary32 once per row (SPEC.md section 5). It is the baseline the binary32 accumulator is compared with.
+
 Both take one block (B codes + one E4M3 scale per operand) per clock and return one binary32 per
 row. Arithmetic: rtl/nvfp4/SPEC.md. Everything that depends on the model comes from
 data/inkling2_small/{config.json,hf_quant_config.json}: block size, code and scale formats, row
@@ -14,6 +18,7 @@ length. A different block size or row length regenerates the RTL; widths are der
 
     python rtl/nvfp4/gen_nvfp4_dot.py common     --out DIR
     python rtl/nvfp4/gen_nvfp4_dot.py reloadable --out DIR [--rows N]
+    python rtl/nvfp4/gen_nvfp4_dot.py fx         --out DIR
     python rtl/nvfp4/gen_nvfp4_dot.py const      --out DIR --name NAME --fixture NPZ --leaf w13 \
                                                  --rows 0,2,4 [--blocks 0:288]
     python rtl/nvfp4/gen_nvfp4_dot.py tb         --out DIR --top NAME --rows N [--const]
@@ -34,6 +39,8 @@ PRIMARY = {"fixture": "data/fixtures/inkling2_small_L00_E000.npz", "leaf": "w13"
 
 E2M1_Q = (0, 1, 2, 3, 4, 6, 8, 12)   # twice the E2M1 magnitudes
 E4M3_MMAX = 15                       # largest E4M3 significand, in units of 2^-3
+E4M3_EMAX = 15                       # largest E4M3 exponent field
+FX_ROW_LOG2 = 9                      # exact-sum variant: rows of up to 2^9 = 512 blocks
 FP_MANT, FP_BIAS = 24, 127           # binary32
 
 
@@ -66,6 +73,18 @@ def derive(B: int, nblk: dict) -> dict:
             "EXP_BASE": FP_BIAS - 22 + pw - 1, "nblk": nblk}
 
 
+def derive_fx(p: dict) -> dict:
+    """Widths of the exact-sum variant. A term is P * 2^(Ew + Ex - 2) in units of 2^-20."""
+    shmax = 2 * E4M3_EMAX - 2                         # largest alignment shift: 28
+    tw = p["PW"] + shmax                              # |aligned term| < 2^tw: 47 bits
+    mw = tw + FX_ROW_LOG2                             # |row sum| < 2^mw for rows of up to 512 blocks: 56 bits
+    if not 32 < mw <= 64:
+        raise ValueError(f"exact-sum variant: a {mw}-bit magnitude does not fit the two 32-bit leading-zero counters")
+    return {"SHMAX": shmax, "TW": tw, "MW": mw, "ACCW": mw + 1, "MAX_BLOCKS": 1 << FX_ROW_LOG2,
+            # biased exponent of a sum whose leading one is bit mw-1: value 2^(mw - 1 - 20)
+            "EXP_TOP": FP_BIAS + mw - 1 - 20, "LATENCY": 7}
+
+
 # --------------------------------------------------------------------------------------- common
 def lzc32() -> str:
     lines = ["// Leading-zero count of a 32-bit word (5 bits) and an all-zero flag: a balanced tree.",
@@ -93,12 +112,80 @@ def lzc32() -> str:
     return "\n".join(lines)
 
 
-def common_sv(p: dict) -> str:
+def row_ports_sv(p: dict) -> str:
+    """Port list of a row datapath (the same for nvfp4_row_dp and nvfp4_row_dp_fx)."""
+    B = p["B"]
+    return f"""  input  logic        clk,
+  input  logic        rst,
+  input  logic        s0_v,
+  input  logic        s0_last,
+  input  logic [{4 * B - 1}:0] w_codes,
+  input  logic [7:0]  w_scale,
+  input  logic [{4 * B - 1}:0] x_codes,
+  input  logic [7:0]  x_scale,
+  output logic        out_valid,
+  output logic [31:0] out_data
+);
+"""
+
+
+def front_sv(p: dict) -> str:
+    """Stages S1 and S2 of a row datapath: products, exact block sum, P = |D| * Mw * Mx.
+    Shared verbatim by nvfp4_row_dp and nvfp4_row_dp_fx."""
     B, DW, AW, PW, MMW = p["B"], p["DW"], p["AW"], p["PW"], p["MMW"]
     terms = " + ".join(f"t{j}" for j in range(B)) + " + " + " + ".join(f"c{j}" for j in range(B))
     lane_wires = "\n".join(
         f"  wire signed [{DW - 1}:0] t{j} = {{{{{DW - 8}{{neg[{j}]}}}}, mag[{8 * j}+:8] ^ {{8{{neg[{j}]}}}}}};\n"
         f"  wire signed [{DW - 1}:0] c{j} = {{{DW - 1}'b0, neg[{j}]}};" for j in range(B))
+    return f"""  // ---------------------------------------------------------------- S1
+  logic [{8 * B - 1}:0] mag;
+  logic [{B - 1}:0]  neg;
+  genvar g;
+  generate for (g = 0; g < {B}; g++) begin : lane
+    nvfp4_e2m1_mul u_mul (.a(w_codes[4*g +: 4]), .b(x_codes[4*g +: 4]), .mag(mag[8*g +: 8]), .neg(neg[g]));
+  end endgenerate
+  // two's complement of a negative product = ~mag + 1; the +1 terms are the c wires
+{lane_wires}
+  wire signed [{DW - 1}:0] d_sum = {terms};
+
+  logic       sw_sg, sx_sg, sw_nan, sx_nan;
+  logic [3:0] sw_m, sx_m, sw_e, sx_e;
+  nvfp4_e4m3_dec u_ws (.s(w_scale), .sign(sw_sg), .m(sw_m), .e(sw_e), .nan(sw_nan));
+  nvfp4_e4m3_dec u_xs (.s(x_scale), .sign(sx_sg), .m(sx_m), .e(sx_e), .nan(sx_nan));
+
+  logic signed [{DW - 1}:0] d_q;
+  logic [{MMW - 1}:0] mm_q;
+  logic [4:0] es_q;
+  logic       sg_q, nan1_q, v1_q, last1_q;
+  always_ff @(posedge clk) begin
+    d_q     <= d_sum;
+    mm_q    <= sw_m * sx_m;
+    es_q    <= {{1'b0, sw_e}} + {{1'b0, sx_e}};
+    sg_q    <= sw_sg ^ sx_sg;
+    nan1_q  <= sw_nan | sx_nan;
+    last1_q <= s0_last;
+    v1_q    <= rst ? 1'b0 : s0_v;
+  end
+
+  // ---------------------------------------------------------------- S2
+  wire [{AW - 1}:0] d_abs = d_q[{DW - 1}] ? (~d_q[{AW - 1}:0] + {AW}'d1) : d_q[{AW - 1}:0];
+  wire [{PW - 1}:0] p_c = d_abs * mm_q;
+  logic [{PW - 1}:0] p_q;
+  logic [4:0] es2_q;
+  logic       sg2_q, nan2_q, v2_q, last2_q;
+  always_ff @(posedge clk) begin
+    p_q     <= p_c;
+    es2_q   <= es_q;
+    sg2_q   <= d_q[{DW - 1}] ^ sg_q;
+    nan2_q  <= nan1_q;
+    last2_q <= last1_q;
+    v2_q    <= rst ? 1'b0 : v1_q;
+  end
+"""
+
+
+def common_sv(p: dict) -> str:
+    B, DW, PW = p["B"], p["DW"], p["PW"]
     shifter = []
     prev = "y_ext"
     for k in range(5):
@@ -143,62 +230,7 @@ endmodule
 //   S3  normalise P into a binary32 operand     (exact)
 //   S4  acc <= RNE(acc + term), one add per block, in arrival order
 module nvfp4_row_dp (
-  input  logic        clk,
-  input  logic        rst,
-  input  logic        s0_v,
-  input  logic        s0_last,
-  input  logic [{4 * B - 1}:0] w_codes,
-  input  logic [7:0]  w_scale,
-  input  logic [{4 * B - 1}:0] x_codes,
-  input  logic [7:0]  x_scale,
-  output logic        out_valid,
-  output logic [31:0] out_data
-);
-  // ---------------------------------------------------------------- S1
-  logic [{8 * B - 1}:0] mag;
-  logic [{B - 1}:0]  neg;
-  genvar g;
-  generate for (g = 0; g < {B}; g++) begin : lane
-    nvfp4_e2m1_mul u_mul (.a(w_codes[4*g +: 4]), .b(x_codes[4*g +: 4]), .mag(mag[8*g +: 8]), .neg(neg[g]));
-  end endgenerate
-  // two's complement of a negative product = ~mag + 1; the +1 terms are the c wires
-{lane_wires}
-  wire signed [{DW - 1}:0] d_sum = {terms};
-
-  logic       sw_sg, sx_sg, sw_nan, sx_nan;
-  logic [3:0] sw_m, sx_m, sw_e, sx_e;
-  nvfp4_e4m3_dec u_ws (.s(w_scale), .sign(sw_sg), .m(sw_m), .e(sw_e), .nan(sw_nan));
-  nvfp4_e4m3_dec u_xs (.s(x_scale), .sign(sx_sg), .m(sx_m), .e(sx_e), .nan(sx_nan));
-
-  logic signed [{DW - 1}:0] d_q;
-  logic [{MMW - 1}:0] mm_q;
-  logic [4:0] es_q;
-  logic       sg_q, nan1_q, v1_q, last1_q;
-  always_ff @(posedge clk) begin
-    d_q     <= d_sum;
-    mm_q    <= sw_m * sx_m;
-    es_q    <= {{1'b0, sw_e}} + {{1'b0, sx_e}};
-    sg_q    <= sw_sg ^ sx_sg;
-    nan1_q  <= sw_nan | sx_nan;
-    last1_q <= s0_last;
-    v1_q    <= rst ? 1'b0 : s0_v;
-  end
-
-  // ---------------------------------------------------------------- S2
-  wire [{AW - 1}:0] d_abs = d_q[{DW - 1}] ? (~d_q[{AW - 1}:0] + {AW}'d1) : d_q[{AW - 1}:0];
-  wire [{PW - 1}:0] p_c = d_abs * mm_q;
-  logic [{PW - 1}:0] p_q;
-  logic [4:0] es2_q;
-  logic       sg2_q, nan2_q, v2_q, last2_q;
-  always_ff @(posedge clk) begin
-    p_q     <= p_c;
-    es2_q   <= es_q;
-    sg2_q   <= d_q[{DW - 1}] ^ sg_q;
-    nan2_q  <= nan1_q;
-    last2_q <= last1_q;
-    v2_q    <= rst ? 1'b0 : v1_q;
-  end
-
+{row_ports_sv(p)}{front_sv(p)}
   // ---------------------------------------------------------------- S3
   logic [4:0] p_lz;
   logic       p_zero;
@@ -285,15 +317,17 @@ endmodule
 
 
 # --------------------------------------------------------------------------------------- tops
-def reloadable_sv(p: dict, rows: int = 1, name: str = "nvfp4_dot") -> str:
+def reloadable_sv(p: dict, rows: int = 1, name: str = "nvfp4_dot", dp: str = "nvfp4_row_dp", latency: int = 5,
+                  title: str = "Reloadable NVFP4 dot-product engine") -> str:
+    """The top with weights on ports: input registers (S0) and one row datapath `dp` per row."""
     B = p["B"]
     cw = 4 * B
     return f"""// GENERATED by rtl/nvfp4/gen_nvfp4_dot.py. Do not edit.
-// Reloadable NVFP4 dot-product engine: {rows} output row(s) sharing one activation stream.
+// {title}: {rows} output row(s) sharing one activation stream.
 // One block per clock: {B} weight codes + weight block scale per row, {B} activation codes +
 // activation block scale. Element j of a block is bits [4j+3:4j], i.e. the packed bytes of the
 // checkpoint loaded little-endian. `in_last` marks the last block of a row; the next row may
-// start on the next clock. `out_valid` pulses 5 clocks after the last block; `out_data` (one
+// start on the next clock. `out_valid` pulses {latency} clocks after the last block; `out_data` (one
 // binary32 per row, row r in bits [32r+31:32r]) is valid in that cycle only.
 // Synchronous reset, held for at least 3 clocks; only control state is reset.
 module {name} (
@@ -324,7 +358,7 @@ module {name} (
   logic [{rows - 1}:0] ov;
   genvar r;
   generate for (r = 0; r < {rows}; r++) begin : g_row
-    nvfp4_row_dp u_dp (.clk(clk), .rst(rst), .s0_v(v0_q), .s0_last(last0_q),
+    {dp} u_dp (.clk(clk), .rst(rst), .s0_v(v0_q), .s0_last(last0_q),
                        .w_codes(wc_q[{cw}*r +: {cw}]), .w_scale(ws_q[8*r +: 8]),
                        .x_codes(xc_q), .x_scale(xs_q),
                        .out_valid(ov[r]), .out_data(out_data[32*r +: 32]));
@@ -332,6 +366,98 @@ module {name} (
   assign out_valid = ov[0];
 endmodule
 """
+
+
+def fx_sv(p: dict, name: str = "nvfp4_dot_fx") -> str:
+    """The exact-sum variant: `nvfp4_row_dp_fx` and its top. Stages S0 to S2 are the generated
+    text of the binary32 block (`reloadable_sv`, `front_sv`); S3 aligns and signs the term, S4 is
+    one two's-complement add per block, S5 and S6 round the row sum to binary32 once per row."""
+    B, PW = p["B"], p["PW"]
+    q = derive_fx(p)
+    TW, MW, ACCW = q["TW"], q["MW"], q["ACCW"]
+    dp = f"""// GENERATED by rtl/nvfp4/gen_nvfp4_dot.py from data/inkling2_small/*.json. Do not edit.
+// NVFP4 block-scaled dot product, exact-sum variant. Arithmetic: rtl/nvfp4/SPEC.md, section 5.
+// The block terms of nvfp4_row_dp, summed exactly in fixed point and rounded to binary32 once per
+// row. Needs nvfp4_common.sv (nvfp4_e2m1_mul, nvfp4_e4m3_dec, nvfp4_lzc32).
+// Block size {B}; block term {PW} bits; aligned term {TW + 1} bits signed, unit 2^-20; accumulator
+// {ACCW} bits two's complement, exact for rows of up to {q['MAX_BLOCKS']} blocks.
+
+// One output row. Stage 0 operands come from the top.
+//   S1  {B} products, exact signed block sum D, product of the two scale significands
+//   S2  P = |D| * Mw * Mx                       (exact, < 2^{PW})
+//   S3  term = (-1)^sign * P * 2^(Ew + Ex - 2)   (exact, two's complement)
+//   S4  acc <= acc + term, one add per block     (exact; the only loop)
+//   S5  |acc| and its leading-zero count         (once per row)
+//   S6  normalise, round to nearest even, pack   (once per row)
+module nvfp4_row_dp_fx (
+{row_ports_sv(p)}{front_sv(p)}
+  // ---------------------------------------------------------------- S3: align and sign
+  wire [4:0]  sh_c  = es2_q - 5'd2;                 // Ew + Ex - 2, 0..{q['SHMAX']}
+  wire [{PW}:0] p_sgn = sg2_q ? (~{{1'b0, p_q}} + {PW + 1}'d1) : {{1'b0, p_q}};
+  wire [{TW}:0] t_c   = {{{{{TW - PW}{{p_sgn[{PW}]}}}}, p_sgn}} << sh_c;
+  logic [{TW}:0] t_q;                               // two's complement, unit 2^-20
+  logic       t_nan, t_v, t_last;
+  always_ff @(posedge clk) begin
+    t_q    <= v2_q ? t_c : {TW + 1}'d0;             // an idle cycle adds 0
+    t_nan  <= v2_q & nan2_q;
+    t_last <= last2_q;
+    t_v    <= rst ? 1'b0 : v2_q;
+  end
+
+  // ---------------------------------------------------------------- S4: exact accumulate
+  logic [{ACCW - 1}:0] acc_q;                       // |row sum| < 2^{MW} for rows of up to {q['MAX_BLOCKS']} blocks
+  logic        first_q, nan_q, fin_q;
+  wire [{ACCW - 1}:0] a_c   = first_q ? {ACCW}'d0 : acc_q;
+  wire [{ACCW - 1}:0] sum_c = a_c + {{{{{ACCW - TW - 1}{{t_q[{TW}]}}}}, t_q}};
+  always_ff @(posedge clk) begin
+    acc_q <= sum_c;
+    if (t_v) nan_q <= (first_q ? 1'b0 : nan_q) | t_nan;
+    if (rst) begin
+      first_q <= 1'b1;
+      fin_q   <= 1'b0;
+    end else begin
+      if (t_v) first_q <= t_last;
+      fin_q   <= t_v & t_last;                      // acc_q holds the row sum for this one clock
+    end
+  end
+
+  // ---------------------------------------------------------------- S5: sign and magnitude, leading zeros
+  wire        s_c = acc_q[{ACCW - 1}];
+  wire [{MW - 1}:0] m_c = s_c ? (~acc_q[{MW - 1}:0] + {MW}'d1) : acc_q[{MW - 1}:0];
+  wire [63:0] m_pad = {{m_c, {64 - MW}'b0}};
+  logic [4:0] lz_hi, lz_lo;
+  logic       z_hi, z_lo;
+  nvfp4_lzc32 u_lzh (.x(m_pad[63:32]), .lz(lz_hi), .zero(z_hi));
+  nvfp4_lzc32 u_lzl (.x(m_pad[31:0]),  .lz(lz_lo), .zero(z_lo));
+  logic [{MW - 1}:0] m5_q;
+  logic [5:0] lz5_q;
+  logic       s5_q, z5_q, nan5_q, v5_q;
+  always_ff @(posedge clk) begin
+    if (fin_q) begin
+      m5_q   <= m_c;
+      lz5_q  <= z_hi ? {{1'b1, lz_lo}} : {{1'b0, lz_hi}};
+      s5_q   <= s_c;
+      z5_q   <= z_hi & z_lo;
+      nan5_q <= nan_q;
+    end
+    v5_q <= rst ? 1'b0 : fin_q;
+  end
+
+  // ---------------------------------------------------------------- S6: normalise, round to nearest even
+  wire [{MW - 1}:0] n_c = m5_q << lz5_q;                 // leading one at bit {MW - 1}
+  wire        inc_c = n_c[{MW - 25}] & (n_c[{MW - 24}] | (|n_c[{MW - 26}:0]));
+  wire [24:0] r_c = {{1'b0, n_c[{MW - 1}:{MW - 24}]}} + {{24'b0, inc_c}};
+  wire [7:0]  e_c = 8'd{q['EXP_TOP']} - {{2'b0, lz5_q}} + {{7'b0, r_c[24]}};
+  always_ff @(posedge clk) begin
+    out_data  <= nan5_q ? 32'h7FC00000 : z5_q ? 32'h00000000 : {{s5_q, e_c, r_c[22:0]}};
+    out_valid <= rst ? 1'b0 : v5_q;
+  end
+endmodule
+
+"""
+    top = reloadable_sv(p, 1, name, dp="nvfp4_row_dp_fx", latency=q["LATENCY"],
+                        title="Reloadable NVFP4 dot-product engine, exact-sum variant")
+    return dp + top.split("\n", 1)[1]        # one "GENERATED" line per file
 
 
 def const_sv(p: dict, name: str, codes: np.ndarray, scales: np.ndarray, origin: str, rom_style: str = "case") -> str:
@@ -411,7 +537,7 @@ endmodule
 """
 
 
-def tb_sv(p: dict, top: str, rows: int, const: bool) -> str:
+def tb_sv(p: dict, top: str, rows: int, const: bool, poke: bool = True) -> str:
     """File-driven testbench (Icarus). One hex word per clock:
     bit 0 valid, bit 1 last, [9:2] x_scale, then x_codes, then per row w_scale, w_codes."""
     cw = 4 * p["B"]
@@ -421,7 +547,7 @@ def tb_sv(p: dict, top: str, rows: int, const: bool) -> str:
                 f"  assign w_codes[{cw * r} +: {cw}] = cur[{10 + cw + r * (8 + cw) + 8} +: {cw}];\n" for r in range(rows)))
     wdecl = "" if const else f"  wire [{rows * cw - 1}:0] w_codes;\n  wire [{rows * 8 - 1}:0] w_scale;\n"
     wconn = "" if const else ".in_last(cur[1]), .w_codes(w_codes), .w_scale(w_scale), "
-    poke = "" if const else f"""`ifdef NVFP4_POKE
+    poke = "" if const or not poke else f"""`ifdef NVFP4_POKE
   // Test hook: binary32 overflow cannot be reached from the ports (terms are below 2^27), so at
   // clock +poke_cycle the accumulator of row 0 is overwritten with +poke_val and, if +poke_term
   // is given, one term with that binary32 value is placed in the S3 register for one clock.
@@ -516,6 +642,8 @@ def write_committed() -> list[pathlib.Path]:
         "nvfp4_dot_const.sv": const_sv(p, "nvfp4_dot_const", codes, scales, origin),
         "tb_nvfp4_dot.sv": tb_sv(p, "nvfp4_dot", 1, False),
         "tb_nvfp4_dot_const.sv": tb_sv(p, "nvfp4_dot_const", 1, True),
+        "nvfp4_dot_fx.sv": fx_sv(p),
+        "tb_nvfp4_dot_fx.sv": tb_sv(p, "nvfp4_dot_fx", 1, False, poke=False),
     }
     for name, text in files.items():
         (out / name).write_text(text)
@@ -524,7 +652,7 @@ def write_committed() -> list[pathlib.Path]:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("what", choices=["common", "reloadable", "const", "tb", "committed", "params"])
+    ap.add_argument("what", choices=["common", "reloadable", "fx", "const", "tb", "committed", "params"])
     ap.add_argument("--out")
     ap.add_argument("--name")
     ap.add_argument("--top")
@@ -553,13 +681,16 @@ def main() -> None:
     elif a.what == "reloadable":
         name = a.name or "nvfp4_dot"
         (out / f"{name}.sv").write_text(reloadable_sv(p, int(a.rows), name))
+    elif a.what == "fx":
+        name = a.name or "nvfp4_dot_fx"
+        (out / f"{name}.sv").write_text(fx_sv(p, name))
     elif a.what == "const":
         rows = [int(r) for r in a.rows.split(",")]
         blocks = tuple(int(v) for v in a.blocks.split(":")) if a.blocks else None
         codes, scales, origin = fixture_rows(a.fixture, a.leaf, rows, blocks, p, a.prefix)
         (out / f"{a.name}.sv").write_text(const_sv(p, a.name, codes, scales, origin))
     elif a.what == "tb":
-        (out / f"tb_{a.top}.sv").write_text(tb_sv(p, a.top, int(a.rows), a.const))
+        (out / f"tb_{a.top}.sv").write_text(tb_sv(p, a.top, int(a.rows), a.const, poke="_fx" not in a.top))
 
 
 if __name__ == "__main__":

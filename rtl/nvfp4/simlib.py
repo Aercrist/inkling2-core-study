@@ -41,12 +41,18 @@ def tool_version(cmd) -> str:
 
 
 # ------------------------------------------------------------------------------- RTL generation
-def gen_rtl(name: str, *, const: dict | None = None, rows: int = 1, out: pathlib.Path | None = None):
+def gen_rtl(name: str, *, const: dict | None = None, rows: int = 1, out: pathlib.Path | None = None,
+            fx: bool = False):
     """Write common + top (+ file-driven testbench) for one design into a directory; returns it.
-    const = dict(fixture=, leaf=, rows=[...], blocks=(b0, b1) | None, prefix="", tile=False)."""
+    const = dict(fixture=, leaf=, rows=[...], blocks=(b0, b1) | None, prefix="", tile=False).
+    fx = True: the exact-sum variant (one row, weights on ports)."""
     d = out or BUILD / "rtl" / name
     d.mkdir(parents=True, exist_ok=True)
     (d / "nvfp4_common.sv").write_text(gen.common_sv(P))
+    if fx:
+        (d / f"{name}.sv").write_text(gen.fx_sv(P, name))
+        (d / f"tb_{name}.sv").write_text(gen.tb_sv(P, name, 1, False, poke=False))
+        return d
     if const is None:
         (d / f"{name}.sv").write_text(gen.reloadable_sv(P, rows, name))
         nrows = rows

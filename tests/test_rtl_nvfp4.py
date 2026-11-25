@@ -59,11 +59,61 @@ def test_reference_models_agree():
     assert np.array_equal(ref.gemm_ref(wc, ws, xc[:8], xs[:8]).diagonal(), bits[:8])
 
 
+def test_exact_sum_reference():
+    """nvfp4_dot_fx: the Python-integer model, the NumPy model and the definition of
+    round-to-nearest-even on rationals agree; the per-block-rounded result is the same whenever
+    none of its additions is inexact."""
+    from fractions import Fraction
+    rng = np.random.default_rng(5)
+    f32 = lambda bits: np.array([bits], np.uint32).view(np.float32)[0]   # noqa: E731
+    assert [ref.rn_even_binary32(n) for n in (0, 1 << 20, -(1 << 20), 1)] == [0, 0x3F800000, 0xBF800000, 0x35800000]
+    assert f32(ref.rn_even_binary32((1 << 24) + 1)) == 16.0                       # tie, down to the even significand
+    assert f32(ref.rn_even_binary32((1 << 24) + 3)) == (2 ** 24 + 4) / 2 ** 20    # tie, up to the even significand
+    assert f32(ref.rn_even_binary32((1 << 25) - 1)) == 32.0                       # carries into the exponent
+    assert f32(ref.rn_even_binary32(-((1 << 56) - 1))) == -(2.0 ** 36)            # the top of the accumulator
+    cases = [0, 1, -1, 3, (1 << 24) - 1, (1 << 24) + 1, (1 << 24) + 3, (1 << 25) - 1, -((1 << 25) + 2), (1 << 56) - 1,
+             (0xFFFFFF << 31) | (1 << 30), (0xFFFFFE << 31) | (1 << 30), (0xA5A5A4 << 19) | (1 << 18) | 1, (0xA5A5A5 << 19) | 1]
+    for _ in range(400):
+        n = int(rng.integers(1, 1 << 62)) >> int(rng.integers(6, 62))
+        sh = max(n.bit_length() - 24, 0)
+        if sh and rng.random() < 0.5:                                             # an exact tie
+            n = (n >> sh << sh) | (1 << (sh - 1))
+        cases.append(-n if rng.random() < 0.5 else n)
+    for n in cases:                                   # nearest neighbour, and the even one of two nearest
+        bits = ref.rn_even_binary32(n)
+        x, c = Fraction(n, 1 << 20), Fraction(float(f32(bits)))
+        lo, hi = (Fraction(float(np.nextafter(f32(bits), np.float32(s * np.inf)))) for s in (-1, 1))
+        assert abs(x - c) <= min(abs(x - lo), abs(x - hi)), n
+        assert abs(x - c) < min(abs(x - lo), abs(x - hi)) or bits & 1 == 0, n
+    assert list(ref.fx_round(np.array(cases, np.int64))) == [ref.rn_even_binary32(n) for n in cases]
+    for nb in (1, 3, 40, 512):
+        k = 64 if nb < 100 else 6
+        wc, ws, xc, xs = _random_rows(rng, k, nb)
+        bits = ref.dot_fx_ref(wc, ws, xc, xs)
+        assert all(ref.dot_fx_ref_int(wc[i], ws[i], xc[i], xs[i]) == int(bits[i]) for i in range(k))
+        assert bits[0] == bits[1] == 0x7FC00000 and bits[2] == bits[3] == 0
+        assert np.array_equal(ref.gemm_fx_ref(wc, ws, xc[:6], xs[:6]).diagonal(), bits[:6])
+        for i in range(k if nb < 100 else 0):
+            st = {}
+            old = ref.dot_ref_int(wc[i], ws[i], xc[i], xs[i], stats=st)
+            assert "inexact result" in st or old == int(bits[i])
+    six = np.full((512, 16), 7, np.uint8)             # largest row: 512 blocks of 16 x (6 * 6), scales 448 * 448
+    big = ref.dot_fx_ref_int(six, np.full(512, 0x7E, np.uint8), six, np.full(512, 0x7E, np.uint8))
+    assert f32(big) == np.float32(512 * 16 * 36 * 448.0 * 448.0) and 512 * (2304 * 14 * 14 << 28) < ref.FX_SUM_BOUND == 1 << 56
+    assert ref.dot_fx_ref_int(np.concatenate([six[:4], six[:4] | 8]), np.full(8, 0x7E, np.uint8), six[:8], np.full(8, 0x7E, np.uint8)) == 0
+    with pytest.raises(AssertionError):               # a row of 513 blocks is outside the specification
+        ref.dot_fx_ref_int(np.zeros((513, 16), np.uint8), np.zeros(513, np.uint8), np.zeros((513, 16), np.uint8), np.zeros(513, np.uint8))
+
+
 def test_generated_rtl_is_in_sync(tmp_path):
     """rtl/nvfp4/generated/ is what the generator writes from the config and the fixture."""
     p = gen.model_params()
     assert (p["B"], p["DW"], p["PW"], p["nblk"]) == (16, 13, 19, {"w13": 288, "w2": 144})
-    want = {"nvfp4_common.sv": gen.common_sv(p), "nvfp4_dot.sv": gen.reloadable_sv(p)}
+    want = {"nvfp4_common.sv": gen.common_sv(p), "nvfp4_dot.sv": gen.reloadable_sv(p),
+            "nvfp4_dot_fx.sv": gen.fx_sv(p), "tb_nvfp4_dot_fx.sv": gen.tb_sv(p, "nvfp4_dot_fx", 1, False, poke=False)}
+    q = gen.derive_fx(p)
+    assert (q["TW"], q["MW"], q["ACCW"], q["MAX_BLOCKS"], q["LATENCY"]) == (47, 56, 57, 512, 7)
+    assert gen.front_sv(p) in want["nvfp4_common.sv"] and gen.front_sv(p) in want["nvfp4_dot_fx.sv"]   # S1 and S2 are shared text
     if FIXTURE.exists():
         codes, scales, origin = gen.fixture_rows(gen.PRIMARY["fixture"], gen.PRIMARY["leaf"], [gen.PRIMARY["row"]], None, p)
         want["nvfp4_dot_const.sv"] = gen.const_sv(p, "nvfp4_dot_const", codes, scales, origin)
@@ -103,6 +153,42 @@ def test_rtl_bit_exact_small(tmp_path, monkeypatch):
     got = S.run_icarus(vvp, S.stream(288, None, None, xb, xs, [(0, i) for i in range(4)]), tag="c")
     assert np.array_equal(got[:, 0], ref.gemm_ref(V.codes_of(w13[[0]]), w13s[[0]], V.codes_of(xb), xs)[:, 0])
     assert got[0, 0] == exp[0]            # the two variants agree on the same row and token
+
+
+@needs_iverilog
+@needs_fixture
+def test_exact_sum_rtl_bit_exact_small(tmp_path, monkeypatch):
+    """nvfp4_dot_fx against its reference in Icarus: random, edge-case, final-rounding and real rows."""
+    import simlib as S
+    import verify as V
+    import verify_fx as F
+    monkeypatch.setattr(S, "BUILD", tmp_path)
+    rng = np.random.default_rng(12)
+    gdir = NV / "generated"
+    vvp = S.build_icarus("nvfp4_dot_fx", [gdir / "nvfp4_common.sv", gdir / "nvfp4_dot_fx.sv", gdir / "tb_nvfp4_dot_fx.sv"])
+    for nb in (1, 5):
+        wc, ws, xc, xs_ = _random_rows(rng, 48, nb)
+        got = S.run_icarus(vvp, S.stream(nb, ref.pack_codes(wc), ws, ref.pack_codes(xc), xs_, [(i, i) for i in range(48)],
+                                         gaps={3: 2, 7: 5}))
+        assert np.array_equal(got[:, 0], ref.dot_fx_ref(wc, ws, xc, xs_))
+    # the final rounding: ties both ways, carry into the exponent, sticky far below, cancellation to +0
+    cases = [c for c in F.directed_fx(rng) if len(c[1]) <= 16 and not c[0].startswith("row of 1 block, largest")]
+    assert {"final rounding: tie, rounded down to even", "final rounding: tie, rounded up to even",
+            "exact cancellation to +0"} <= {c[0] for c in cases}
+    wc, ws, xc, xs_ = F.pad_rows([c[1] for c in cases], 16, rng)
+    exp = ref.dot_fx_ref(wc, ws, xc, xs_)
+    got = S.run_icarus(vvp, S.stream(16, ref.pack_codes(wc), ws, ref.pack_codes(xc), xs_, [(i, i) for i in range(len(cases))]))
+    assert np.array_equal(got[:, 0], exp)
+    assert all(e == 0 for c, e in zip(cases, exp) if c[0] == "exact cancellation to +0")
+    # two real rows: the reference, and the same bits as the per-block-rounded block (no addition rounds there)
+    z = np.load(FIXTURE)
+    w13, w13s = V.blocks(z["w13"]), z["w13_scale"]
+    xp, xs, _ = ref.quantize_activations(V.embedding_activations(2))
+    xb = V.blocks(xp)
+    pairs = [(0, 0), (4607, 1)]
+    got = S.run_icarus(vvp, S.stream(288, w13, w13s, xb, xs, pairs))
+    exp = [int(ref.dot_fx_ref(V.codes_of(w13[r]), w13s[r], V.codes_of(xb[x]), xs[x])) for r, x in pairs]
+    assert list(got[:, 0]) == exp == [int(ref.dot_ref(V.codes_of(w13[r]), w13s[r], V.codes_of(xb[x]), xs[x])) for r, x in pairs]
 
 
 def test_silicon_json_is_well_formed():

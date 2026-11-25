@@ -311,3 +311,151 @@ def dot_ref_int(wc, ws, xc, xs, acc_init_bits: int | None = None, stats: dict | 
     if inf:
         return (inf_s << 31) | 0x7F800000
     return (acc[0] << 31) | (acc[1] << 23) | (acc[2] & 0x7FFFFF)
+
+
+# ----------------------------------------------------------------------------- exact-sum variant
+# nvfp4_dot_fx (SPEC.md section 5): the same exact block terms, kept in fixed point and rounded
+# once per row.
+#
+#     tau_b = (-1)^(sw xor sx) * D_b * Mw_b * Mx_b * 2^(Ew_b + Ex_b - 2)    integer, unit 2^-20
+#     S     = sum_b tau_b                                                  exact, |S| < 2^56
+#     out   = RN_even(S * 2^-20) as binary32, or 0x7FC00000 if any block scale of the row is NaN
+#
+# Two implementations: `dot_fx_ref_int` (Python integers, rounding by `divmod`; exact by
+# construction) and `dot_fx_ref` / `gemm_fx_ref` (NumPy int64 sums, rounding by a shift and a
+# remainder compare, packed with `ldexp`). Neither follows the RTL (sign-magnitude conversion,
+# leading-zero count, normalising shift). The tests check them against each other and against
+# the definition of round-to-nearest-even stated on rationals.
+FX_UNIT_LOG2 = 20                 # the accumulator counts multiples of 2^-20
+FX_MAX_BLOCKS = 512               # longest row the 57-bit accumulator is specified for
+FX_TERM_BOUND = 1 << 47           # |tau_b| <= 2304 * 15 * 15 * 2^28 < 2^47
+FX_SUM_BOUND = FX_MAX_BLOCKS * FX_TERM_BOUND   # = 2^56: every partial sum fits 57-bit two's complement
+
+
+def rn_even_binary32(n: int, k: int = FX_UNIT_LOG2) -> int:
+    """Bit pattern of RN_even(n * 2^-k) in binary32 for a Python integer n; integers only.
+    Asserts that the result is a normal number (no overflow, no subnormal): with k = 20 and
+    |n| < 2^56 the value is zero or lies in [2^-20, 2^36)."""
+    if n == 0:
+        return 0
+    m = abs(n)
+    e = m.bit_length() - 1 - k                    # 2^e <= |value| < 2^(e+1)
+    sh = e + k - 23                               # |value| = m * 2^-sh units in the last place
+    if sh <= 0:
+        q = m << -sh                              # 24 bits or fewer: exact
+    else:
+        q, r = divmod(m, 1 << sh)
+        half = 1 << (sh - 1)
+        if r > half or (r == half and q & 1):     # nearest; a tie goes to the even significand
+            q += 1
+    if q == 1 << 24:                              # rounded up to the next power of two
+        q, e = 1 << 23, e + 1
+    assert -126 <= e <= 127, "binary32 overflow or subnormal cannot occur for |n| < 2^56, k = 20"
+    return (int(n < 0) << 31) | ((e + 127) << 23) | (q & 0x7FFFFF)
+
+
+def fx_round_case(n: int, k: int = FX_UNIT_LOG2) -> list[str]:
+    """Which case of the final rounding the exact sum n * 2^-k is (for coverage counts)."""
+    if n == 0:
+        return ["zero"]
+    m = abs(n)
+    sh = m.bit_length() - 24
+    if sh <= 0 or m & ((1 << sh) - 1) == 0:
+        return ["exact: no bit below the 24-bit significand"]
+    q, r = divmod(m, 1 << sh)
+    half = 1 << (sh - 1)
+    if r == half:
+        out = ["tie, rounded up to even" if q & 1 else "tie, rounded down to even"]
+    elif r > half:
+        out = ["above half, rounded up"]
+    else:
+        out = ["below half, rounded down"]
+        if r < (1 << max(sh - 21, 0)) and sh > 21:
+            out.append("below half, only bits 20 or more places below the guard bit set")
+    if r >= half and (r > half or q & 1) and q + 1 == 1 << 24:
+        out.append("rounding carried into the exponent")
+    return out
+
+
+def dot_fx_ref_int(wc, ws, xc, xs, stats: dict | None = None) -> int:
+    """One dot product of the exact-sum variant in Python integers. wc, xc: [NB, B] codes;
+    ws, xs: [NB] bytes. Asserts the no-overflow bound of the 57-bit accumulator on every
+    partial sum (NaN bytes decode to M = 15, E = 15 and are inside the bound as well)."""
+    wc, xc = np.asarray(wc), np.asarray(xc)
+    assert wc.shape[0] <= FX_MAX_BLOCKS, "rows of more than 512 blocks are outside the specification"
+    acc, nan, live = 0, False, False
+    for b in range(wc.shape[0]):
+        d = int((E2M1_Q[wc[b]] * E2M1_Q[xc[b]]).sum())
+        sw, mw, ew, nw = (int(v) for v in e4m3_fields(ws[b]))
+        sx, mx, ex, nx = (int(v) for v in e4m3_fields(xs[b]))
+        nan |= bool(nw or nx)
+        t = (d * mw * mx * (-1 if sw ^ sx else 1)) << (ew + ex - 2)
+        assert abs(t) < FX_TERM_BOUND
+        acc += t
+        live |= t != 0
+        assert -FX_SUM_BOUND < acc < FX_SUM_BOUND          # never wraps in 57-bit two's complement
+    if nan:
+        return int(QNAN_BITS)
+    if stats is not None:
+        for key in (["exact cancellation to +0"] if acc == 0 and live else fx_round_case(acc)):
+            stats[key] = stats.get(key, 0) + 1
+    return rn_even_binary32(acc)
+
+
+def fx_terms(wc, ws, xc, xs):
+    """Codes [..., NB, B], scale bytes [..., NB] -> (aligned terms int64 [..., NB] in units of
+    2^-20, nan [...])."""
+    d = (E2M1_Q[np.asarray(wc)].astype(np.int64) * E2M1_Q[np.asarray(xc)]).sum(-1)
+    sw, mw, ew, nw = e4m3_fields(ws)
+    sx, mx, ex, nx = e4m3_fields(xs)
+    t = (d * mw * mx * np.where(sw ^ sx, -1, 1)) << (ew + ex - 2).astype(np.int64)
+    assert t.shape[-1] <= FX_MAX_BLOCKS and (np.abs(t) < FX_TERM_BOUND).all()   # so no partial sum reaches 2^56
+    return t, (nw | nx).any(-1)
+
+
+def _bit_length_u64(m: np.ndarray) -> np.ndarray:
+    """Bit length of non-negative integers below 2^56 (frexp is exact below 2^53, so in two halves)."""
+    hi, lo = m >> np.uint64(28), m & np.uint64((1 << 28) - 1)
+    return np.where(hi > 0, 28 + np.frexp(hi.astype(np.float64))[1], np.frexp(lo.astype(np.float64))[1]).astype(np.int64)
+
+
+def fx_round(sums: np.ndarray) -> np.ndarray:
+    """RN_even(sum * 2^-20) as binary32 bit patterns, for int64 sums with |sum| < 2^56."""
+    s = np.asarray(sums, np.int64)
+    m = np.abs(s).astype(np.uint64)
+    assert (m < np.uint64(FX_SUM_BOUND)).all(), "sum outside the 57-bit accumulator"
+    sh = np.maximum(_bit_length_u64(m) - 24, 0).astype(np.uint64)
+    q = m >> sh
+    rem = m & ((np.uint64(1) << sh) - np.uint64(1))
+    half = (np.uint64(1) << sh) >> np.uint64(1)                    # 0 when nothing is discarded
+    up = (rem > half) | ((rem == half) & (sh > 0) & ((q & np.uint64(1)) == 1))
+    q = q + up.astype(np.uint64)                                   # at most 2^24: exact in float32
+    v = np.ldexp(q.astype(np.float32), sh.astype(np.int64) - FX_UNIT_LOG2).astype(np.float32)
+    assert (v <= np.float32(2.0 ** 36)).all()                      # |sum| * 2^-20 < 2^36: binary32 cannot overflow
+    return np.where(s < 0, -v, v).astype(np.float32).view(np.uint32)
+
+
+def dot_fx_ref(wc, ws, xc, xs) -> np.ndarray:
+    """The exact-sum variant: codes [..., NB, B], block scales [..., NB] -> binary32 bits [...]."""
+    t, nan = fx_terms(wc, ws, xc, xs)
+    return np.where(nan, QNAN_BITS, fx_round(t.sum(-1))).astype(np.uint32)
+
+
+def gemm_fx_ref(wc, ws, xc, xs, return_sums: bool = False):
+    """All dot products of R weight rows with T tokens in the exact-sum definition: wc [R, NB, B],
+    ws [R, NB], xc [T, NB, B], xs [T, NB] -> uint32 [T, R] (and the exact int64 sums if asked)."""
+    qw = E2M1_Q[np.asarray(wc)].astype(np.float32)   # block sums are integers below 2^12: exact in
+    qx = E2M1_Q[np.asarray(xc)].astype(np.float32)   # float32 whatever BLAS does
+    sw, mw, ew, nw = e4m3_fields(ws)
+    sx, mx, ex, nx = e4m3_fields(xs)
+    fw = (mw * np.where(sw, -1, 1)).astype(np.int64) << (ew - 1).astype(np.int64)     # Mw * 2^(Ew-1), signed
+    fx = (mx * np.where(sx, -1, 1)).astype(np.int64) << (ex - 1).astype(np.int64)
+    T, R, NB = qx.shape[0], qw.shape[0], qw.shape[1]
+    assert NB <= FX_MAX_BLOCKS
+    acc = np.zeros((T, R), np.int64)
+    for b in range(NB):
+        d = (qx[:, b, :] @ qw[:, b, :].T).astype(np.int64)        # [T, R] exact integers
+        acc += d * fx[:, b, None] * fw[None, :, b]                # |term| < 2^47, |acc| < 2^56
+    bits = fx_round(acc)
+    bits[nx.any(1)[:, None] | nw.any(1)[None, :]] = QNAN_BITS
+    return (bits, acc) if return_sums else bits
