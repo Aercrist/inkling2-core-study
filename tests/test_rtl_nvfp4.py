@@ -215,3 +215,49 @@ def test_silicon_json_is_well_formed():
     for key in ("cell_area", "energy_per_block"):
         assert r[key]["min"] <= r[key]["median"] <= r[key]["max"]
     assert set(d["tools"]) >= {"verilator", "iverilog", "yosys", "openroad", "opensta"}
+
+
+def test_silicon_json_exact_sum_section():
+    """Shape and internal consistency of the exact-sum section (rtl/nvfp4/run_all.py --exact-sum)."""
+    path = ROOT / "results" / "silicon.json"
+    if not path.exists() or "exact_sum_variant" not in json.loads(path.read_text()):
+        pytest.skip("results/silicon.json has no exact_sum_variant section yet (rtl/nvfp4/run_all.py --exact-sum)")
+    d = json.loads(path.read_text())
+    x = d["exact_sum_variant"]
+    des = x["design"]
+    assert (des["top"], des["accumulator_bits"], des["max_blocks_per_row"]) == ("nvfp4_dot_fx", 57, 512)
+    assert des["latency_clocks_last_block_to_out_valid"] == 7 and des["feed_forward_stages_after_the_loop"] == 2
+    v = x["verification"]
+    assert v["vectors"]["pass"] and v["vectors"]["mismatches_total"] == 0 and v["vectors"]["vectors_total"] >= 1_000_000
+    assert sum(g["vectors"] for g in v["vectors"]["groups"].values()) == v["vectors"]["vectors_total"]
+    assert all(g["vectors"] > 0 and g["mismatches"] == 0 for g in v["vectors"]["groups"].values())
+    cov = v["vectors"]["final_rounding_coverage_directed_and_stress"]
+    assert all(cov.get(k, 0) > 0 for k in ("tie, rounded down to even", "tie, rounded up to even", "above half, rounded up",
+                                           "below half, rounded down", "rounding carried into the exponent", "exact cancellation to +0"))
+    assert v["icarus"]["pass"] and v["mutation"]["pass"]
+    assert all(m["mismatches"] > 0 for m in v["mutation"]["mutants"].values()) and v["mutation"]["unmodified"]["mismatches"] == 0
+    dc = x["definitions_compared"]
+    for key in ("real_rows", "random_rows"):
+        assert 0 <= dc[key]["bit_identical"] <= dc[key]["outputs"] and dc[key]["worst_relative_difference"] >= 0
+    assert all(0 <= s["bit_identical"] <= s["outputs"] for s in dc["sets"].values())
+    s = x["silicon"]
+    for job, m in s["runs"].items():
+        name, period = job.split(":")
+        assert m["design"] == name and m["clock_period_constraint_ps"] == float(period)
+        assert m["timing_closed"] == (m["setup_wns_ps"] >= 0 and m["hold_wns_ps"] >= 0)
+        assert m["post_route_netlist_bit_exact"] is True and "w13_row0" in m["workloads"]
+    for name, cs in s["clock_search"].items():
+        pts = cs["all_points"]
+        assert [q["constraint_ps"] for q in pts] == sorted(q["constraint_ps"] for q in pts)
+        assert all(f"{name}:{q['constraint_ps']}" in s["runs"] for q in cs["points"] if q["setup_wns_ps"] is not None)
+        if cs["complete"]:                       # the bracket is one step wide: closes at hi, does not at hi - step
+            hi, by = cs["smallest_closing_constraint_ps"], {q["constraint_ps"]: q for q in pts}
+            assert by[hi]["closed"] and cs["largest_failing_constraint_ps"] == hi - cs["step_ps"] and not by[hi - cs["step_ps"]]["closed"]
+    for label, c in s["comparison"].items():
+        assert c["top"] == ("nvfp4_dot_fx" if label.startswith("fx") else "nvfp4_dot") and c["timing_closed"]
+        assert abs(c["energy_per_block_pj"] - c["power_w"]["total"] * c["clock_period_ps"]) < 1e-6 * c["energy_per_block_pj"]
+        assert c["worst_setup_path"]["cells_on_path"] > 0 and c["worst_setup_path"]["startpoint"] and c["worst_setup_path"]["endpoint"]
+    old = d["silicon"]["runs"]["rel:1800"]       # the column of the existing block is the existing run, not a new number
+    c = s["comparison"]["rel_at_common_clock"]
+    assert (c["cell_area_um2"], c["cells"], c["setup_wns_ps"]) == (old["cell_area_um2"], old["cells"], old["setup_wns_ps"])
+    assert c["power_w"] == old["workloads"]["w13_row0"]["power_w"]

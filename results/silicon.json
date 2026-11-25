@@ -3931,5 +3931,4385 @@
   "openroad": "OpenROAD binary of openroad/orfs@sha256:31c5fd29e541059e36ad87b197ece981c04d2ce3a1f2035976fe266ec0e521cb (reports its version as 'unknown')",
   "opensta": "OpenSTA 3.1.0 (inside OpenROAD)",
   "klayout": "KLayout 0.30.12"
+ },
+ "exact_sum_variant": {
+  "generated_utc": "2026-11-25T23:50:06Z",
+  "generated_by": "rtl/nvfp4/run_all.py --exact-sum",
+  "what": "nvfp4_dot_fx: the block terms of nvfp4_dot summed exactly in a 57-bit two's complement accumulator (unit 2^-20) and rounded to binary32 once per row, built as the baseline for the binary32 accumulator of nvfp4_dot. Same ports and protocol, same flow, constraints and corner. Everything else in this file is as it was.",
+  "design": {
+   "top": "nvfp4_dot_fx",
+   "rows": 1,
+   "block_size": 16,
+   "aligned_term_bits": 48,
+   "accumulator_bits": 57,
+   "accumulator_unit": "2^-20",
+   "largest_alignment_shift": 28,
+   "max_blocks_per_row": 512,
+   "register_stages": 7,
+   "feed_forward_stages_after_the_loop": 2,
+   "latency_clocks_last_block_to_out_valid": 7,
+   "latency_clocks_nvfp4_dot": 5,
+   "stages": {
+    "S0": "input registers (the text of nvfp4_dot)",
+    "S1": "as nvfp4_dot",
+    "S2": "as nvfp4_dot",
+    "S3": "sign, then alignment shift by Ew + Ex - 2 (0..28): 48-bit two's complement term",
+    "S4": "57-bit add (the only loop); NaN flag",
+    "S5": "sign and 56-bit magnitude of the row sum, leading-zero count (registers load once per row)",
+    "S6": "normalising shift, round to nearest even, exponent, pack; output register"
+   }
+  },
+  "verification": {
+   "vectors": {
+    "pass": true,
+    "dut": "nvfp4_dot_fx",
+    "vectors_total": 1181020,
+    "mismatches_total": 0,
+    "clock_cycles_total": 252716333,
+    "simulator": "Verilator 5.020 2024-01-01 rev (Debian 5.020-1)",
+    "quick": false,
+    "groups": {
+     "real expert rows x real-looking tokens": {
+      "vectors": 853504,
+      "mismatches": 0
+     },
+     "random codes and scale bytes, rows of 1 to 512 blocks": {
+      "vectors": 232000,
+      "mismatches": 0
+     },
+     "directed edge cases of verify.py": {
+      "vectors": 1076,
+      "mismatches": 0
+     },
+     "directed cases for the exact sum and the final rounding": {
+      "vectors": 440,
+      "mismatches": 0
+     },
+     "rounding stress (per-term patterns of verify.py)": {
+      "vectors": 50000,
+      "mismatches": 0
+     },
+     "final-rounding stress": {
+      "vectors": 44000,
+      "mismatches": 0
+     }
+    },
+    "sections": [
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "real w13 rows (L0 E0) x embedding-derived tokens",
+      "vectors": 524288,
+      "mismatches": 0,
+      "clock_cycles": 160401908,
+      "note": "1024 rows x 512 tokens, 288 blocks, 10% of vectors with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "real w2 rows (L0 E0) x SwiGLU outputs of the real w13",
+      "vectors": 131072,
+      "mismatches": 0,
+      "clock_cycles": 20062645,
+      "note": "512 rows x 256 tokens, 144 blocks"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "real w13 rows, layer 0 expert 77 x mixed tokens",
+      "vectors": 22720,
+      "mismatches": 0,
+      "clock_cycles": 6952653,
+      "note": "64 rows x 355 tokens (gaussian, heavy-tailed, sparse, embedding)"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "real w2 rows, layer 0 expert 77 x mixed tokens",
+      "vectors": 10304,
+      "mismatches": 0,
+      "clock_cycles": 1575743,
+      "note": "64 rows x 161 tokens"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "real w13 rows, layer 0 expert 211 x mixed tokens",
+      "vectors": 22720,
+      "mismatches": 0,
+      "clock_cycles": 6939070,
+      "note": "64 rows x 355 tokens (gaussian, heavy-tailed, sparse, embedding)"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "real w2 rows, layer 0 expert 211 x mixed tokens",
+      "vectors": 10304,
+      "mismatches": 0,
+      "clock_cycles": 1576924,
+      "note": "64 rows x 161 tokens"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "real w13 rows, layer 0 expert 383 x mixed tokens",
+      "vectors": 22720,
+      "mismatches": 0,
+      "clock_cycles": 6955309,
+      "note": "64 rows x 355 tokens (gaussian, heavy-tailed, sparse, embedding)"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "real w2 rows, layer 0 expert 383 x mixed tokens",
+      "vectors": 10304,
+      "mismatches": 0,
+      "clock_cycles": 1572089,
+      "note": "64 rows x 161 tokens"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "real w13 rows, layer 13 expert 5 x mixed tokens",
+      "vectors": 22720,
+      "mismatches": 0,
+      "clock_cycles": 6947858,
+      "note": "64 rows x 355 tokens (gaussian, heavy-tailed, sparse, embedding)"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "real w2 rows, layer 13 expert 5 x mixed tokens",
+      "vectors": 10304,
+      "mismatches": 0,
+      "clock_cycles": 1579824,
+      "note": "64 rows x 161 tokens"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "real w13 rows, layer 26 expert 100 x mixed tokens",
+      "vectors": 22720,
+      "mismatches": 0,
+      "clock_cycles": 6949060,
+      "note": "64 rows x 355 tokens (gaussian, heavy-tailed, sparse, embedding)"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "real w2 rows, layer 26 expert 100 x mixed tokens",
+      "vectors": 10304,
+      "mismatches": 0,
+      "clock_cycles": 1572547,
+      "note": "64 rows x 161 tokens"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "real w13 rows, layer 39 expert 300 x mixed tokens",
+      "vectors": 22720,
+      "mismatches": 0,
+      "clock_cycles": 6958630,
+      "note": "64 rows x 355 tokens (gaussian, heavy-tailed, sparse, embedding)"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "real w2 rows, layer 39 expert 300 x mixed tokens",
+      "vectors": 10304,
+      "mismatches": 0,
+      "clock_cycles": 1581488,
+      "note": "64 rows x 161 tokens"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "random codes, any scale bytes, rows of 1 block(s)",
+      "vectors": 40000,
+      "mismatches": 0,
+      "clock_cycles": 44880,
+      "note": "uniform 4-bit codes (so +0 and -0 codes too); 'any' = all 256 scale bytes including NaN; 'finite' = all 254 finite bytes (zeros, subnormals, negatives) with NaN injected at the stated rate; 20% of vectors with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "random codes, any scale bytes, rows of 2 block(s)",
+      "vectors": 30000,
+      "mismatches": 0,
+      "clock_cycles": 67723,
+      "note": "uniform 4-bit codes (so +0 and -0 codes too); 'any' = all 256 scale bytes including NaN; 'finite' = all 254 finite bytes (zeros, subnormals, negatives) with NaN injected at the stated rate; 20% of vectors with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "random codes, finite scale bytes, rows of 3 block(s)",
+      "vectors": 30000,
+      "mismatches": 0,
+      "clock_cycles": 101109,
+      "note": "uniform 4-bit codes (so +0 and -0 codes too); 'any' = all 256 scale bytes including NaN; 'finite' = all 254 finite bytes (zeros, subnormals, negatives) with NaN injected at the stated rate; 20% of vectors with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "random codes, finite scale bytes, rows of 5 block(s)",
+      "vectors": 30000,
+      "mismatches": 0,
+      "clock_cycles": 169012,
+      "note": "uniform 4-bit codes (so +0 and -0 codes too); 'any' = all 256 scale bytes including NaN; 'finite' = all 254 finite bytes (zeros, subnormals, negatives) with NaN injected at the stated rate; 20% of vectors with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "random codes, finite scale bytes, rows of 16 block(s)",
+      "vectors": 30000,
+      "mismatches": 0,
+      "clock_cycles": 539129,
+      "note": "uniform 4-bit codes (so +0 and -0 codes too); 'any' = all 256 scale bytes including NaN; 'finite' = all 254 finite bytes (zeros, subnormals, negatives) with NaN injected at the stated rate; 20% of vectors with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "random codes, finite scale bytes, rows of 31 block(s)",
+      "vectors": 20000,
+      "mismatches": 0,
+      "clock_cycles": 698083,
+      "note": "uniform 4-bit codes (so +0 and -0 codes too); 'any' = all 256 scale bytes including NaN; 'finite' = all 254 finite bytes (zeros, subnormals, negatives) with NaN injected at the stated rate; 20% of vectors with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "random codes, finite scale bytes, rows of 144 block(s)",
+      "vectors": 12000,
+      "mismatches": 0,
+      "clock_cycles": 1938937,
+      "note": "uniform 4-bit codes (so +0 and -0 codes too); 'any' = all 256 scale bytes including NaN; 'finite' = all 254 finite bytes (zeros, subnormals, negatives) with NaN injected at the stated rate; 20% of vectors with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "random codes, finite scale bytes, rows of 288 block(s)",
+      "vectors": 24000,
+      "mismatches": 0,
+      "clock_cycles": 7775859,
+      "note": "uniform 4-bit codes (so +0 and -0 codes too); 'any' = all 256 scale bytes including NaN; 'finite' = all 254 finite bytes (zeros, subnormals, negatives) with NaN injected at the stated rate; 20% of vectors with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "random codes, real scale bytes, rows of 288 block(s)",
+      "vectors": 12000,
+      "mismatches": 0,
+      "clock_cycles": 3890346,
+      "note": "uniform 4-bit codes (so +0 and -0 codes too); 'any' = all 256 scale bytes including NaN; 'finite' = all 254 finite bytes (zeros, subnormals, negatives) with NaN injected at the stated rate; 20% of vectors with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "random codes, finite scale bytes, rows of 512 block(s)",
+      "vectors": 4000,
+      "mismatches": 0,
+      "clock_cycles": 2295533,
+      "note": "uniform 4-bit codes (so +0 and -0 codes too); 'any' = all 256 scale bytes including NaN; 'finite' = all 254 finite bytes (zeros, subnormals, negatives) with NaN injected at the stated rate; 20% of vectors with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed: zero scale",
+      "vectors": 48,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed: all-zero blocks",
+      "vectors": 24,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed: saturation (all codes +-6, scales 448)",
+      "vectors": 48,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed: saturation, negative scales",
+      "vectors": 48,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed: subnormal scales",
+      "vectors": 112,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed: subnormal x maximum scale",
+      "vectors": 56,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed: maximum scales",
+      "vectors": 16,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed: NaN scale",
+      "vectors": 80,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed: NaN scale with zero codes",
+      "vectors": 36,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed: sign patterns",
+      "vectors": 112,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed: cancellation inside a block",
+      "vectors": 8,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed: cancellation across blocks",
+      "vectors": 8,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed: rounding: small terms then large term",
+      "vectors": 240,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed: rounding: large term then small terms",
+      "vectors": 240,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: maximum magnitude row (1 block, all codes +-6, scales 448)",
+      "vectors": 4,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: row of 1 block, largest product at each of the 29 alignment shifts",
+      "vectors": 116,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: row of 1 block, smallest non-zero term (2^-20)",
+      "vectors": 4,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: maximum magnitude row (2 blocks, all codes +-6, scales 448)",
+      "vectors": 4,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: exact cancellation to +0",
+      "vectors": 34,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: cancellation of large terms down to a small sum",
+      "vectors": 30,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: final rounding: tie, rounded down to even",
+      "vectors": 28,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: final rounding: tie, rounded up to even",
+      "vectors": 28,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: final rounding: tie at an all-ones significand, carries into the exponent",
+      "vectors": 28,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: final rounding: tie at significand 2^24 - 2, rounded down, no carry",
+      "vectors": 28,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: final rounding: all ones (2^k - 1), rounded up into the next power of two",
+      "vectors": 28,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: final rounding: exact: low bits zero",
+      "vectors": 28,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: final rounding: one unit below a tie, rounded down",
+      "vectors": 24,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: final rounding: one unit above a tie on an even significand, rounded up (sticky far below)",
+      "vectors": 24,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: final rounding: only the lowest unit set below the significand, rounded down (sticky far below)",
+      "vectors": 24,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: maximum magnitude row (288 blocks, all codes +-6, scales 448)",
+      "vectors": 4,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "directed, exact sum: maximum magnitude row (512 blocks, all codes +-6, scales 448)",
+      "vectors": 4,
+      "mismatches": 0,
+      "clock_cycles": 0,
+      "note": "each vector run back to back and again with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "rounding stress (the per-term patterns of verify.py), rows of 4 blocks",
+      "vectors": 20000,
+      "mismatches": 0,
+      "clock_cycles": 80020,
+      "note": "terms +-{1,3,2^k,2^k+-1,3*2^k,...} x 2^e"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "rounding stress (the per-term patterns of verify.py), rows of 12 blocks",
+      "vectors": 20000,
+      "mismatches": 0,
+      "clock_cycles": 240020,
+      "note": "terms +-{1,3,2^k,2^k+-1,3*2^k,...} x 2^e"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "rounding stress (the per-term patterns of verify.py), rows of 40 blocks",
+      "vectors": 10000,
+      "mismatches": 0,
+      "clock_cycles": 400020,
+      "note": "terms +-{1,3,2^k,2^k+-1,3*2^k,...} x 2^e"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "final-rounding stress, rows of 12 blocks, leading bit of the sum 24..45",
+      "vectors": 40000,
+      "mismatches": 0,
+      "clock_cycles": 539602,
+      "note": "sums built bit by bit: ties, one unit either side of a tie, all ones, sticky only in the lowest unit, exact; half of the short rows also carry a pair of large terms that cancels; 20% of vectors with idle gaps"
+     },
+     {
+      "dut": "nvfp4_dot_fx",
+      "name": "final-rounding stress, rows of 512 blocks, leading bit of the sum 46..55",
+      "vectors": 4000,
+      "mismatches": 0,
+      "clock_cycles": 2310312,
+      "note": "sums built bit by bit: ties, one unit either side of a tie, all ones, sticky only in the lowest unit, exact; half of the short rows also carry a pair of large terms that cancels; 20% of vectors with idle gaps"
+     }
+    ],
+    "final_rounding_coverage_directed_and_stress": {
+     "NaN scale in the row": 3442,
+     "above half, rounded up": 17841,
+     "below half, only bits 20 or more places below the guard bit set": 715,
+     "below half, rounded down": 17758,
+     "exact cancellation to +0": 62,
+     "exact: no bit below the 24-bit significand": 43694,
+     "rounding carried into the exponent": 3198,
+     "tie, rounded down to even": 6368,
+     "tie, rounded up to even": 6271,
+     "zero": 80
+    },
+    "seconds": 75.9
+   },
+   "icarus": {
+    "simulator": "Icarus Verilog version 12.0 (stable) ()",
+    "real_vectors": 96,
+    "real_mismatches": 0,
+    "random_vectors": 192,
+    "random_mismatches": 0,
+    "directed_final_rounding_vectors": 190,
+    "directed_final_rounding_mismatches": 0,
+    "pass": true
+   },
+   "mutation": {
+    "vector_set": "every directed case, 1/16 of the stress groups and 1/64 of the real-row and random groups",
+    "mutants": {
+     "final rounding: round half up instead of ties to even": {
+      "replaced": "wire        inc_c = n_c[31] & (n_c[32] | (|n_c[30:0]));",
+      "by": "wire        inc_c = n_c[31];",
+      "vectors": 11651,
+      "mismatches": 484,
+      "by_group": {
+       "real expert rows x real-looking tokens": {
+        "vectors": 640,
+        "mismatches": 0
+       },
+       "random codes and scale bytes, rows of 1 to 512 blocks": {
+        "vectors": 3620,
+        "mismatches": 34
+       },
+       "directed edge cases of verify.py": {
+        "vectors": 1076,
+        "mismatches": 14
+       },
+       "directed cases for the exact sum and the final rounding": {
+        "vectors": 440,
+        "mismatches": 62
+       },
+       "rounding stress (per-term patterns of verify.py)": {
+        "vectors": 3125,
+        "mismatches": 28
+       },
+       "final-rounding stress": {
+        "vectors": 2750,
+        "mismatches": 346
+       }
+      }
+     },
+     "S3: alignment shift off by one (Ew + Ex - 1)": {
+      "replaced": "wire [4:0]  sh_c  = es2_q - 5'd2;",
+      "by": "wire [4:0]  sh_c  = es2_q - 5'd1;",
+      "vectors": 11651,
+      "mismatches": 11024,
+      "by_group": {
+       "real expert rows x real-looking tokens": {
+        "vectors": 640,
+        "mismatches": 640
+       },
+       "random codes and scale bytes, rows of 1 to 512 blocks": {
+        "vectors": 3620,
+        "mismatches": 3434
+       },
+       "directed edge cases of verify.py": {
+        "vectors": 1076,
+        "mismatches": 872
+       },
+       "directed cases for the exact sum and the final rounding": {
+        "vectors": 440,
+        "mismatches": 406
+       },
+       "rounding stress (per-term patterns of verify.py)": {
+        "vectors": 3125,
+        "mismatches": 2922
+       },
+       "final-rounding stress": {
+        "vectors": 2750,
+        "mismatches": 2750
+       }
+      }
+     }
+    },
+    "unmodified": {
+     "vectors": 11651,
+     "mismatches": 0,
+     "generator_output_equals_committed_rtl": true
+    },
+    "pass": true
+   }
+  },
+  "definitions_compared": {
+   "what": "per-block-rounded reference (ref.gemm_ref: one binary32 round-to-nearest-even addition per block) against the exact-sum reference (ref.gemm_fx_ref: exact integer sum, one rounding per row); no RTL involved; relative difference = |per-block - exact-sum| / |exact-sum| over outputs whose exact-sum result is not zero",
+   "sets": {
+    "w13 of layer 0 expert 0 (4608 rows x 288 blocks) x 512 embedding-derived tokens": {
+     "kind": "real",
+     "outputs": 2359296,
+     "bit_identical": 2359296,
+     "bit_identical_fraction": 1.0,
+     "worst_relative_difference": 0.0,
+     "median_relative_difference_where_different": 0.0,
+     "exact_sum_zero_but_per_block_not": 0,
+     "outputs_whose_exact_sum_is_a_binary32_number": 2359296,
+     "largest_abs_exact_sum_log2_units": 46.83545831823659
+    },
+    "w2 of layer 0 expert 0 (4608 rows x 144 blocks) x 256 SwiGLU outputs of the real w13": {
+     "kind": "real",
+     "outputs": 1179648,
+     "bit_identical": 1179648,
+     "bit_identical_fraction": 1.0,
+     "worst_relative_difference": 0.0,
+     "median_relative_difference_where_different": 0.0,
+     "exact_sum_zero_but_per_block_not": 0,
+     "outputs_whose_exact_sum_is_a_binary32_number": 1179648,
+     "largest_abs_exact_sum_log2_units": 44.62654857757045
+    },
+    "random codes and random finite scale bytes, 512 rows x 64 tokens, 288 blocks": {
+     "kind": "random",
+     "outputs": 32768,
+     "bit_identical": 4325,
+     "bit_identical_fraction": 0.131988525390625,
+     "worst_relative_difference": 0.001557246926656705,
+     "median_relative_difference_where_different": 2.234812160685676e-07,
+     "exact_sum_zero_but_per_block_not": 0,
+     "outputs_whose_exact_sum_is_a_binary32_number": 1,
+     "largest_abs_exact_sum_log2_units": 45.26380116138968
+    },
+    "random codes, scale bytes in the range real weights use (100..126), 512 rows x 64 tokens, 288 blocks": {
+     "kind": "random, scale bytes of real weights",
+     "outputs": 32768,
+     "bit_identical": 32618,
+     "bit_identical_fraction": 0.99542236328125,
+     "worst_relative_difference": 1.8768222771297005e-07,
+     "median_relative_difference_where_different": 7.406149013265451e-08,
+     "exact_sum_zero_but_per_block_not": 0,
+     "outputs_whose_exact_sum_is_a_binary32_number": 32621,
+     "largest_abs_exact_sum_log2_units": 46.78333020147837
+    }
+   },
+   "real_rows": {
+    "outputs": 3538944,
+    "bit_identical": 3538944,
+    "bit_identical_fraction": 1.0,
+    "worst_relative_difference": 0.0
+   },
+   "random_rows": {
+    "outputs": 32768,
+    "bit_identical": 4325,
+    "bit_identical_fraction": 0.131988525390625,
+    "worst_relative_difference": 0.001557246926656705
+   },
+   "rows_where_no_per_block_addition_rounds": {
+    "rows_examined": 1500,
+    "rows_without_an_inexact_addition": 572,
+    "of_which_bit_identical": 572,
+    "note": "random codes and finite scale bytes, rows of 2, 3, 5, 16 and 40 blocks; the integer model of the binary32 adder reports whether any addition of a row was inexact"
+   },
+   "pass": true
+  },
+  "silicon": {
+   "flow": "as silicon.flow, silicon.library and silicon.constraints of this file; work files in scratch",
+   "clock_search_rule": "bracket = (largest constraint that failed, smallest that closed); each round runs the two constraints that cut the bracket in three, on a 10 ps grid, two flows at a time; closed = setup and hold slack both >= 0 in the flow's final report after routing; stops when the bracket is 10 ps wide. One placement seed per constraint.",
+   "runs": {
+    "fx:1800": {
+     "design": "fx",
+     "top": "nvfp4_dot_fx",
+     "rows": 1,
+     "fixed_weights": false,
+     "hardwired_weights": 0,
+     "clock_period_constraint_ps": 1800.0,
+     "synth_cell_area_um2": 563.40036,
+     "synth_cells": 4905,
+     "cell_area_um2": 575.02,
+     "cells": 4928,
+     "sequential_cells": 414,
+     "area_by_class_um2": {
+      "fill_cell": 538.629,
+      "tap_cell": 9.06876,
+      "clock_buffer": 9.37494,
+      "timing_repair_buffer": 17.7584,
+      "inverter": 41.7863,
+      "clock_inverter": 1.48716,
+      "sequential_cell": 120.722,
+      "multi_input_combinational_cell": 383.891
+     },
+     "count_by_class": {
+      "fill_cell": 6077,
+      "tap_cell": 311,
+      "clock_buffer": 35,
+      "timing_repair_buffer": 203,
+      "inverter": 955,
+      "clock_inverter": 10,
+      "sequential_cell": 414,
+      "multi_input_combinational_cell": 3311
+     },
+     "core_area_um2": 1122.72,
+     "die_area_um2": 1265.01,
+     "utilization": 0.520246,
+     "setup_wns_ps": 475.743,
+     "hold_wns_ps": 42.602,
+     "min_period_ps": 1324.26,
+     "fmax_mhz": 755.1,
+     "timing_closed": true,
+     "route_drc_violations": 0,
+     "distinct_blocks_in_table": null,
+     "sta": {
+      "setup_wns_ps": 475.74266938382186,
+      "hold_wns_ps": 42.6019568548249,
+      "min_period_ps": 1324.26,
+      "fmax_mhz": 755.14,
+      "critical_path": {
+       "from": "wc_q[5]$_DFF_P_",
+       "to": "g_row[0].u_dp.d_q[12]$_DFF_P_"
+      }
+     },
+     "vectorless_power_w": 0.000942782,
+     "workloads": {
+      "w13_row0": {
+       "description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000681948,
+        "switching": 0.000417629,
+        "dynamic": 0.001099577,
+        "leakage": 4.8521e-07,
+        "total": 0.00110006
+       },
+       "power_by_group_w": {
+        "sequential": 0.000367291,
+        "combinational": 0.000523366,
+        "clock": 0.000209404
+       },
+       "energy_per_block_pj": 1.9801079999999998,
+       "energy_per_mac_pj": 0.12375674999999998,
+       "dynamic_energy_per_block_pj": 1.9792386,
+       "leakage_energy_per_block_pj": 0.000873378,
+       "vcd_pins_annotated": 16745,
+       "pins_unannotated": 2
+      },
+      "idle": {
+       "description": "in_valid low, data pins held at zero",
+       "clocks": 256,
+       "outputs": 0,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000375573,
+        "switching": 9.70289e-05,
+        "dynamic": 0.0004726019,
+        "leakage": 6.53229e-07,
+        "total": 0.000473256
+       },
+       "power_by_group_w": {
+        "sequential": 0.000263306,
+        "combinational": 5.44584e-07,
+        "clock": 0.000209404
+       },
+       "energy_per_block_pj": 0.8518608,
+       "energy_per_mac_pj": 0.0532413,
+       "dynamic_energy_per_block_pj": 0.85068342,
+       "leakage_energy_per_block_pj": 0.0011758122,
+       "vcd_pins_annotated": 16745,
+       "pins_unannotated": 2
+      }
+     },
+     "post_route_netlist_bit_exact": true,
+     "flow_seconds": 230.0
+    },
+    "fx:600": {
+     "design": "fx",
+     "top": "nvfp4_dot_fx",
+     "rows": 1,
+     "fixed_weights": false,
+     "hardwired_weights": 0,
+     "clock_period_constraint_ps": 600.0,
+     "synth_cell_area_um2": 563.40036,
+     "synth_cells": 4905,
+     "cell_area_um2": 637.131,
+     "cells": 5550,
+     "sequential_cells": 414,
+     "area_by_class_um2": {
+      "fill_cell": 476.518,
+      "tap_cell": 9.06876,
+      "clock_buffer": 11.0225,
+      "timing_repair_buffer": 76.4138,
+      "inverter": 41.8592,
+      "clock_inverter": 0.8019,
+      "sequential_cell": 120.737,
+      "multi_input_combinational_cell": 386.297
+     },
+     "count_by_class": {
+      "fill_cell": 6097,
+      "tap_cell": 311,
+      "clock_buffer": 36,
+      "timing_repair_buffer": 826,
+      "inverter": 955,
+      "clock_inverter": 8,
+      "sequential_cell": 414,
+      "multi_input_combinational_cell": 3311
+     },
+     "core_area_um2": 1122.72,
+     "die_area_um2": 1265.01,
+     "utilization": 0.575568,
+     "setup_wns_ps": -543.783,
+     "hold_wns_ps": 11.4755,
+     "min_period_ps": 1143.78,
+     "fmax_mhz": 874.3,
+     "timing_closed": false,
+     "route_drc_violations": 0,
+     "distinct_blocks_in_table": null,
+     "sta": {
+      "setup_wns_ps": -543.7832983425151,
+      "hold_wns_ps": 11.475542784135781,
+      "min_period_ps": 1143.78,
+      "fmax_mhz": 874.29,
+      "critical_path": {
+       "from": "wc_q[5]$_DFF_P_",
+       "to": "g_row[0].u_dp.d_q[12]$_DFF_P_"
+      }
+     },
+     "vectorless_power_w": 0.0031085,
+     "workloads": {
+      "w13_row0": {
+       "description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.00235377,
+        "switching": 0.00131463,
+        "dynamic": 0.0036683999999999996,
+        "leakage": 5.81884e-07,
+        "total": 0.00366898
+       },
+       "power_by_group_w": {
+        "sequential": 0.00107731,
+        "combinational": 0.00189581,
+        "clock": 0.000695868
+       },
+       "energy_per_block_pj": 2.201388,
+       "energy_per_mac_pj": 0.13758675,
+       "dynamic_energy_per_block_pj": 2.20104,
+       "leakage_energy_per_block_pj": 0.0003491304,
+       "vcd_pins_annotated": 17989,
+       "pins_unannotated": 2
+      },
+      "idle": {
+       "description": "in_valid low, data pins held at zero",
+       "clocks": 256,
+       "outputs": 0,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.00119134,
+        "switching": 0.000293953,
+        "dynamic": 0.001485293,
+        "leakage": 8.01136e-07,
+        "total": 0.0014861
+       },
+       "power_by_group_w": {
+        "sequential": 0.000789537,
+        "combinational": 6.89921e-07,
+        "clock": 0.000695868
+       },
+       "energy_per_block_pj": 0.89166,
+       "energy_per_mac_pj": 0.05572875,
+       "dynamic_energy_per_block_pj": 0.8911758,
+       "leakage_energy_per_block_pj": 0.0004806816,
+       "vcd_pins_annotated": 17989,
+       "pins_unannotated": 2
+      }
+     },
+     "post_route_netlist_bit_exact": true,
+     "flow_seconds": 261.0
+    },
+    "fx:800": {
+     "design": "fx",
+     "top": "nvfp4_dot_fx",
+     "rows": 1,
+     "fixed_weights": false,
+     "hardwired_weights": 0,
+     "clock_period_constraint_ps": 800.0,
+     "synth_cell_area_um2": 563.40036,
+     "synth_cells": 4905,
+     "cell_area_um2": 616.705,
+     "cells": 5351,
+     "sequential_cells": 414,
+     "area_by_class_um2": {
+      "fill_cell": 496.945,
+      "tap_cell": 9.06876,
+      "clock_buffer": 9.46242,
+      "timing_repair_buffer": 57.8826,
+      "inverter": 41.8446,
+      "clock_inverter": 2.14326,
+      "sequential_cell": 120.722,
+      "multi_input_combinational_cell": 384.65
+     },
+     "count_by_class": {
+      "fill_cell": 6094,
+      "tap_cell": 311,
+      "clock_buffer": 33,
+      "timing_repair_buffer": 625,
+      "inverter": 955,
+      "clock_inverter": 13,
+      "sequential_cell": 414,
+      "multi_input_combinational_cell": 3311
+     },
+     "core_area_um2": 1122.72,
+     "die_area_um2": 1265.01,
+     "utilization": 0.557374,
+     "setup_wns_ps": -354.483,
+     "hold_wns_ps": 38.2533,
+     "min_period_ps": 1154.48,
+     "fmax_mhz": 866.2,
+     "timing_closed": false,
+     "route_drc_violations": 0,
+     "distinct_blocks_in_table": null,
+     "sta": {
+      "setup_wns_ps": -354.4831664601623,
+      "hold_wns_ps": 38.25333815008221,
+      "min_period_ps": 1154.48,
+      "fmax_mhz": 866.19,
+      "critical_path": {
+       "from": "wc_q[5]$_DFF_P_",
+       "to": "g_row[0].u_dp.d_q[12]$_DFF_P_"
+      }
+     },
+     "vectorless_power_w": 0.00224286,
+     "workloads": {
+      "w13_row0": {
+       "description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.00168752,
+        "switching": 0.000982445,
+        "dynamic": 0.002669965,
+        "leakage": 5.45875e-07,
+        "total": 0.00267051
+       },
+       "power_by_group_w": {
+        "sequential": 0.000815489,
+        "combinational": 0.00136558,
+        "clock": 0.000489438
+       },
+       "energy_per_block_pj": 2.136408,
+       "energy_per_mac_pj": 0.1335255,
+       "dynamic_energy_per_block_pj": 2.1359719999999998,
+       "leakage_energy_per_block_pj": 0.0004367,
+       "vcd_pins_annotated": 17591,
+       "pins_unannotated": 2
+      },
+      "idle": {
+       "description": "in_valid low, data pins held at zero",
+       "clocks": 256,
+       "outputs": 0,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.00085376,
+        "switching": 0.000227149,
+        "dynamic": 0.001080909,
+        "leakage": 7.53173e-07,
+        "total": 0.00108166
+       },
+       "power_by_group_w": {
+        "sequential": 0.000591581,
+        "combinational": 6.4361e-07,
+        "clock": 0.000489438
+       },
+       "energy_per_block_pj": 0.8653279999999999,
+       "energy_per_mac_pj": 0.05408299999999999,
+       "dynamic_energy_per_block_pj": 0.8647271999999999,
+       "leakage_energy_per_block_pj": 0.0006025384,
+       "vcd_pins_annotated": 17591,
+       "pins_unannotated": 2
+      }
+     },
+     "post_route_netlist_bit_exact": true,
+     "flow_seconds": 230.0
+    },
+    "fx:1000": {
+     "design": "fx",
+     "top": "nvfp4_dot_fx",
+     "rows": 1,
+     "fixed_weights": false,
+     "hardwired_weights": 0,
+     "clock_period_constraint_ps": 1000.0,
+     "synth_cell_area_um2": 563.40036,
+     "synth_cells": 4905,
+     "cell_area_um2": 593.697,
+     "cells": 5110,
+     "sequential_cells": 414,
+     "area_by_class_um2": {
+      "fill_cell": 519.952,
+      "tap_cell": 9.06876,
+      "clock_buffer": 9.2583,
+      "timing_repair_buffer": 34.6421,
+      "inverter": 41.83,
+      "clock_inverter": 3.16386,
+      "sequential_cell": 120.722,
+      "multi_input_combinational_cell": 384.081
+     },
+     "count_by_class": {
+      "fill_cell": 6198,
+      "tap_cell": 311,
+      "clock_buffer": 32,
+      "timing_repair_buffer": 382,
+      "inverter": 955,
+      "clock_inverter": 16,
+      "sequential_cell": 414,
+      "multi_input_combinational_cell": 3311
+     },
+     "core_area_um2": 1122.72,
+     "die_area_um2": 1265.01,
+     "utilization": 0.536881,
+     "setup_wns_ps": -145.848,
+     "hold_wns_ps": 40.2823,
+     "min_period_ps": 1145.85,
+     "fmax_mhz": 872.7,
+     "timing_closed": false,
+     "route_drc_violations": 0,
+     "distinct_blocks_in_table": null,
+     "sta": {
+      "setup_wns_ps": -145.84833399325106,
+      "hold_wns_ps": 40.28225685790403,
+      "min_period_ps": 1145.85,
+      "fmax_mhz": 872.72,
+      "critical_path": {
+       "from": "wc_q[5]$_DFF_P_",
+       "to": "g_row[0].u_dp.d_q[12]$_DFF_P_"
+      }
+     },
+     "vectorless_power_w": 0.00175304,
+     "workloads": {
+      "w13_row0": {
+       "description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.001292,
+        "switching": 0.000778404,
+        "dynamic": 0.002070404,
+        "leakage": 5.09541e-07,
+        "total": 0.00207091
+       },
+       "power_by_group_w": {
+        "sequential": 0.000658589,
+        "combinational": 0.0010169,
+        "clock": 0.000395419
+       },
+       "energy_per_block_pj": 2.07091,
+       "energy_per_mac_pj": 0.129431875,
+       "dynamic_energy_per_block_pj": 2.070404,
+       "leakage_energy_per_block_pj": 0.0005095410000000001,
+       "vcd_pins_annotated": 17109,
+       "pins_unannotated": 2
+      },
+      "idle": {
+       "description": "in_valid low, data pins held at zero",
+       "clocks": 256,
+       "outputs": 0,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000681868,
+        "switching": 0.000187219,
+        "dynamic": 0.0008690869999999999,
+        "leakage": 6.9645e-07,
+        "total": 0.000869783
+       },
+       "power_by_group_w": {
+        "sequential": 0.000473778,
+        "combinational": 5.86606e-07,
+        "clock": 0.000395419
+       },
+       "energy_per_block_pj": 0.869783,
+       "energy_per_mac_pj": 0.0543614375,
+       "dynamic_energy_per_block_pj": 0.8690869999999999,
+       "leakage_energy_per_block_pj": 0.00069645,
+       "vcd_pins_annotated": 17109,
+       "pins_unannotated": 2
+      }
+     },
+     "post_route_netlist_bit_exact": true,
+     "flow_seconds": 232.0
+    },
+    "fx:1070": {
+     "design": "fx",
+     "top": "nvfp4_dot_fx",
+     "rows": 1,
+     "fixed_weights": false,
+     "hardwired_weights": 0,
+     "clock_period_constraint_ps": 1070.0,
+     "synth_cell_area_um2": 563.40036,
+     "synth_cells": 4905,
+     "cell_area_um2": 590.3,
+     "cells": 5063,
+     "sequential_cells": 414,
+     "area_by_class_um2": {
+      "fill_cell": 523.349,
+      "tap_cell": 9.06876,
+      "clock_buffer": 11.212,
+      "timing_repair_buffer": 29.6557,
+      "inverter": 41.8446,
+      "clock_inverter": 2.59524,
+      "sequential_cell": 120.722,
+      "multi_input_combinational_cell": 384.27
+     },
+     "count_by_class": {
+      "fill_cell": 6107,
+      "tap_cell": 311,
+      "clock_buffer": 37,
+      "timing_repair_buffer": 335,
+      "inverter": 955,
+      "clock_inverter": 11,
+      "sequential_cell": 414,
+      "multi_input_combinational_cell": 3311
+     },
+     "core_area_um2": 1122.72,
+     "die_area_um2": 1265.01,
+     "utilization": 0.533855,
+     "setup_wns_ps": -74.8865,
+     "hold_wns_ps": 42.2092,
+     "min_period_ps": 1144.89,
+     "fmax_mhz": 873.4,
+     "timing_closed": false,
+     "route_drc_violations": 0,
+     "distinct_blocks_in_table": null,
+     "sta": {
+      "setup_wns_ps": -74.88654171164299,
+      "hold_wns_ps": 42.20923627497622,
+      "min_period_ps": 1144.89,
+      "fmax_mhz": 873.45,
+      "critical_path": {
+       "from": "wc_q[5]$_DFF_P_",
+       "to": "g_row[0].u_dp.d_q[11]$_DFF_P_"
+      }
+     },
+     "vectorless_power_w": 0.00166368,
+     "workloads": {
+      "w13_row0": {
+       "description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.00122799,
+        "switching": 0.000721094,
+        "dynamic": 0.001949084,
+        "leakage": 5.04803e-07,
+        "total": 0.00194959
+       },
+       "power_by_group_w": {
+        "sequential": 0.000617079,
+        "combinational": 0.000929203,
+        "clock": 0.000403312
+       },
+       "energy_per_block_pj": 2.0860613,
+       "energy_per_mac_pj": 0.13037883125,
+       "dynamic_energy_per_block_pj": 2.08551988,
+       "leakage_energy_per_block_pj": 0.00054013921,
+       "vcd_pins_annotated": 17015,
+       "pins_unannotated": 2
+      },
+      "idle": {
+       "description": "in_valid low, data pins held at zero",
+       "clocks": 256,
+       "outputs": 0,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000674417,
+        "switching": 0.000171519,
+        "dynamic": 0.0008459359999999999,
+        "leakage": 6.86154e-07,
+        "total": 0.000846621
+       },
+       "power_by_group_w": {
+        "sequential": 0.000442736,
+        "combinational": 5.73973e-07,
+        "clock": 0.000403312
+       },
+       "energy_per_block_pj": 0.9058844699999999,
+       "energy_per_mac_pj": 0.056617779374999996,
+       "dynamic_energy_per_block_pj": 0.9051515199999999,
+       "leakage_energy_per_block_pj": 0.00073418478,
+       "vcd_pins_annotated": 17015,
+       "pins_unannotated": 2
+      }
+     },
+     "post_route_netlist_bit_exact": true,
+     "flow_seconds": 225.0
+    },
+    "fx:1130": {
+     "design": "fx",
+     "top": "nvfp4_dot_fx",
+     "rows": 1,
+     "fixed_weights": false,
+     "hardwired_weights": 0,
+     "clock_period_constraint_ps": 1130.0,
+     "synth_cell_area_um2": 563.40036,
+     "synth_cells": 4905,
+     "cell_area_um2": 587.501,
+     "cells": 5031,
+     "sequential_cells": 414,
+     "area_by_class_um2": {
+      "fill_cell": 526.148,
+      "tap_cell": 9.06876,
+      "clock_buffer": 10.6871,
+      "timing_repair_buffer": 26.6231,
+      "inverter": 41.83,
+      "clock_inverter": 3.41172,
+      "sequential_cell": 120.722,
+      "multi_input_combinational_cell": 384.227
+     },
+     "count_by_class": {
+      "fill_cell": 6095,
+      "tap_cell": 311,
+      "clock_buffer": 34,
+      "timing_repair_buffer": 303,
+      "inverter": 955,
+      "clock_inverter": 14,
+      "sequential_cell": 414,
+      "multi_input_combinational_cell": 3311
+     },
+     "core_area_um2": 1122.72,
+     "die_area_um2": 1265.01,
+     "utilization": 0.531362,
+     "setup_wns_ps": -18.9,
+     "hold_wns_ps": 42.2601,
+     "min_period_ps": 1148.9,
+     "fmax_mhz": 870.4,
+     "timing_closed": false,
+     "route_drc_violations": 0,
+     "distinct_blocks_in_table": null,
+     "sta": {
+      "setup_wns_ps": -18.89999275752946,
+      "hold_wns_ps": 42.260070611919375,
+      "min_period_ps": 1148.9,
+      "fmax_mhz": 870.4,
+      "critical_path": {
+       "from": "xc_q[9]$_DFF_P_",
+       "to": "g_row[0].u_dp.d_q[12]$_DFF_P_"
+      }
+     },
+     "vectorless_power_w": 0.00156918,
+     "workloads": {
+      "w13_row0": {
+       "description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.00114579,
+        "switching": 0.000687356,
+        "dynamic": 0.001833146,
+        "leakage": 5.00781e-07,
+        "total": 0.00183365
+       },
+       "power_by_group_w": {
+        "sequential": 0.000583916,
+        "combinational": 0.000866928,
+        "clock": 0.000382801
+       },
+       "energy_per_block_pj": 2.0720245,
+       "energy_per_mac_pj": 0.12950153125,
+       "dynamic_energy_per_block_pj": 2.07145498,
+       "leakage_energy_per_block_pj": 0.00056588253,
+       "vcd_pins_annotated": 16951,
+       "pins_unannotated": 2
+      },
+      "idle": {
+       "description": "in_valid low, data pins held at zero",
+       "clocks": 256,
+       "outputs": 0,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000632563,
+        "switching": 0.000169058,
+        "dynamic": 0.0008016210000000001,
+        "leakage": 6.78507e-07,
+        "total": 0.000802299
+       },
+       "power_by_group_w": {
+        "sequential": 0.000418932,
+        "combinational": 5.66358e-07,
+        "clock": 0.000382801
+       },
+       "energy_per_block_pj": 0.90659787,
+       "energy_per_mac_pj": 0.056662366875,
+       "dynamic_energy_per_block_pj": 0.9058317300000001,
+       "leakage_energy_per_block_pj": 0.0007667129100000001,
+       "vcd_pins_annotated": 16951,
+       "pins_unannotated": 2
+      }
+     },
+     "post_route_netlist_bit_exact": true,
+     "flow_seconds": 227.0
+    },
+    "fx:1140": {
+     "design": "fx",
+     "top": "nvfp4_dot_fx",
+     "rows": 1,
+     "fixed_weights": false,
+     "hardwired_weights": 0,
+     "clock_period_constraint_ps": 1140.0,
+     "synth_cell_area_um2": 563.40036,
+     "synth_cells": 4905,
+     "cell_area_um2": 585.708,
+     "cells": 5022,
+     "sequential_cells": 414,
+     "area_by_class_um2": {
+      "fill_cell": 527.942,
+      "tap_cell": 9.06876,
+      "clock_buffer": 9.97272,
+      "timing_repair_buffer": 25.8941,
+      "inverter": 41.83,
+      "clock_inverter": 3.09096,
+      "sequential_cell": 120.722,
+      "multi_input_combinational_cell": 384.198
+     },
+     "count_by_class": {
+      "fill_cell": 6047,
+      "tap_cell": 311,
+      "clock_buffer": 33,
+      "timing_repair_buffer": 294,
+      "inverter": 955,
+      "clock_inverter": 15,
+      "sequential_cell": 414,
+      "multi_input_combinational_cell": 3311
+     },
+     "core_area_um2": 1122.72,
+     "die_area_um2": 1265.01,
+     "utilization": 0.529765,
+     "setup_wns_ps": -8.42892,
+     "hold_wns_ps": 40.7877,
+     "min_period_ps": 1148.43,
+     "fmax_mhz": 870.8,
+     "timing_closed": false,
+     "route_drc_violations": 0,
+     "distinct_blocks_in_table": null,
+     "sta": {
+      "setup_wns_ps": -8.42892425893697,
+      "hold_wns_ps": 40.787748341929614,
+      "min_period_ps": 1148.43,
+      "fmax_mhz": 870.75,
+      "critical_path": {
+       "from": "wc_q[5]$_DFF_P_",
+       "to": "g_row[0].u_dp.d_q[11]$_DFF_P_"
+      }
+     },
+     "vectorless_power_w": 0.00153637,
+     "workloads": {
+      "w13_row0": {
+       "description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.00111898,
+        "switching": 0.00067772,
+        "dynamic": 0.0017967,
+        "leakage": 4.98536e-07,
+        "total": 0.0017972
+       },
+       "power_by_group_w": {
+        "sequential": 0.00057892,
+        "combinational": 0.000857754,
+        "clock": 0.000360527
+       },
+       "energy_per_block_pj": 2.048808,
+       "energy_per_mac_pj": 0.1280505,
+       "dynamic_energy_per_block_pj": 2.048238,
+       "leakage_energy_per_block_pj": 0.00056833104,
+       "vcd_pins_annotated": 16933,
+       "pins_unannotated": 2
+      },
+      "idle": {
+       "description": "in_valid low, data pins held at zero",
+       "clocks": 256,
+       "outputs": 0,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000611266,
+        "switching": 0.00016443,
+        "dynamic": 0.000775696,
+        "leakage": 6.75615e-07,
+        "total": 0.000776371
+       },
+       "power_by_group_w": {
+        "sequential": 0.000415279,
+        "combinational": 5.6481e-07,
+        "clock": 0.000360527
+       },
+       "energy_per_block_pj": 0.88506294,
+       "energy_per_mac_pj": 0.05531643375,
+       "dynamic_energy_per_block_pj": 0.88429344,
+       "leakage_energy_per_block_pj": 0.0007702011,
+       "vcd_pins_annotated": 16933,
+       "pins_unannotated": 2
+      }
+     },
+     "post_route_netlist_bit_exact": true,
+     "flow_seconds": 211.0
+    },
+    "fx:1150": {
+     "design": "fx",
+     "top": "nvfp4_dot_fx",
+     "rows": 1,
+     "fixed_weights": false,
+     "hardwired_weights": 0,
+     "clock_period_constraint_ps": 1150.0,
+     "synth_cell_area_um2": 563.40036,
+     "synth_cells": 4905,
+     "cell_area_um2": 586.378,
+     "cells": 5028,
+     "sequential_cells": 414,
+     "area_by_class_um2": {
+      "fill_cell": 527.271,
+      "tap_cell": 9.06876,
+      "clock_buffer": 10.5705,
+      "timing_repair_buffer": 26.6522,
+      "inverter": 41.8154,
+      "clock_inverter": 2.27448,
+      "sequential_cell": 120.722,
+      "multi_input_combinational_cell": 384.343
+     },
+     "count_by_class": {
+      "fill_cell": 6165,
+      "tap_cell": 311,
+      "clock_buffer": 35,
+      "timing_repair_buffer": 300,
+      "inverter": 955,
+      "clock_inverter": 13,
+      "sequential_cell": 414,
+      "multi_input_combinational_cell": 3311
+     },
+     "core_area_um2": 1122.72,
+     "die_area_um2": 1265.01,
+     "utilization": 0.530362,
+     "setup_wns_ps": 1.92668,
+     "hold_wns_ps": 37.5273,
+     "min_period_ps": 1148.07,
+     "fmax_mhz": 871.0,
+     "timing_closed": true,
+     "route_drc_violations": 0,
+     "distinct_blocks_in_table": null,
+     "sta": {
+      "setup_wns_ps": 1.9266810446331342,
+      "hold_wns_ps": 37.52727310575785,
+      "min_period_ps": 1148.07,
+      "fmax_mhz": 871.02,
+      "critical_path": {
+       "from": "wc_q[9]$_DFF_P_",
+       "to": "g_row[0].u_dp.d_q[12]$_DFF_P_"
+      }
+     },
+     "vectorless_power_w": 0.00153322,
+     "workloads": {
+      "w13_row0": {
+       "description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.00112257,
+        "switching": 0.000669604,
+        "dynamic": 0.0017921740000000001,
+        "leakage": 5.00074e-07,
+        "total": 0.00179268
+       },
+       "power_by_group_w": {
+        "sequential": 0.000574025,
+        "combinational": 0.000853562,
+        "clock": 0.000365092
+       },
+       "energy_per_block_pj": 2.061582,
+       "energy_per_mac_pj": 0.128848875,
+       "dynamic_energy_per_block_pj": 2.0610001000000002,
+       "leakage_energy_per_block_pj": 0.0005750851000000001,
+       "vcd_pins_annotated": 16945,
+       "pins_unannotated": 2
+      },
+      "idle": {
+       "description": "in_valid low, data pins held at zero",
+       "clocks": 256,
+       "outputs": 0,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000616734,
+        "switching": 0.000160378,
+        "dynamic": 0.0007771119999999999,
+        "leakage": 6.78109e-07,
+        "total": 0.00077779
+       },
+       "power_by_group_w": {
+        "sequential": 0.000412132,
+        "combinational": 5.66622e-07,
+        "clock": 0.000365092
+       },
+       "energy_per_block_pj": 0.8944585,
+       "energy_per_mac_pj": 0.05590365625,
+       "dynamic_energy_per_block_pj": 0.8936787999999999,
+       "leakage_energy_per_block_pj": 0.00077982535,
+       "vcd_pins_annotated": 16945,
+       "pins_unannotated": 2
+      }
+     },
+     "post_route_netlist_bit_exact": true,
+     "flow_seconds": 249.0
+    },
+    "fx:1180": {
+     "design": "fx",
+     "top": "nvfp4_dot_fx",
+     "rows": 1,
+     "fixed_weights": false,
+     "hardwired_weights": 0,
+     "clock_period_constraint_ps": 1180.0,
+     "synth_cell_area_um2": 563.40036,
+     "synth_cells": 4905,
+     "cell_area_um2": 582.573,
+     "cells": 4997,
+     "sequential_cells": 414,
+     "area_by_class_um2": {
+      "fill_cell": 531.077,
+      "tap_cell": 9.06876,
+      "clock_buffer": 9.89982,
+      "timing_repair_buffer": 23.7071,
+      "inverter": 41.7863,
+      "clock_inverter": 2.56608,
+      "sequential_cell": 120.722,
+      "multi_input_combinational_cell": 383.891
+     },
+     "count_by_class": {
+      "fill_cell": 6094,
+      "tap_cell": 311,
+      "clock_buffer": 34,
+      "timing_repair_buffer": 269,
+      "inverter": 955,
+      "clock_inverter": 14,
+      "sequential_cell": 414,
+      "multi_input_combinational_cell": 3311
+     },
+     "core_area_um2": 1122.72,
+     "die_area_um2": 1265.01,
+     "utilization": 0.526973,
+     "setup_wns_ps": 19.8558,
+     "hold_wns_ps": 42.3834,
+     "min_period_ps": 1160.14,
+     "fmax_mhz": 862.0,
+     "timing_closed": true,
+     "route_drc_violations": 0,
+     "distinct_blocks_in_table": null,
+     "sta": {
+      "setup_wns_ps": 19.855783763248407,
+      "hold_wns_ps": 42.38338863487237,
+      "min_period_ps": 1160.14,
+      "fmax_mhz": 861.96,
+      "critical_path": {
+       "from": "xc_q[9]$_DFF_P_",
+       "to": "g_row[0].u_dp.d_q[12]$_DFF_P_"
+      }
+     },
+     "vectorless_power_w": 0.00147388,
+     "workloads": {
+      "w13_row0": {
+       "description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.00107133,
+        "switching": 0.000650667,
+        "dynamic": 0.0017219969999999999,
+        "leakage": 4.94761e-07,
+        "total": 0.0017225
+       },
+       "power_by_group_w": {
+        "sequential": 0.000559446,
+        "combinational": 0.000819087,
+        "clock": 0.000343963
+       },
+       "energy_per_block_pj": 2.0325499999999996,
+       "energy_per_mac_pj": 0.12703437499999998,
+       "dynamic_energy_per_block_pj": 2.03195646,
+       "leakage_energy_per_block_pj": 0.00058381798,
+       "vcd_pins_annotated": 16883,
+       "pins_unannotated": 2
+      },
+      "idle": {
+       "description": "in_valid low, data pins held at zero",
+       "clocks": 256,
+       "outputs": 0,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000587993,
+        "switching": 0.000157405,
+        "dynamic": 0.000745398,
+        "leakage": 6.69395e-07,
+        "total": 0.000746067
+       },
+       "power_by_group_w": {
+        "sequential": 0.000401546,
+        "combinational": 5.58951e-07,
+        "clock": 0.000343963
+       },
+       "energy_per_block_pj": 0.88035906,
+       "energy_per_mac_pj": 0.05502244125,
+       "dynamic_energy_per_block_pj": 0.8795696399999999,
+       "leakage_energy_per_block_pj": 0.0007898861,
+       "vcd_pins_annotated": 16883,
+       "pins_unannotated": 2
+      }
+     },
+     "post_route_netlist_bit_exact": true,
+     "flow_seconds": 251.0
+    },
+    "fx:1200": {
+     "design": "fx",
+     "top": "nvfp4_dot_fx",
+     "rows": 1,
+     "fixed_weights": false,
+     "hardwired_weights": 0,
+     "clock_period_constraint_ps": 1200.0,
+     "synth_cell_area_um2": 563.40036,
+     "synth_cells": 4905,
+     "cell_area_um2": 581.946,
+     "cells": 4979,
+     "sequential_cells": 414,
+     "area_by_class_um2": {
+      "fill_cell": 531.703,
+      "tap_cell": 9.06876,
+      "clock_buffer": 10.7017,
+      "timing_repair_buffer": 22.0158,
+      "inverter": 41.7863,
+      "clock_inverter": 2.82852,
+      "sequential_cell": 120.722,
+      "multi_input_combinational_cell": 383.891
+     },
+     "count_by_class": {
+      "fill_cell": 6054,
+      "tap_cell": 311,
+      "clock_buffer": 35,
+      "timing_repair_buffer": 251,
+      "inverter": 955,
+      "clock_inverter": 13,
+      "sequential_cell": 414,
+      "multi_input_combinational_cell": 3311
+     },
+     "core_area_um2": 1122.72,
+     "die_area_um2": 1265.01,
+     "utilization": 0.526414,
+     "setup_wns_ps": 29.9464,
+     "hold_wns_ps": 41.7427,
+     "min_period_ps": 1170.05,
+     "fmax_mhz": 854.7,
+     "timing_closed": true,
+     "route_drc_violations": 0,
+     "distinct_blocks_in_table": null,
+     "sta": {
+      "setup_wns_ps": 29.94637882978156,
+      "hold_wns_ps": 41.742658108119244,
+      "min_period_ps": 1170.05,
+      "fmax_mhz": 854.66,
+      "critical_path": {
+       "from": "xc_q[9]$_DFF_P_",
+       "to": "g_row[0].u_dp.d_q[12]$_DFF_P_"
+      }
+     },
+     "vectorless_power_w": 0.00146178,
+     "workloads": {
+      "w13_row0": {
+       "description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.0010643,
+        "switching": 0.000640162,
+        "dynamic": 0.001704462,
+        "leakage": 4.93754e-07,
+        "total": 0.00170496
+       },
+       "power_by_group_w": {
+        "sequential": 0.000549795,
+        "combinational": 0.000799315,
+        "clock": 0.000355849
+       },
+       "energy_per_block_pj": 2.0459519999999998,
+       "energy_per_mac_pj": 0.12787199999999999,
+       "dynamic_energy_per_block_pj": 2.0453544,
+       "leakage_energy_per_block_pj": 0.0005925048,
+       "vcd_pins_annotated": 16847,
+       "pins_unannotated": 2
+      },
+      "idle": {
+       "description": "in_valid low, data pins held at zero",
+       "clocks": 256,
+       "outputs": 0,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000593809,
+        "switching": 0.000156557,
+        "dynamic": 0.000750366,
+        "leakage": 6.66594e-07,
+        "total": 0.000751033
+       },
+       "power_by_group_w": {
+        "sequential": 0.000394628,
+        "combinational": 5.54771e-07,
+        "clock": 0.000355849
+       },
+       "energy_per_block_pj": 0.9012396,
+       "energy_per_mac_pj": 0.056327475,
+       "dynamic_energy_per_block_pj": 0.9004392,
+       "leakage_energy_per_block_pj": 0.0007999128,
+       "vcd_pins_annotated": 16847,
+       "pins_unannotated": 2
+      }
+     },
+     "post_route_netlist_bit_exact": true,
+     "flow_seconds": 220.0
+    },
+    "rel:1610": {
+     "design": "rel",
+     "top": "nvfp4_dot",
+     "rows": 1,
+     "fixed_weights": false,
+     "hardwired_weights": 0,
+     "clock_period_constraint_ps": 1610.0,
+     "synth_cell_area_um2": 493.83918,
+     "synth_cells": 4445,
+     "cell_area_um2": 544.388,
+     "cells": 4897,
+     "sequential_cells": 273,
+     "area_by_class_um2": {
+      "fill_cell": 429.76,
+      "tap_cell": 8.48556,
+      "clock_buffer": 7.05672,
+      "timing_repair_buffer": 56.0455,
+      "inverter": 39.3368,
+      "clock_inverter": 1.25388,
+      "timing_repair_inverter": 0.08748,
+      "sequential_cell": 79.6214,
+      "multi_input_combinational_cell": 360.986
+     },
+     "count_by_class": {
+      "fill_cell": 5506,
+      "tap_cell": 291,
+      "clock_buffer": 23,
+      "timing_repair_buffer": 619,
+      "inverter": 895,
+      "clock_inverter": 5,
+      "timing_repair_inverter": 1,
+      "sequential_cell": 273,
+      "multi_input_combinational_cell": 3081
+     },
+     "core_area_um2": 982.634,
+     "die_area_um2": 1117.36,
+     "utilization": 0.562645,
+     "setup_wns_ps": -0.789369,
+     "hold_wns_ps": 37.3098,
+     "min_period_ps": 1610.79,
+     "fmax_mhz": 620.8,
+     "timing_closed": false,
+     "route_drc_violations": 0,
+     "distinct_blocks_in_table": null,
+     "sta": {
+      "setup_wns_ps": -0.7893685736626475,
+      "hold_wns_ps": 37.309835925516175,
+      "min_period_ps": 1610.79,
+      "fmax_mhz": 620.81,
+      "critical_path": {
+       "from": "g_row[0].u_dp.first_q$_SDFFE_PP1P_",
+       "to": "g_row[0].u_dp.inf_q$_DFFE_PP_"
+      }
+     },
+     "vectorless_power_w": 0.000963912,
+     "workloads": {
+      "w13_row0": {
+       "description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.00074322,
+        "switching": 0.000534152,
+        "dynamic": 0.001277372,
+        "leakage": 4.68219e-07,
+        "total": 0.00127784
+       },
+       "power_by_group_w": {
+        "sequential": 0.000308694,
+        "combinational": 0.000795976,
+        "clock": 0.000173169
+       },
+       "energy_per_block_pj": 2.0573224,
+       "energy_per_mac_pj": 0.12858265,
+       "dynamic_energy_per_block_pj": 2.0565689199999997,
+       "leakage_energy_per_block_pj": 0.00075383259,
+       "vcd_pins_annotated": 16131,
+       "pins_unannotated": 2
+      },
+      "w13_row1": {
+       "description": "w13 row 1 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.00073444,
+        "switching": 0.000524267,
+        "dynamic": 0.001258707,
+        "leakage": 4.7145e-07,
+        "total": 0.00125918
+       },
+       "power_by_group_w": {
+        "sequential": 0.000307954,
+        "combinational": 0.000778055,
+        "clock": 0.000173169
+       },
+       "energy_per_block_pj": 2.0272798,
+       "energy_per_mac_pj": 0.1267049875,
+       "dynamic_energy_per_block_pj": 2.02651827,
+       "leakage_energy_per_block_pj": 0.0007590345,
+       "vcd_pins_annotated": 16131,
+       "pins_unannotated": 2
+      },
+      "w13_row577": {
+       "description": "w13 row 577 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000739313,
+        "switching": 0.000529996,
+        "dynamic": 0.0012693090000000001,
+        "leakage": 4.69201e-07,
+        "total": 0.00126978
+       },
+       "power_by_group_w": {
+        "sequential": 0.00030824,
+        "combinational": 0.000788368,
+        "clock": 0.000173169
+       },
+       "energy_per_block_pj": 2.0443458000000003,
+       "energy_per_mac_pj": 0.12777161250000002,
+       "dynamic_energy_per_block_pj": 2.04358749,
+       "leakage_energy_per_block_pj": 0.0007554136100000001,
+       "vcd_pins_annotated": 16131,
+       "pins_unannotated": 2
+      },
+      "w13_row1154": {
+       "description": "w13 row 1154 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000743672,
+        "switching": 0.000534364,
+        "dynamic": 0.001278036,
+        "leakage": 4.67744e-07,
+        "total": 0.0012785
+       },
+       "power_by_group_w": {
+        "sequential": 0.000308837,
+        "combinational": 0.000796498,
+        "clock": 0.000173169
+       },
+       "energy_per_block_pj": 2.058385,
+       "energy_per_mac_pj": 0.1286490625,
+       "dynamic_energy_per_block_pj": 2.05763796,
+       "leakage_energy_per_block_pj": 0.00075306784,
+       "vcd_pins_annotated": 16131,
+       "pins_unannotated": 2
+      },
+      "w13_row2305": {
+       "description": "w13 row 2305 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000740405,
+        "switching": 0.000531184,
+        "dynamic": 0.001271589,
+        "leakage": 4.6932e-07,
+        "total": 0.00127206
+       },
+       "power_by_group_w": {
+        "sequential": 0.000308052,
+        "combinational": 0.000790838,
+        "clock": 0.000173169
+       },
+       "energy_per_block_pj": 2.0480166,
+       "energy_per_mac_pj": 0.1280010375,
+       "dynamic_energy_per_block_pj": 2.0472582900000003,
+       "leakage_energy_per_block_pj": 0.0007556052000000001,
+       "vcd_pins_annotated": 16131,
+       "pins_unannotated": 2
+      },
+      "w2_row0": {
+       "description": "w2 row 0 of layer 0 expert 0 x 8 tokens, 144 blocks each, no idle clocks",
+       "clocks": 1152,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000733057,
+        "switching": 0.000521805,
+        "dynamic": 0.0012548619999999998,
+        "leakage": 4.69698e-07,
+        "total": 0.00125533
+       },
+       "power_by_group_w": {
+        "sequential": 0.000306427,
+        "combinational": 0.000775736,
+        "clock": 0.000173169
+       },
+       "energy_per_block_pj": 2.0210813,
+       "energy_per_mac_pj": 0.12631758125,
+       "dynamic_energy_per_block_pj": 2.02032782,
+       "leakage_energy_per_block_pj": 0.00075621378,
+       "vcd_pins_annotated": 16131,
+       "pins_unannotated": 2
+      },
+      "t1_b0": {
+       "description": "288-block rows whose weights are block(s) 0..0 of w13 row 0 repeated 288 times (hard-wired, or driven on the weight pins) x 8 tokens",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000692355,
+        "switching": 0.000497959,
+        "dynamic": 0.001190314,
+        "leakage": 4.82105e-07,
+        "total": 0.0011908
+       },
+       "power_by_group_w": {
+        "sequential": 0.000277114,
+        "combinational": 0.000740512,
+        "clock": 0.000173169
+       },
+       "energy_per_block_pj": 1.917188,
+       "energy_per_mac_pj": 0.11982425,
+       "dynamic_energy_per_block_pj": 1.91640554,
+       "leakage_energy_per_block_pj": 0.0007761890500000001,
+       "vcd_pins_annotated": 16131,
+       "pins_unannotated": 2
+      },
+      "t1_b100": {
+       "description": "288-block rows whose weights are block(s) 100..100 of w13 row 0 repeated 288 times (hard-wired, or driven on the weight pins) x 8 tokens",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000695669,
+        "switching": 0.000497687,
+        "dynamic": 0.001193356,
+        "leakage": 4.82118e-07,
+        "total": 0.00119384
+       },
+       "power_by_group_w": {
+        "sequential": 0.000279409,
+        "combinational": 0.000741259,
+        "clock": 0.000173169
+       },
+       "energy_per_block_pj": 1.9220824,
+       "energy_per_mac_pj": 0.12013015,
+       "dynamic_energy_per_block_pj": 1.9213031600000001,
+       "leakage_energy_per_block_pj": 0.0007762099799999999,
+       "vcd_pins_annotated": 16131,
+       "pins_unannotated": 2
+      },
+      "k1_b0": {
+       "description": "w13 row 0 blocks 0..0 hard-wired or held on the weight pins; 2304 rows of 1 real activation block(s)",
+       "clocks": 2304,
+       "outputs": 2304,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000646065,
+        "switching": 0.000456134,
+        "dynamic": 0.001102199,
+        "leakage": 5.17574e-07,
+        "total": 0.00110272
+       },
+       "power_by_group_w": {
+        "sequential": 0.000278912,
+        "combinational": 0.000650636,
+        "clock": 0.000173169
+       },
+       "energy_per_block_pj": 1.7753792,
+       "energy_per_mac_pj": 0.1109612,
+       "dynamic_energy_per_block_pj": 1.77454039,
+       "leakage_energy_per_block_pj": 0.00083329414,
+       "vcd_pins_annotated": 16131,
+       "pins_unannotated": 2
+      },
+      "k1_b100": {
+       "description": "w13 row 0 blocks 100..100 hard-wired or held on the weight pins; 2304 rows of 1 real activation block(s)",
+       "clocks": 2304,
+       "outputs": 2304,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000646836,
+        "switching": 0.000453717,
+        "dynamic": 0.001100553,
+        "leakage": 5.18277e-07,
+        "total": 0.00110107
+       },
+       "power_by_group_w": {
+        "sequential": 0.00028096,
+        "combinational": 0.000646943,
+        "clock": 0.000173169
+       },
+       "energy_per_block_pj": 1.7727227,
+       "energy_per_mac_pj": 0.11079516875,
+       "dynamic_energy_per_block_pj": 1.77189033,
+       "leakage_energy_per_block_pj": 0.00083442597,
+       "vcd_pins_annotated": 16131,
+       "pins_unannotated": 2
+      },
+      "k1_b200": {
+       "description": "w13 row 0 blocks 200..200 hard-wired or held on the weight pins; 2304 rows of 1 real activation block(s)",
+       "clocks": 2304,
+       "outputs": 2304,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000637306,
+        "switching": 0.000441471,
+        "dynamic": 0.001078777,
+        "leakage": 5.22028e-07,
+        "total": 0.0010793
+       },
+       "power_by_group_w": {
+        "sequential": 0.000277337,
+        "combinational": 0.000628794,
+        "clock": 0.000173169
+       },
+       "energy_per_block_pj": 1.737673,
+       "energy_per_mac_pj": 0.1086045625,
+       "dynamic_energy_per_block_pj": 1.73683097,
+       "leakage_energy_per_block_pj": 0.00084046508,
+       "vcd_pins_annotated": 16131,
+       "pins_unannotated": 2
+      },
+      "idle": {
+       "description": "in_valid low, data pins held at zero",
+       "clocks": 256,
+       "outputs": 0,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000298376,
+        "switching": 7.5808e-05,
+        "dynamic": 0.000374184,
+        "leakage": 6.9324e-07,
+        "total": 0.000374877
+       },
+       "power_by_group_w": {
+        "sequential": 0.000201087,
+        "combinational": 6.2118e-07,
+        "clock": 0.000173169
+       },
+       "energy_per_block_pj": 0.60355197,
+       "energy_per_mac_pj": 0.037721998125,
+       "dynamic_energy_per_block_pj": 0.6024362400000001,
+       "leakage_energy_per_block_pj": 0.0011161164,
+       "vcd_pins_annotated": 16131,
+       "pins_unannotated": 2
+      }
+     },
+     "post_route_netlist_bit_exact": true,
+     "flow_seconds": 220.0
+    },
+    "rel:1620": {
+     "design": "rel",
+     "top": "nvfp4_dot",
+     "rows": 1,
+     "fixed_weights": false,
+     "hardwired_weights": 0,
+     "clock_period_constraint_ps": 1620.0,
+     "synth_cell_area_um2": 493.83918,
+     "synth_cells": 4445,
+     "cell_area_um2": 536.879,
+     "cells": 4819,
+     "sequential_cells": 273,
+     "area_by_class_um2": {
+      "fill_cell": 437.269,
+      "tap_cell": 8.48556,
+      "clock_buffer": 6.82344,
+      "timing_repair_buffer": 48.9451,
+      "inverter": 39.3077,
+      "clock_inverter": 1.13724,
+      "timing_repair_inverter": 0.08748,
+      "sequential_cell": 79.6214,
+      "multi_input_combinational_cell": 360.957
+     },
+     "count_by_class": {
+      "fill_cell": 5451,
+      "tap_cell": 291,
+      "clock_buffer": 23,
+      "timing_repair_buffer": 541,
+      "inverter": 895,
+      "clock_inverter": 5,
+      "timing_repair_inverter": 1,
+      "sequential_cell": 273,
+      "multi_input_combinational_cell": 3081
+     },
+     "core_area_um2": 982.634,
+     "die_area_um2": 1117.36,
+     "utilization": 0.555003,
+     "setup_wns_ps": 6.66067,
+     "hold_wns_ps": 38.6751,
+     "min_period_ps": 1613.34,
+     "fmax_mhz": 619.8,
+     "timing_closed": true,
+     "route_drc_violations": 0,
+     "distinct_blocks_in_table": null,
+     "sta": {
+      "setup_wns_ps": 6.660672040550896,
+      "hold_wns_ps": 38.675056367671175,
+      "min_period_ps": 1613.34,
+      "fmax_mhz": 619.83,
+      "critical_path": {
+       "from": "g_row[0].u_dp.first_q$_SDFFE_PP1P_",
+       "to": "g_row[0].u_dp.inf_q$_DFFE_PP_"
+      }
+     },
+     "vectorless_power_w": 0.000945213,
+     "workloads": {
+      "w13_row0": {
+       "description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.00072131,
+        "switching": 0.000524046,
+        "dynamic": 0.001245356,
+        "leakage": 4.57274e-07,
+        "total": 0.00124581
+       },
+       "power_by_group_w": {
+        "sequential": 0.00030735,
+        "combinational": 0.000772748,
+        "clock": 0.000165715
+       },
+       "energy_per_block_pj": 2.0182122,
+       "energy_per_mac_pj": 0.1261382625,
+       "dynamic_energy_per_block_pj": 2.01747672,
+       "leakage_energy_per_block_pj": 0.00074078388,
+       "vcd_pins_annotated": 15975,
+       "pins_unannotated": 2
+      },
+      "w13_row1": {
+       "description": "w13 row 1 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000713066,
+        "switching": 0.000514408,
+        "dynamic": 0.001227474,
+        "leakage": 4.60333e-07,
+        "total": 0.00122793
+       },
+       "power_by_group_w": {
+        "sequential": 0.000306603,
+        "combinational": 0.000755617,
+        "clock": 0.000165715
+       },
+       "energy_per_block_pj": 1.9892466,
+       "energy_per_mac_pj": 0.1243279125,
+       "dynamic_energy_per_block_pj": 1.9885078800000002,
+       "leakage_energy_per_block_pj": 0.00074573946,
+       "vcd_pins_annotated": 15975,
+       "pins_unannotated": 2
+      },
+      "w13_row577": {
+       "description": "w13 row 577 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.00071777,
+        "switching": 0.000520061,
+        "dynamic": 0.001237831,
+        "leakage": 4.58182e-07,
+        "total": 0.00123829
+       },
+       "power_by_group_w": {
+        "sequential": 0.000306893,
+        "combinational": 0.000765681,
+        "clock": 0.000165715
+       },
+       "energy_per_block_pj": 2.0060298,
+       "energy_per_mac_pj": 0.1253768625,
+       "dynamic_energy_per_block_pj": 2.00528622,
+       "leakage_energy_per_block_pj": 0.00074225484,
+       "vcd_pins_annotated": 15975,
+       "pins_unannotated": 2
+      },
+      "w13_row1154": {
+       "description": "w13 row 1154 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000721832,
+        "switching": 0.000524329,
+        "dynamic": 0.001246161,
+        "leakage": 4.56796e-07,
+        "total": 0.00124662
+       },
+       "power_by_group_w": {
+        "sequential": 0.000307472,
+        "combinational": 0.000773431,
+        "clock": 0.000165715
+       },
+       "energy_per_block_pj": 2.0195244,
+       "energy_per_mac_pj": 0.126220275,
+       "dynamic_energy_per_block_pj": 2.01878082,
+       "leakage_energy_per_block_pj": 0.00074000952,
+       "vcd_pins_annotated": 15975,
+       "pins_unannotated": 2
+      },
+      "w13_row2305": {
+       "description": "w13 row 2305 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000718689,
+        "switching": 0.000521157,
+        "dynamic": 0.001239846,
+        "leakage": 4.58376e-07,
+        "total": 0.0012403
+       },
+       "power_by_group_w": {
+        "sequential": 0.000306693,
+        "combinational": 0.000767895,
+        "clock": 0.000165715
+       },
+       "energy_per_block_pj": 2.009286,
+       "energy_per_mac_pj": 0.125580375,
+       "dynamic_energy_per_block_pj": 2.00855052,
+       "leakage_energy_per_block_pj": 0.00074256912,
+       "vcd_pins_annotated": 15975,
+       "pins_unannotated": 2
+      },
+      "w2_row0": {
+       "description": "w2 row 0 of layer 0 expert 0 x 8 tokens, 144 blocks each, no idle clocks",
+       "clocks": 1152,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000711597,
+        "switching": 0.000511999,
+        "dynamic": 0.001223596,
+        "leakage": 4.58601e-07,
+        "total": 0.00122405
+       },
+       "power_by_group_w": {
+        "sequential": 0.000305107,
+        "combinational": 0.000753231,
+        "clock": 0.000165715
+       },
+       "energy_per_block_pj": 1.982961,
+       "energy_per_mac_pj": 0.1239350625,
+       "dynamic_energy_per_block_pj": 1.9822255199999999,
+       "leakage_energy_per_block_pj": 0.00074293362,
+       "vcd_pins_annotated": 15975,
+       "pins_unannotated": 2
+      },
+      "t1_b0": {
+       "description": "288-block rows whose weights are block(s) 0..0 of w13 row 0 repeated 288 times (hard-wired, or driven on the weight pins) x 8 tokens",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000670947,
+        "switching": 0.000488191,
+        "dynamic": 0.001159138,
+        "leakage": 4.71006e-07,
+        "total": 0.00115961
+       },
+       "power_by_group_w": {
+        "sequential": 0.000275964,
+        "combinational": 0.000717929,
+        "clock": 0.000165715
+       },
+       "energy_per_block_pj": 1.8785682,
+       "energy_per_mac_pj": 0.1174105125,
+       "dynamic_energy_per_block_pj": 1.8778035600000003,
+       "leakage_energy_per_block_pj": 0.00076302972,
+       "vcd_pins_annotated": 15975,
+       "pins_unannotated": 2
+      },
+      "t1_b100": {
+       "description": "288-block rows whose weights are block(s) 100..100 of w13 row 0 repeated 288 times (hard-wired, or driven on the weight pins) x 8 tokens",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000674002,
+        "switching": 0.000487769,
+        "dynamic": 0.001161771,
+        "leakage": 4.71021e-07,
+        "total": 0.00116224
+       },
+       "power_by_group_w": {
+        "sequential": 0.00027821,
+        "combinational": 0.000718317,
+        "clock": 0.000165715
+       },
+       "energy_per_block_pj": 1.8828288000000002,
+       "energy_per_mac_pj": 0.11767680000000001,
+       "dynamic_energy_per_block_pj": 1.88206902,
+       "leakage_energy_per_block_pj": 0.00076305402,
+       "vcd_pins_annotated": 15975,
+       "pins_unannotated": 2
+      },
+      "k1_b0": {
+       "description": "w13 row 0 blocks 0..0 hard-wired or held on the weight pins; 2304 rows of 1 real activation block(s)",
+       "clocks": 2304,
+       "outputs": 2304,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000630947,
+        "switching": 0.000448108,
+        "dynamic": 0.001079055,
+        "leakage": 5.031e-07,
+        "total": 0.00107956
+       },
+       "power_by_group_w": {
+        "sequential": 0.00027779,
+        "combinational": 0.000636053,
+        "clock": 0.000165715
+       },
+       "energy_per_block_pj": 1.7488872,
+       "energy_per_mac_pj": 0.10930545,
+       "dynamic_energy_per_block_pj": 1.7480691,
+       "leakage_energy_per_block_pj": 0.000815022,
+       "vcd_pins_annotated": 15975,
+       "pins_unannotated": 2
+      },
+      "k1_b100": {
+       "description": "w13 row 0 blocks 100..100 hard-wired or held on the weight pins; 2304 rows of 1 real activation block(s)",
+       "clocks": 2304,
+       "outputs": 2304,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000631678,
+        "switching": 0.000445584,
+        "dynamic": 0.001077262,
+        "leakage": 5.03836e-07,
+        "total": 0.00107777
+       },
+       "power_by_group_w": {
+        "sequential": 0.000279787,
+        "combinational": 0.000632264,
+        "clock": 0.000165715
+       },
+       "energy_per_block_pj": 1.7459874,
+       "energy_per_mac_pj": 0.1091242125,
+       "dynamic_energy_per_block_pj": 1.7451644400000002,
+       "leakage_energy_per_block_pj": 0.00081621432,
+       "vcd_pins_annotated": 15975,
+       "pins_unannotated": 2
+      },
+      "k1_b200": {
+       "description": "w13 row 0 blocks 200..200 hard-wired or held on the weight pins; 2304 rows of 1 real activation block(s)",
+       "clocks": 2304,
+       "outputs": 2304,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000622443,
+        "switching": 0.000433644,
+        "dynamic": 0.001056087,
+        "leakage": 5.07498e-07,
+        "total": 0.00105659
+       },
+       "power_by_group_w": {
+        "sequential": 0.000276271,
+        "combinational": 0.000614608,
+        "clock": 0.000165715
+       },
+       "energy_per_block_pj": 1.7116758,
+       "energy_per_mac_pj": 0.1069797375,
+       "dynamic_energy_per_block_pj": 1.71086094,
+       "leakage_energy_per_block_pj": 0.0008221467599999999,
+       "vcd_pins_annotated": 15975,
+       "pins_unannotated": 2
+      },
+      "idle": {
+       "description": "in_valid low, data pins held at zero",
+       "clocks": 256,
+       "outputs": 0,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000292548,
+        "switching": 7.31165e-05,
+        "dynamic": 0.0003656645,
+        "leakage": 6.75182e-07,
+        "total": 0.000366339
+       },
+       "power_by_group_w": {
+        "sequential": 0.000200021,
+        "combinational": 6.03718e-07,
+        "clock": 0.000165715
+       },
+       "energy_per_block_pj": 0.5934691799999999,
+       "energy_per_mac_pj": 0.037091823749999996,
+       "dynamic_energy_per_block_pj": 0.5923764899999999,
+       "leakage_energy_per_block_pj": 0.00109379484,
+       "vcd_pins_annotated": 15975,
+       "pins_unannotated": 2
+      }
+     },
+     "post_route_netlist_bit_exact": true,
+     "flow_seconds": 314.0
+    },
+    "rel:1650": {
+     "design": "rel",
+     "top": "nvfp4_dot",
+     "rows": 1,
+     "fixed_weights": false,
+     "hardwired_weights": 0,
+     "clock_period_constraint_ps": 1650.0,
+     "synth_cell_area_um2": 493.83918,
+     "synth_cells": 4445,
+     "cell_area_um2": 525.463,
+     "cells": 4694,
+     "sequential_cells": 273,
+     "area_by_class_um2": {
+      "fill_cell": 448.685,
+      "tap_cell": 8.48556,
+      "clock_buffer": 6.1965,
+      "timing_repair_buffer": 37.8205,
+      "inverter": 39.3368,
+      "clock_inverter": 1.58922,
+      "timing_repair_inverter": 0.1458,
+      "sequential_cell": 79.6214,
+      "multi_input_combinational_cell": 360.753
+     },
+     "count_by_class": {
+      "fill_cell": 5393,
+      "tap_cell": 291,
+      "clock_buffer": 23,
+      "timing_repair_buffer": 411,
+      "inverter": 895,
+      "clock_inverter": 9,
+      "timing_repair_inverter": 2,
+      "sequential_cell": 273,
+      "multi_input_combinational_cell": 3081
+     },
+     "core_area_um2": 982.634,
+     "die_area_um2": 1117.36,
+     "utilization": 0.543385,
+     "setup_wns_ps": 11.439,
+     "hold_wns_ps": 38.6928,
+     "min_period_ps": 1638.56,
+     "fmax_mhz": 610.3,
+     "timing_closed": true,
+     "route_drc_violations": 0,
+     "distinct_blocks_in_table": null,
+     "sta": {
+      "setup_wns_ps": 11.438960935328208,
+      "hold_wns_ps": 38.6927852416665,
+      "min_period_ps": 1638.56,
+      "fmax_mhz": 610.29,
+      "critical_path": {
+       "from": "g_row[0].u_dp.first_q$_SDFFE_PP1P_",
+       "to": "g_row[0].u_dp.inf_q$_DFFE_PP_"
+      }
+     },
+     "vectorless_power_w": 0.000912529,
+     "workloads": {
+      "w13_row0": {
+       "description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.0006879,
+        "switching": 0.000514778,
+        "dynamic": 0.001202678,
+        "leakage": 4.37448e-07,
+        "total": 0.00120312
+       },
+       "power_by_group_w": {
+        "sequential": 0.00030214,
+        "combinational": 0.000742509,
+        "clock": 0.000158468
+       },
+       "energy_per_block_pj": 1.985148,
+       "energy_per_mac_pj": 0.12407175,
+       "dynamic_energy_per_block_pj": 1.9844187,
+       "leakage_energy_per_block_pj": 0.0007217892,
+       "vcd_pins_annotated": 15725,
+       "pins_unannotated": 2
+      },
+      "w13_row1": {
+       "description": "w13 row 1 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000680679,
+        "switching": 0.000505537,
+        "dynamic": 0.001186216,
+        "leakage": 4.40297e-07,
+        "total": 0.00118666
+       },
+       "power_by_group_w": {
+        "sequential": 0.000301412,
+        "combinational": 0.000726776,
+        "clock": 0.000158468
+       },
+       "energy_per_block_pj": 1.957989,
+       "energy_per_mac_pj": 0.1223743125,
+       "dynamic_energy_per_block_pj": 1.9572564,
+       "leakage_energy_per_block_pj": 0.00072649005,
+       "vcd_pins_annotated": 15725,
+       "pins_unannotated": 2
+      },
+      "w13_row577": {
+       "description": "w13 row 577 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000684798,
+        "switching": 0.000510929,
+        "dynamic": 0.0011957270000000002,
+        "leakage": 4.38295e-07,
+        "total": 0.00119616
+       },
+       "power_by_group_w": {
+        "sequential": 0.000301686,
+        "combinational": 0.000736011,
+        "clock": 0.000158468
+       },
+       "energy_per_block_pj": 1.9736639999999999,
+       "energy_per_mac_pj": 0.12335399999999999,
+       "dynamic_energy_per_block_pj": 1.9729495500000003,
+       "leakage_energy_per_block_pj": 0.00072318675,
+       "vcd_pins_annotated": 15725,
+       "pins_unannotated": 2
+      },
+      "w13_row1154": {
+       "description": "w13 row 1154 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000688526,
+        "switching": 0.000515078,
+        "dynamic": 0.001203604,
+        "leakage": 4.36984e-07,
+        "total": 0.00120404
+       },
+       "power_by_group_w": {
+        "sequential": 0.000302271,
+        "combinational": 0.000743302,
+        "clock": 0.000158468
+       },
+       "energy_per_block_pj": 1.9866660000000003,
+       "energy_per_mac_pj": 0.12416662500000002,
+       "dynamic_energy_per_block_pj": 1.9859466000000001,
+       "leakage_energy_per_block_pj": 0.0007210236,
+       "vcd_pins_annotated": 15725,
+       "pins_unannotated": 2
+      },
+      "w13_row2305": {
+       "description": "w13 row 2305 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000685481,
+        "switching": 0.000511978,
+        "dynamic": 0.0011974590000000001,
+        "leakage": 4.38401e-07,
+        "total": 0.0011979
+       },
+       "power_by_group_w": {
+        "sequential": 0.000301502,
+        "combinational": 0.000737927,
+        "clock": 0.000158468
+       },
+       "energy_per_block_pj": 1.976535,
+       "energy_per_mac_pj": 0.1235334375,
+       "dynamic_energy_per_block_pj": 1.9758073500000002,
+       "leakage_energy_per_block_pj": 0.00072336165,
+       "vcd_pins_annotated": 15725,
+       "pins_unannotated": 2
+      },
+      "w2_row0": {
+       "description": "w2 row 0 of layer 0 expert 0 x 8 tokens, 144 blocks each, no idle clocks",
+       "clocks": 1152,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000678929,
+        "switching": 0.000503019,
+        "dynamic": 0.001181948,
+        "leakage": 4.38733e-07,
+        "total": 0.00118239
+       },
+       "power_by_group_w": {
+        "sequential": 0.000299933,
+        "combinational": 0.000723986,
+        "clock": 0.000158468
+       },
+       "energy_per_block_pj": 1.9509434999999997,
+       "energy_per_mac_pj": 0.12193396874999998,
+       "dynamic_energy_per_block_pj": 1.9502142,
+       "leakage_energy_per_block_pj": 0.00072390945,
+       "vcd_pins_annotated": 15725,
+       "pins_unannotated": 2
+      },
+      "t1_b0": {
+       "description": "288-block rows whose weights are block(s) 0..0 of w13 row 0 repeated 288 times (hard-wired, or driven on the weight pins) x 8 tokens",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000638735,
+        "switching": 0.00047954,
+        "dynamic": 0.001118275,
+        "leakage": 4.51047e-07,
+        "total": 0.00111873
+       },
+       "power_by_group_w": {
+        "sequential": 0.000271311,
+        "combinational": 0.000688948,
+        "clock": 0.000158468
+       },
+       "energy_per_block_pj": 1.8459045000000003,
+       "energy_per_mac_pj": 0.11536903125000002,
+       "dynamic_energy_per_block_pj": 1.84515375,
+       "leakage_energy_per_block_pj": 0.0007442275499999999,
+       "vcd_pins_annotated": 15725,
+       "pins_unannotated": 2
+      },
+      "t1_b100": {
+       "description": "288-block rows whose weights are block(s) 100..100 of w13 row 0 repeated 288 times (hard-wired, or driven on the weight pins) x 8 tokens",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000641401,
+        "switching": 0.000479169,
+        "dynamic": 0.00112057,
+        "leakage": 4.51114e-07,
+        "total": 0.00112102
+       },
+       "power_by_group_w": {
+        "sequential": 0.000273568,
+        "combinational": 0.000688985,
+        "clock": 0.000158468
+       },
+       "energy_per_block_pj": 1.849683,
+       "energy_per_mac_pj": 0.1156051875,
+       "dynamic_energy_per_block_pj": 1.8489404999999999,
+       "leakage_energy_per_block_pj": 0.0007443381,
+       "vcd_pins_annotated": 15725,
+       "pins_unannotated": 2
+      },
+      "k1_b0": {
+       "description": "w13 row 0 blocks 0..0 hard-wired or held on the weight pins; 2304 rows of 1 real activation block(s)",
+       "clocks": 2304,
+       "outputs": 2304,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000603236,
+        "switching": 0.000441023,
+        "dynamic": 0.001044259,
+        "leakage": 4.80905e-07,
+        "total": 0.00104474
+       },
+       "power_by_group_w": {
+        "sequential": 0.000273138,
+        "combinational": 0.000613133,
+        "clock": 0.000158468
+       },
+       "energy_per_block_pj": 1.7238209999999998,
+       "energy_per_mac_pj": 0.10773881249999999,
+       "dynamic_energy_per_block_pj": 1.7230273500000002,
+       "leakage_energy_per_block_pj": 0.0007934932499999999,
+       "vcd_pins_annotated": 15725,
+       "pins_unannotated": 2
+      },
+      "k1_b100": {
+       "description": "w13 row 0 blocks 100..100 hard-wired or held on the weight pins; 2304 rows of 1 real activation block(s)",
+       "clocks": 2304,
+       "outputs": 2304,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000603904,
+        "switching": 0.00043864,
+        "dynamic": 0.001042544,
+        "leakage": 4.8158e-07,
+        "total": 0.00104303
+       },
+       "power_by_group_w": {
+        "sequential": 0.000275144,
+        "combinational": 0.000609414,
+        "clock": 0.000158468
+       },
+       "energy_per_block_pj": 1.7209994999999998,
+       "energy_per_mac_pj": 0.10756246874999999,
+       "dynamic_energy_per_block_pj": 1.7201976,
+       "leakage_energy_per_block_pj": 0.0007946069999999999,
+       "vcd_pins_annotated": 15725,
+       "pins_unannotated": 2
+      },
+      "k1_b200": {
+       "description": "w13 row 0 blocks 200..200 hard-wired or held on the weight pins; 2304 rows of 1 real activation block(s)",
+       "clocks": 2304,
+       "outputs": 2304,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000595092,
+        "switching": 0.000426955,
+        "dynamic": 0.0010220469999999999,
+        "leakage": 4.85167e-07,
+        "total": 0.00102253
+       },
+       "power_by_group_w": {
+        "sequential": 0.000271629,
+        "combinational": 0.000592436,
+        "clock": 0.000158468
+       },
+       "energy_per_block_pj": 1.6871745,
+       "energy_per_mac_pj": 0.10544840625,
+       "dynamic_energy_per_block_pj": 1.6863775499999998,
+       "leakage_energy_per_block_pj": 0.0008005255499999999,
+       "vcd_pins_annotated": 15725,
+       "pins_unannotated": 2
+      },
+      "idle": {
+       "description": "in_valid low, data pins held at zero",
+       "clocks": 256,
+       "outputs": 0,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000279476,
+        "switching": 7.51409e-05,
+        "dynamic": 0.0003546169,
+        "leakage": 6.48923e-07,
+        "total": 0.000355266
+       },
+       "power_by_group_w": {
+        "sequential": 0.00019622,
+        "combinational": 5.77997e-07,
+        "clock": 0.000158468
+       },
+       "energy_per_block_pj": 0.5861889,
+       "energy_per_mac_pj": 0.03663680625,
+       "dynamic_energy_per_block_pj": 0.5851178850000001,
+       "leakage_energy_per_block_pj": 0.00107072295,
+       "vcd_pins_annotated": 15725,
+       "pins_unannotated": 2
+      }
+     },
+     "post_route_netlist_bit_exact": true,
+     "flow_seconds": 324.0
+    },
+    "rel:1670": {
+     "design": "rel",
+     "top": "nvfp4_dot",
+     "rows": 1,
+     "fixed_weights": false,
+     "hardwired_weights": 0,
+     "clock_period_constraint_ps": 1670.0,
+     "synth_cell_area_um2": 493.83918,
+     "synth_cells": 4445,
+     "cell_area_um2": 524.369,
+     "cells": 4684,
+     "sequential_cells": 273,
+     "area_by_class_um2": {
+      "fill_cell": 449.778,
+      "tap_cell": 8.48556,
+      "clock_buffer": 6.16734,
+      "timing_repair_buffer": 36.8728,
+      "inverter": 39.366,
+      "clock_inverter": 1.61838,
+      "timing_repair_inverter": 0.08748,
+      "sequential_cell": 79.6214,
+      "multi_input_combinational_cell": 360.636
+     },
+     "count_by_class": {
+      "fill_cell": 5433,
+      "tap_cell": 291,
+      "clock_buffer": 24,
+      "timing_repair_buffer": 403,
+      "inverter": 895,
+      "clock_inverter": 7,
+      "timing_repair_inverter": 1,
+      "sequential_cell": 273,
+      "multi_input_combinational_cell": 3081
+     },
+     "core_area_um2": 982.634,
+     "die_area_um2": 1117.36,
+     "utilization": 0.542273,
+     "setup_wns_ps": 21.6851,
+     "hold_wns_ps": 38.5111,
+     "min_period_ps": 1648.31,
+     "fmax_mhz": 606.7,
+     "timing_closed": true,
+     "route_drc_violations": 0,
+     "distinct_blocks_in_table": null,
+     "sta": {
+      "setup_wns_ps": 21.68509824823286,
+      "hold_wns_ps": 38.51105560959701,
+      "min_period_ps": 1648.31,
+      "fmax_mhz": 606.68,
+      "critical_path": {
+       "from": "g_row[0].u_dp.first_q$_SDFFE_PP1P_",
+       "to": "g_row[0].u_dp.inf_q$_DFFE_PP_"
+      }
+     },
+     "vectorless_power_w": 0.000895559,
+     "workloads": {
+      "w13_row0": {
+       "description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.00067835,
+        "switching": 0.000508828,
+        "dynamic": 0.001187178,
+        "leakage": 4.34454e-07,
+        "total": 0.00118761
+       },
+       "power_by_group_w": {
+        "sequential": 0.000298684,
+        "combinational": 0.000735022,
+        "clock": 0.000153906
+       },
+       "energy_per_block_pj": 1.9833087,
+       "energy_per_mac_pj": 0.12395679375,
+       "dynamic_energy_per_block_pj": 1.98258726,
+       "leakage_energy_per_block_pj": 0.00072553818,
+       "vcd_pins_annotated": 15705,
+       "pins_unannotated": 2
+      },
+      "w13_row1": {
+       "description": "w13 row 1 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000671485,
+        "switching": 0.000499678,
+        "dynamic": 0.001171163,
+        "leakage": 4.37144e-07,
+        "total": 0.0011716
+       },
+       "power_by_group_w": {
+        "sequential": 0.000297969,
+        "combinational": 0.000719725,
+        "clock": 0.000153906
+       },
+       "energy_per_block_pj": 1.9565720000000004,
+       "energy_per_mac_pj": 0.12228575000000003,
+       "dynamic_energy_per_block_pj": 1.9558422100000001,
+       "leakage_energy_per_block_pj": 0.00073003048,
+       "vcd_pins_annotated": 15705,
+       "pins_unannotated": 2
+      },
+      "w13_row577": {
+       "description": "w13 row 577 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000675377,
+        "switching": 0.000505003,
+        "dynamic": 0.00118038,
+        "leakage": 4.35284e-07,
+        "total": 0.00118082
+       },
+       "power_by_group_w": {
+        "sequential": 0.000298245,
+        "combinational": 0.000728664,
+        "clock": 0.000153906
+       },
+       "energy_per_block_pj": 1.9719693999999999,
+       "energy_per_mac_pj": 0.12324808749999999,
+       "dynamic_energy_per_block_pj": 1.9712346,
+       "leakage_energy_per_block_pj": 0.0007269242800000001,
+       "vcd_pins_annotated": 15705,
+       "pins_unannotated": 2
+      },
+      "w13_row1154": {
+       "description": "w13 row 1154 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000678963,
+        "switching": 0.000509153,
+        "dynamic": 0.001188116,
+        "leakage": 4.34026e-07,
+        "total": 0.00118855
+       },
+       "power_by_group_w": {
+        "sequential": 0.000298813,
+        "combinational": 0.00073583,
+        "clock": 0.000153906
+       },
+       "energy_per_block_pj": 1.9848784999999998,
+       "energy_per_mac_pj": 0.12405490624999999,
+       "dynamic_energy_per_block_pj": 1.98415372,
+       "leakage_energy_per_block_pj": 0.00072482342,
+       "vcd_pins_annotated": 15705,
+       "pins_unannotated": 2
+      },
+      "w13_row2305": {
+       "description": "w13 row 2305 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000675906,
+        "switching": 0.000506066,
+        "dynamic": 0.0011819719999999999,
+        "leakage": 4.35386e-07,
+        "total": 0.00118241
+       },
+       "power_by_group_w": {
+        "sequential": 0.000298058,
+        "combinational": 0.000730444,
+        "clock": 0.000153906
+       },
+       "energy_per_block_pj": 1.9746247000000001,
+       "energy_per_mac_pj": 0.12341404375000001,
+       "dynamic_energy_per_block_pj": 1.9738932399999998,
+       "leakage_energy_per_block_pj": 0.00072709462,
+       "vcd_pins_annotated": 15705,
+       "pins_unannotated": 2
+      },
+      "w2_row0": {
+       "description": "w2 row 0 of layer 0 expert 0 x 8 tokens, 144 blocks each, no idle clocks",
+       "clocks": 1152,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000669364,
+        "switching": 0.000497188,
+        "dynamic": 0.001166552,
+        "leakage": 4.35783e-07,
+        "total": 0.00116699
+       },
+       "power_by_group_w": {
+        "sequential": 0.000296497,
+        "combinational": 0.000716585,
+        "clock": 0.000153906
+       },
+       "energy_per_block_pj": 1.9488732999999998,
+       "energy_per_mac_pj": 0.12180458124999999,
+       "dynamic_energy_per_block_pj": 1.94814184,
+       "leakage_energy_per_block_pj": 0.0007277576099999999,
+       "vcd_pins_annotated": 15705,
+       "pins_unannotated": 2
+      },
+      "t1_b0": {
+       "description": "288-block rows whose weights are block(s) 0..0 of w13 row 0 repeated 288 times (hard-wired, or driven on the weight pins) x 8 tokens",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000629808,
+        "switching": 0.00047404,
+        "dynamic": 0.0011038480000000002,
+        "leakage": 4.47958e-07,
+        "total": 0.0011043
+       },
+       "power_by_group_w": {
+        "sequential": 0.000268336,
+        "combinational": 0.000682054,
+        "clock": 0.000153906
+       },
+       "energy_per_block_pj": 1.8441809999999996,
+       "energy_per_mac_pj": 0.11526131249999998,
+       "dynamic_energy_per_block_pj": 1.8434261600000004,
+       "leakage_energy_per_block_pj": 0.00074808986,
+       "vcd_pins_annotated": 15705,
+       "pins_unannotated": 2
+      },
+      "t1_b100": {
+       "description": "288-block rows whose weights are block(s) 100..100 of w13 row 0 repeated 288 times (hard-wired, or driven on the weight pins) x 8 tokens",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000632572,
+        "switching": 0.000473784,
+        "dynamic": 0.001106356,
+        "leakage": 4.4799e-07,
+        "total": 0.0011068
+       },
+       "power_by_group_w": {
+        "sequential": 0.000270581,
+        "combinational": 0.000682318,
+        "clock": 0.000153906
+       },
+       "energy_per_block_pj": 1.848356,
+       "energy_per_mac_pj": 0.11552225,
+       "dynamic_energy_per_block_pj": 1.84761452,
+       "leakage_energy_per_block_pj": 0.0007481432999999999,
+       "vcd_pins_annotated": 15705,
+       "pins_unannotated": 2
+      },
+      "k1_b0": {
+       "description": "w13 row 0 blocks 0..0 hard-wired or held on the weight pins; 2304 rows of 1 real activation block(s)",
+       "clocks": 2304,
+       "outputs": 2304,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000594132,
+        "switching": 0.000435236,
+        "dynamic": 0.0010293680000000001,
+        "leakage": 4.77767e-07,
+        "total": 0.00102985
+       },
+       "power_by_group_w": {
+        "sequential": 0.00027013,
+        "combinational": 0.00060581,
+        "clock": 0.000153906
+       },
+       "energy_per_block_pj": 1.7198494999999998,
+       "energy_per_mac_pj": 0.10749059374999999,
+       "dynamic_energy_per_block_pj": 1.7190445600000002,
+       "leakage_energy_per_block_pj": 0.00079787089,
+       "vcd_pins_annotated": 15705,
+       "pins_unannotated": 2
+      },
+      "k1_b100": {
+       "description": "w13 row 0 blocks 100..100 hard-wired or held on the weight pins; 2304 rows of 1 real activation block(s)",
+       "clocks": 2304,
+       "outputs": 2304,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000594785,
+        "switching": 0.000432984,
+        "dynamic": 0.001027769,
+        "leakage": 4.78467e-07,
+        "total": 0.00102825
+       },
+       "power_by_group_w": {
+        "sequential": 0.000272128,
+        "combinational": 0.000602213,
+        "clock": 0.000153906
+       },
+       "energy_per_block_pj": 1.7171775,
+       "energy_per_mac_pj": 0.10732359375,
+       "dynamic_energy_per_block_pj": 1.71637423,
+       "leakage_energy_per_block_pj": 0.00079903989,
+       "vcd_pins_annotated": 15705,
+       "pins_unannotated": 2
+      },
+      "k1_b200": {
+       "description": "w13 row 0 blocks 200..200 hard-wired or held on the weight pins; 2304 rows of 1 real activation block(s)",
+       "clocks": 2304,
+       "outputs": 2304,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000586301,
+        "switching": 0.000421408,
+        "dynamic": 0.001007709,
+        "leakage": 4.81919e-07,
+        "total": 0.00100819
+       },
+       "power_by_group_w": {
+        "sequential": 0.000268621,
+        "combinational": 0.000585664,
+        "clock": 0.000153906
+       },
+       "energy_per_block_pj": 1.6836772999999998,
+       "energy_per_mac_pj": 0.10522983124999999,
+       "dynamic_energy_per_block_pj": 1.68287403,
+       "leakage_energy_per_block_pj": 0.00080480473,
+       "vcd_pins_annotated": 15705,
+       "pins_unannotated": 2
+      },
+      "idle": {
+       "description": "in_valid low, data pins held at zero",
+       "clocks": 256,
+       "outputs": 0,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000274477,
+        "switching": 7.31721e-05,
+        "dynamic": 0.00034764910000000004,
+        "leakage": 6.45729e-07,
+        "total": 0.000348295
+       },
+       "power_by_group_w": {
+        "sequential": 0.000193813,
+        "combinational": 5.75138e-07,
+        "clock": 0.000153906
+       },
+       "energy_per_block_pj": 0.58165265,
+       "energy_per_mac_pj": 0.036353290625,
+       "dynamic_energy_per_block_pj": 0.5805739970000001,
+       "leakage_energy_per_block_pj": 0.00107836743,
+       "vcd_pins_annotated": 15705,
+       "pins_unannotated": 2
+      }
+     },
+     "post_route_netlist_bit_exact": true,
+     "flow_seconds": 326.0
+    },
+    "rel:1730": {
+     "design": "rel",
+     "top": "nvfp4_dot",
+     "rows": 1,
+     "fixed_weights": false,
+     "hardwired_weights": 0,
+     "clock_period_constraint_ps": 1730.0,
+     "synth_cell_area_um2": 493.83918,
+     "synth_cells": 4445,
+     "cell_area_um2": 516.146,
+     "cells": 4604,
+     "sequential_cells": 273,
+     "area_by_class_um2": {
+      "fill_cell": 458.002,
+      "tap_cell": 8.48556,
+      "clock_buffer": 6.69222,
+      "timing_repair_buffer": 29.0434,
+      "inverter": 39.3368,
+      "clock_inverter": 1.21014,
+      "timing_repair_inverter": 0.05832,
+      "sequential_cell": 79.6214,
+      "multi_input_combinational_cell": 360.184
+     },
+     "count_by_class": {
+      "fill_cell": 5430,
+      "tap_cell": 291,
+      "clock_buffer": 25,
+      "timing_repair_buffer": 322,
+      "inverter": 895,
+      "clock_inverter": 7,
+      "timing_repair_inverter": 1,
+      "sequential_cell": 273,
+      "multi_input_combinational_cell": 3081
+     },
+     "core_area_um2": 982.634,
+     "die_area_um2": 1117.36,
+     "utilization": 0.533904,
+     "setup_wns_ps": 29.8063,
+     "hold_wns_ps": 37.3472,
+     "min_period_ps": 1700.19,
+     "fmax_mhz": 588.2,
+     "timing_closed": true,
+     "route_drc_violations": 0,
+     "distinct_blocks_in_table": null,
+     "sta": {
+      "setup_wns_ps": 29.806268683514013,
+      "hold_wns_ps": 37.3471949304441,
+      "min_period_ps": 1700.19,
+      "fmax_mhz": 588.17,
+      "critical_path": {
+       "from": "g_row[0].u_dp.first_q$_SDFFE_PP1P_",
+       "to": "g_row[0].u_dp.inf_q$_DFFE_PP_"
+      }
+     },
+     "vectorless_power_w": 0.000860066,
+     "workloads": {
+      "w13_row0": {
+       "description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000650947,
+        "switching": 0.000487738,
+        "dynamic": 0.001138685,
+        "leakage": 4.21124e-07,
+        "total": 0.00113911
+       },
+       "power_by_group_w": {
+        "sequential": 0.000288275,
+        "combinational": 0.000696806,
+        "clock": 0.000154025
+       },
+       "energy_per_block_pj": 1.9706603000000003,
+       "energy_per_mac_pj": 0.12316626875000002,
+       "dynamic_energy_per_block_pj": 1.9699250499999998,
+       "leakage_energy_per_block_pj": 0.00072854452,
+       "vcd_pins_annotated": 15545,
+       "pins_unannotated": 2
+      },
+      "w13_row1": {
+       "description": "w13 row 1 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000645001,
+        "switching": 0.000479102,
+        "dynamic": 0.001124103,
+        "leakage": 4.23674e-07,
+        "total": 0.00112453
+       },
+       "power_by_group_w": {
+        "sequential": 0.000287599,
+        "combinational": 0.000682903,
+        "clock": 0.000154025
+       },
+       "energy_per_block_pj": 1.9454369,
+       "energy_per_mac_pj": 0.12158980625,
+       "dynamic_energy_per_block_pj": 1.94469819,
+       "leakage_energy_per_block_pj": 0.00073295602,
+       "vcd_pins_annotated": 15545,
+       "pins_unannotated": 2
+      },
+      "w13_row577": {
+       "description": "w13 row 577 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.00064843,
+        "switching": 0.000484149,
+        "dynamic": 0.0011325789999999999,
+        "leakage": 4.21882e-07,
+        "total": 0.001133
+       },
+       "power_by_group_w": {
+        "sequential": 0.000287864,
+        "combinational": 0.000691112,
+        "clock": 0.000154025
+       },
+       "energy_per_block_pj": 1.9600899999999999,
+       "energy_per_mac_pj": 0.12250562499999999,
+       "dynamic_energy_per_block_pj": 1.9593616699999998,
+       "leakage_energy_per_block_pj": 0.00072985586,
+       "vcd_pins_annotated": 15545,
+       "pins_unannotated": 2
+      },
+      "w13_row1154": {
+       "description": "w13 row 1154 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000651686,
+        "switching": 0.000488071,
+        "dynamic": 0.001139757,
+        "leakage": 4.20674e-07,
+        "total": 0.00114018
+       },
+       "power_by_group_w": {
+        "sequential": 0.000288386,
+        "combinational": 0.000697767,
+        "clock": 0.000154025
+       },
+       "energy_per_block_pj": 1.9725114000000001,
+       "energy_per_mac_pj": 0.12328196250000001,
+       "dynamic_energy_per_block_pj": 1.9717796099999998,
+       "leakage_energy_per_block_pj": 0.00072776602,
+       "vcd_pins_annotated": 15545,
+       "pins_unannotated": 2
+      },
+      "w13_row2305": {
+       "description": "w13 row 2305 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000648787,
+        "switching": 0.000485119,
+        "dynamic": 0.001133906,
+        "leakage": 4.21981e-07,
+        "total": 0.00113433
+       },
+       "power_by_group_w": {
+        "sequential": 0.000287677,
+        "combinational": 0.000692626,
+        "clock": 0.000154025
+       },
+       "energy_per_block_pj": 1.9623908999999997,
+       "energy_per_mac_pj": 0.12264943124999998,
+       "dynamic_energy_per_block_pj": 1.9616573800000001,
+       "leakage_energy_per_block_pj": 0.00073002713,
+       "vcd_pins_annotated": 15545,
+       "pins_unannotated": 2
+      },
+      "w2_row0": {
+       "description": "w2 row 0 of layer 0 expert 0 x 8 tokens, 144 blocks each, no idle clocks",
+       "clocks": 1152,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000642582,
+        "switching": 0.000476635,
+        "dynamic": 0.001119217,
+        "leakage": 4.22577e-07,
+        "total": 0.00111964
+       },
+       "power_by_group_w": {
+        "sequential": 0.000286184,
+        "combinational": 0.000679431,
+        "clock": 0.000154025
+       },
+       "energy_per_block_pj": 1.9369772,
+       "energy_per_mac_pj": 0.121061075,
+       "dynamic_energy_per_block_pj": 1.9362454100000002,
+       "leakage_energy_per_block_pj": 0.00073105821,
+       "vcd_pins_annotated": 15545,
+       "pins_unannotated": 2
+      },
+      "t1_b0": {
+       "description": "288-block rows whose weights are block(s) 0..0 of w13 row 0 repeated 288 times (hard-wired, or driven on the weight pins) x 8 tokens",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000604354,
+        "switching": 0.000454245,
+        "dynamic": 0.001058599,
+        "leakage": 4.3454e-07,
+        "total": 0.00105903
+       },
+       "power_by_group_w": {
+        "sequential": 0.000258861,
+        "combinational": 0.000646147,
+        "clock": 0.000154025
+       },
+       "energy_per_block_pj": 1.8321219,
+       "energy_per_mac_pj": 0.11450761875,
+       "dynamic_energy_per_block_pj": 1.8313762699999998,
+       "leakage_energy_per_block_pj": 0.0007517542,
+       "vcd_pins_annotated": 15545,
+       "pins_unannotated": 2
+      },
+      "t1_b100": {
+       "description": "288-block rows whose weights are block(s) 100..100 of w13 row 0 repeated 288 times (hard-wired, or driven on the weight pins) x 8 tokens",
+       "clocks": 2304,
+       "outputs": 8,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000606796,
+        "switching": 0.000453715,
+        "dynamic": 0.001060511,
+        "leakage": 4.34597e-07,
+        "total": 0.00106095
+       },
+       "power_by_group_w": {
+        "sequential": 0.000261038,
+        "combinational": 0.000645884,
+        "clock": 0.000154025
+       },
+       "energy_per_block_pj": 1.8354435,
+       "energy_per_mac_pj": 0.11471521875,
+       "dynamic_energy_per_block_pj": 1.8346840300000002,
+       "leakage_energy_per_block_pj": 0.00075185281,
+       "vcd_pins_annotated": 15545,
+       "pins_unannotated": 2
+      },
+      "k1_b0": {
+       "description": "w13 row 0 blocks 0..0 hard-wired or held on the weight pins; 2304 rows of 1 real activation block(s)",
+       "clocks": 2304,
+       "outputs": 2304,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000573198,
+        "switching": 0.000417874,
+        "dynamic": 0.000991072,
+        "leakage": 4.62008e-07,
+        "total": 0.000991534
+       },
+       "power_by_group_w": {
+        "sequential": 0.000260493,
+        "combinational": 0.000577016,
+        "clock": 0.000154025
+       },
+       "energy_per_block_pj": 1.7153538199999998,
+       "energy_per_mac_pj": 0.10720961374999999,
+       "dynamic_energy_per_block_pj": 1.7145545599999998,
+       "leakage_energy_per_block_pj": 0.00079927384,
+       "vcd_pins_annotated": 15545,
+       "pins_unannotated": 2
+      },
+      "k1_b100": {
+       "description": "w13 row 0 blocks 100..100 hard-wired or held on the weight pins; 2304 rows of 1 real activation block(s)",
+       "clocks": 2304,
+       "outputs": 2304,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000573727,
+        "switching": 0.00041547,
+        "dynamic": 0.000989197,
+        "leakage": 4.62731e-07,
+        "total": 0.000989661
+       },
+       "power_by_group_w": {
+        "sequential": 0.000262452,
+        "combinational": 0.000573185,
+        "clock": 0.000154025
+       },
+       "energy_per_block_pj": 1.7121135299999999,
+       "energy_per_mac_pj": 0.10700709562499999,
+       "dynamic_energy_per_block_pj": 1.71131081,
+       "leakage_energy_per_block_pj": 0.00080052463,
+       "vcd_pins_annotated": 15545,
+       "pins_unannotated": 2
+      },
+      "k1_b200": {
+       "description": "w13 row 0 blocks 200..200 hard-wired or held on the weight pins; 2304 rows of 1 real activation block(s)",
+       "clocks": 2304,
+       "outputs": 2304,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000565773,
+        "switching": 0.000404371,
+        "dynamic": 0.000970144,
+        "leakage": 4.66078e-07,
+        "total": 0.00097061
+       },
+       "power_by_group_w": {
+        "sequential": 0.000259061,
+        "combinational": 0.000557524,
+        "clock": 0.000154025
+       },
+       "energy_per_block_pj": 1.6791553,
+       "energy_per_mac_pj": 0.10494720625,
+       "dynamic_energy_per_block_pj": 1.67834912,
+       "leakage_energy_per_block_pj": 0.00080631494,
+       "vcd_pins_annotated": 15545,
+       "pins_unannotated": 2
+      },
+      "idle": {
+       "description": "in_valid low, data pins held at zero",
+       "clocks": 256,
+       "outputs": 0,
+       "post_route_netlist_bit_exact": true,
+       "power_w": {
+        "internal": 0.000271127,
+        "switching": 6.99451e-05,
+        "dynamic": 0.0003410721,
+        "leakage": 6.27022e-07,
+        "total": 0.000341699
+       },
+       "power_by_group_w": {
+        "sequential": 0.000187118,
+        "combinational": 5.55765e-07,
+        "clock": 0.000154025
+       },
+       "energy_per_block_pj": 0.59113927,
+       "energy_per_mac_pj": 0.036946204375,
+       "dynamic_energy_per_block_pj": 0.590054733,
+       "leakage_energy_per_block_pj": 0.00108474806,
+       "vcd_pins_annotated": 15545,
+       "pins_unannotated": 2
+      }
+     },
+     "post_route_netlist_bit_exact": true,
+     "flow_seconds": 312.0
+    }
+   },
+   "clock_search": {
+    "fx": {
+     "top": "nvfp4_dot_fx",
+     "start_bracket": {
+      "fails": {
+       "constraint_ps": 0,
+       "note": "0 ps stands for 'cannot close'; it is not a run"
+      },
+      "closes": {
+       "constraint_ps": 1800,
+       "setup_wns_ps": 475.743,
+       "hold_wns_ps": 42.602,
+       "cell_area_um2": 575.02
+      }
+     },
+     "step_ps": 10,
+     "rounds": [
+      {
+       "bracket_ps": [
+        0,
+        1800
+       ],
+       "tried_ps": [
+        600,
+        1200
+       ],
+       "closed_ps": [
+        1200
+       ],
+       "new_bracket_ps": [
+        600,
+        1200
+       ]
+      },
+      {
+       "bracket_ps": [
+        600,
+        1200
+       ],
+       "tried_ps": [
+        800,
+        1000
+       ],
+       "closed_ps": [],
+       "new_bracket_ps": [
+        1000,
+        1200
+       ]
+      },
+      {
+       "bracket_ps": [
+        1000,
+        1200
+       ],
+       "tried_ps": [
+        1070,
+        1130
+       ],
+       "closed_ps": [],
+       "new_bracket_ps": [
+        1130,
+        1200
+       ]
+      },
+      {
+       "bracket_ps": [
+        1130,
+        1200
+       ],
+       "tried_ps": [
+        1150,
+        1180
+       ],
+       "closed_ps": [
+        1150,
+        1180
+       ],
+       "new_bracket_ps": [
+        1130,
+        1150
+       ]
+      },
+      {
+       "bracket_ps": [
+        1130,
+        1150
+       ],
+       "tried_ps": [
+        1140
+       ],
+       "closed_ps": [],
+       "new_bracket_ps": [
+        1140,
+        1150
+       ]
+      }
+     ],
+     "points": [
+      {
+       "constraint_ps": 600,
+       "setup_wns_ps": -543.783,
+       "hold_wns_ps": 11.4755,
+       "cell_area_um2": 637.131,
+       "closed": false
+      },
+      {
+       "constraint_ps": 800,
+       "setup_wns_ps": -354.483,
+       "hold_wns_ps": 38.2533,
+       "cell_area_um2": 616.705,
+       "closed": false
+      },
+      {
+       "constraint_ps": 1000,
+       "setup_wns_ps": -145.848,
+       "hold_wns_ps": 40.2823,
+       "cell_area_um2": 593.697,
+       "closed": false
+      },
+      {
+       "constraint_ps": 1070,
+       "setup_wns_ps": -74.8865,
+       "hold_wns_ps": 42.2092,
+       "cell_area_um2": 590.3,
+       "closed": false
+      },
+      {
+       "constraint_ps": 1130,
+       "setup_wns_ps": -18.9,
+       "hold_wns_ps": 42.2601,
+       "cell_area_um2": 587.501,
+       "closed": false
+      },
+      {
+       "constraint_ps": 1140,
+       "setup_wns_ps": -8.42892,
+       "hold_wns_ps": 40.7877,
+       "cell_area_um2": 585.708,
+       "closed": false
+      },
+      {
+       "constraint_ps": 1150,
+       "setup_wns_ps": 1.92668,
+       "hold_wns_ps": 37.5273,
+       "cell_area_um2": 586.378,
+       "closed": true
+      },
+      {
+       "constraint_ps": 1180,
+       "setup_wns_ps": 19.8558,
+       "hold_wns_ps": 42.3834,
+       "cell_area_um2": 582.573,
+       "closed": true
+      },
+      {
+       "constraint_ps": 1200,
+       "setup_wns_ps": 29.9464,
+       "hold_wns_ps": 41.7427,
+       "cell_area_um2": 581.946,
+       "closed": true
+      }
+     ],
+     "complete": true,
+     "largest_failing_constraint_ps": 1140,
+     "smallest_closing_constraint_ps": 1150,
+     "monotonic": true,
+     "all_points": [
+      {
+       "constraint_ps": 600,
+       "setup_wns_ps": -543.783,
+       "hold_wns_ps": 11.4755,
+       "cell_area_um2": 637.131,
+       "closed": false
+      },
+      {
+       "constraint_ps": 800,
+       "setup_wns_ps": -354.483,
+       "hold_wns_ps": 38.2533,
+       "cell_area_um2": 616.705,
+       "closed": false
+      },
+      {
+       "constraint_ps": 1000,
+       "setup_wns_ps": -145.848,
+       "hold_wns_ps": 40.2823,
+       "cell_area_um2": 593.697,
+       "closed": false
+      },
+      {
+       "constraint_ps": 1070,
+       "setup_wns_ps": -74.8865,
+       "hold_wns_ps": 42.2092,
+       "cell_area_um2": 590.3,
+       "closed": false
+      },
+      {
+       "constraint_ps": 1130,
+       "setup_wns_ps": -18.9,
+       "hold_wns_ps": 42.2601,
+       "cell_area_um2": 587.501,
+       "closed": false
+      },
+      {
+       "constraint_ps": 1140,
+       "setup_wns_ps": -8.42892,
+       "hold_wns_ps": 40.7877,
+       "cell_area_um2": 585.708,
+       "closed": false
+      },
+      {
+       "constraint_ps": 1150,
+       "setup_wns_ps": 1.92668,
+       "hold_wns_ps": 37.5273,
+       "cell_area_um2": 586.378,
+       "closed": true
+      },
+      {
+       "constraint_ps": 1180,
+       "setup_wns_ps": 19.8558,
+       "hold_wns_ps": 42.3834,
+       "cell_area_um2": 582.573,
+       "closed": true
+      },
+      {
+       "constraint_ps": 1200,
+       "setup_wns_ps": 29.9464,
+       "hold_wns_ps": 41.7427,
+       "cell_area_um2": 581.946,
+       "closed": true
+      },
+      {
+       "constraint_ps": 1800,
+       "setup_wns_ps": 475.743,
+       "hold_wns_ps": 42.602,
+       "cell_area_um2": 575.02,
+       "closed": true
+      }
+     ]
+    },
+    "rel": {
+     "top": "nvfp4_dot",
+     "start_bracket": {
+      "fails": {
+       "constraint_ps": 1600,
+       "setup_wns_ps": -16.6344,
+       "hold_wns_ps": 38.7157,
+       "cell_area_um2": 546.822,
+       "note": "silicon.runs['rel:1600'] of this file, not rerun"
+      },
+      "closes": {
+       "constraint_ps": 1800,
+       "setup_wns_ps": 23.3443,
+       "hold_wns_ps": 38.0992,
+       "cell_area_um2": 511.072,
+       "note": "silicon.runs['rel:1800'] of this file, not rerun"
+      }
+     },
+     "step_ps": 10,
+     "rounds": [
+      {
+       "bracket_ps": [
+        1600,
+        1800
+       ],
+       "tried_ps": [
+        1670,
+        1730
+       ],
+       "closed_ps": [
+        1670,
+        1730
+       ],
+       "new_bracket_ps": [
+        1600,
+        1670
+       ]
+      },
+      {
+       "bracket_ps": [
+        1600,
+        1670
+       ],
+       "tried_ps": [
+        1620,
+        1650
+       ],
+       "closed_ps": [
+        1620,
+        1650
+       ],
+       "new_bracket_ps": [
+        1600,
+        1620
+       ]
+      },
+      {
+       "bracket_ps": [
+        1600,
+        1620
+       ],
+       "tried_ps": [
+        1610
+       ],
+       "closed_ps": [],
+       "new_bracket_ps": [
+        1610,
+        1620
+       ]
+      }
+     ],
+     "points": [
+      {
+       "constraint_ps": 1610,
+       "setup_wns_ps": -0.789369,
+       "hold_wns_ps": 37.3098,
+       "cell_area_um2": 544.388,
+       "closed": false
+      },
+      {
+       "constraint_ps": 1620,
+       "setup_wns_ps": 6.66067,
+       "hold_wns_ps": 38.6751,
+       "cell_area_um2": 536.879,
+       "closed": true
+      },
+      {
+       "constraint_ps": 1650,
+       "setup_wns_ps": 11.439,
+       "hold_wns_ps": 38.6928,
+       "cell_area_um2": 525.463,
+       "closed": true
+      },
+      {
+       "constraint_ps": 1670,
+       "setup_wns_ps": 21.6851,
+       "hold_wns_ps": 38.5111,
+       "cell_area_um2": 524.369,
+       "closed": true
+      },
+      {
+       "constraint_ps": 1730,
+       "setup_wns_ps": 29.8063,
+       "hold_wns_ps": 37.3472,
+       "cell_area_um2": 516.146,
+       "closed": true
+      }
+     ],
+     "complete": true,
+     "largest_failing_constraint_ps": 1610,
+     "smallest_closing_constraint_ps": 1620,
+     "monotonic": true,
+     "all_points": [
+      {
+       "constraint_ps": 1600,
+       "setup_wns_ps": -16.6344,
+       "hold_wns_ps": 38.7157,
+       "cell_area_um2": 546.822,
+       "note": "silicon.runs['rel:1600'] of this file, not rerun",
+       "closed": false
+      },
+      {
+       "constraint_ps": 1610,
+       "setup_wns_ps": -0.789369,
+       "hold_wns_ps": 37.3098,
+       "cell_area_um2": 544.388,
+       "closed": false
+      },
+      {
+       "constraint_ps": 1620,
+       "setup_wns_ps": 6.66067,
+       "hold_wns_ps": 38.6751,
+       "cell_area_um2": 536.879,
+       "closed": true
+      },
+      {
+       "constraint_ps": 1650,
+       "setup_wns_ps": 11.439,
+       "hold_wns_ps": 38.6928,
+       "cell_area_um2": 525.463,
+       "closed": true
+      },
+      {
+       "constraint_ps": 1670,
+       "setup_wns_ps": 21.6851,
+       "hold_wns_ps": 38.5111,
+       "cell_area_um2": 524.369,
+       "closed": true
+      },
+      {
+       "constraint_ps": 1730,
+       "setup_wns_ps": 29.8063,
+       "hold_wns_ps": 37.3472,
+       "cell_area_um2": 516.146,
+       "closed": true
+      },
+      {
+       "constraint_ps": 1800,
+       "setup_wns_ps": 23.3443,
+       "hold_wns_ps": 38.0992,
+       "cell_area_um2": 511.072,
+       "note": "silicon.runs['rel:1800'] of this file, not rerun",
+       "closed": true
+      }
+     ]
+    }
+   },
+   "worst_setup_paths": {
+    "rel:1800": {
+     "report": "reports/asap7/rel_p1800/base/6_finish.rpt",
+     "startpoint": "g_row[0].u_dp.first_q$_SDFFE_PP1P_",
+     "endpoint": "g_row[0].u_dp.inf_q$_DFFE_PP_",
+     "cells_on_path": 56,
+     "of_which_buffers_and_inverters": 9,
+     "launch_flip_flop_clock_pin_to_endpoint_ps": 1761.2,
+     "data_arrival_ps": 1851.48,
+     "slack_ps": 23.34,
+     "startpoint_stage": "S4 register",
+     "endpoint_stage": "S4 register"
+    },
+    "rel:1620": {
+     "report": "reports/asap7/rel_p1620/base/6_finish.rpt",
+     "startpoint": "g_row[0].u_dp.first_q$_SDFFE_PP1P_",
+     "endpoint": "g_row[0].u_dp.inf_q$_DFFE_PP_",
+     "cells_on_path": 53,
+     "of_which_buffers_and_inverters": 9,
+     "launch_flip_flop_clock_pin_to_endpoint_ps": 1594.53,
+     "data_arrival_ps": 1690.4,
+     "slack_ps": 6.66,
+     "startpoint_stage": "S4 register",
+     "endpoint_stage": "S4 register"
+    },
+    "fx:1800": {
+     "report": "reports/asap7/fx_p1800/base/6_finish.rpt",
+     "startpoint": "wc_q[5]$_DFF_P_",
+     "endpoint": "g_row[0].u_dp.d_q[12]$_DFF_P_",
+     "cells_on_path": 40,
+     "of_which_buffers_and_inverters": 10,
+     "launch_flip_flop_clock_pin_to_endpoint_ps": 1312.82,
+     "data_arrival_ps": 1410.88,
+     "slack_ps": 475.74,
+     "startpoint_stage": "S0 register",
+     "endpoint_stage": "S1 register"
+    },
+    "fx:1150": {
+     "report": "reports/asap7/fx_p1150/base/6_finish.rpt",
+     "startpoint": "wc_q[9]$_DFF_P_",
+     "endpoint": "g_row[0].u_dp.d_q[12]$_DFF_P_",
+     "cells_on_path": 38,
+     "of_which_buffers_and_inverters": 12,
+     "launch_flip_flop_clock_pin_to_endpoint_ps": 1125.88,
+     "data_arrival_ps": 1229.59,
+     "slack_ps": 1.93,
+     "startpoint_stage": "S0 register",
+     "endpoint_stage": "S1 register"
+    }
+   },
+   "comparison": {
+    "rel_at_common_clock": {
+     "design": "rel",
+     "top": "nvfp4_dot",
+     "workload": "w13_row0",
+     "workload_description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+     "clock_period_ps": 1800.0,
+     "clock_mhz": 555.6,
+     "timing_closed": true,
+     "setup_wns_ps": 23.3443,
+     "hold_wns_ps": 38.0992,
+     "cell_area_um2": 511.072,
+     "cells": 4548,
+     "sequential_cells": 273,
+     "synth_cell_area_um2": 493.83918,
+     "core_area_um2": 982.634,
+     "power_w": {
+      "internal": 0.000622769,
+      "switching": 0.000469373,
+      "dynamic": 0.001092142,
+      "leakage": 4.10924e-07,
+      "total": 0.00109255
+     },
+     "energy_per_block_pj": 1.96659,
+     "dynamic_energy_per_block_pj": 1.9658555999999998,
+     "leakage_energy_per_block_pj": 0.0007396632,
+     "energy_per_mac_pj": 0.122911875,
+     "area_per_mac_lane_um2": 31.942,
+     "weights_in_module": 16,
+     "area_per_weight_um2": 31.942,
+     "post_route_netlist_bit_exact": true,
+     "source": "silicon.runs['rel:1800'] of this file",
+     "area_by_class_um2": {
+      "fill_cell": 463.075,
+      "tap_cell": 8.48556,
+      "clock_buffer": 6.79428,
+      "timing_repair_buffer": 23.882,
+      "inverter": 39.2202,
+      "clock_inverter": 1.70586,
+      "sequential_cell": 79.6068,
+      "multi_input_combinational_cell": 359.864
+     },
+     "count_by_class": {
+      "fill_cell": 5417,
+      "tap_cell": 291,
+      "clock_buffer": 25,
+      "timing_repair_buffer": 267,
+      "inverter": 895,
+      "clock_inverter": 7,
+      "sequential_cell": 273,
+      "multi_input_combinational_cell": 3081
+     },
+     "power_by_group_w": {
+      "sequential": 0.000276335,
+      "combinational": 0.000665857,
+      "clock": 0.000150361
+     },
+     "blocks_per_second": 555555555.5555556,
+     "worst_setup_path": {
+      "report": "reports/asap7/rel_p1800/base/6_finish.rpt",
+      "startpoint": "g_row[0].u_dp.first_q$_SDFFE_PP1P_",
+      "endpoint": "g_row[0].u_dp.inf_q$_DFFE_PP_",
+      "cells_on_path": 56,
+      "of_which_buffers_and_inverters": 9,
+      "launch_flip_flop_clock_pin_to_endpoint_ps": 1761.2,
+      "data_arrival_ps": 1851.48,
+      "slack_ps": 23.34,
+      "startpoint_stage": "S4 register",
+      "endpoint_stage": "S4 register"
+     },
+     "worst_setup_slack_by_stage_ps": {
+      "S0": 1455.731934,
+      "S1": 448.953979,
+      "S2": 898.448425,
+      "S3": 1156.701904,
+      "S4": 23.344326
+     },
+     "flip_flops_by_stage": {
+      "S0": 146,
+      "S1": 30,
+      "S2": 28,
+      "S3": 31,
+      "S4": 38
+     }
+    },
+    "rel_at_best_clock": {
+     "design": "rel",
+     "top": "nvfp4_dot",
+     "workload": "w13_row0",
+     "workload_description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+     "clock_period_ps": 1620.0,
+     "clock_mhz": 617.3,
+     "timing_closed": true,
+     "setup_wns_ps": 6.66067,
+     "hold_wns_ps": 38.6751,
+     "cell_area_um2": 536.879,
+     "cells": 4819,
+     "sequential_cells": 273,
+     "synth_cell_area_um2": 493.83918,
+     "core_area_um2": 982.634,
+     "power_w": {
+      "internal": 0.00072131,
+      "switching": 0.000524046,
+      "dynamic": 0.001245356,
+      "leakage": 4.57274e-07,
+      "total": 0.00124581
+     },
+     "energy_per_block_pj": 2.0182122,
+     "dynamic_energy_per_block_pj": 2.01747672,
+     "leakage_energy_per_block_pj": 0.00074078388,
+     "energy_per_mac_pj": 0.1261382625,
+     "area_per_mac_lane_um2": 33.5549375,
+     "weights_in_module": 16,
+     "area_per_weight_um2": 33.5549375,
+     "post_route_netlist_bit_exact": true,
+     "source": "this section's runs",
+     "area_by_class_um2": {
+      "fill_cell": 437.269,
+      "tap_cell": 8.48556,
+      "clock_buffer": 6.82344,
+      "timing_repair_buffer": 48.9451,
+      "inverter": 39.3077,
+      "clock_inverter": 1.13724,
+      "timing_repair_inverter": 0.08748,
+      "sequential_cell": 79.6214,
+      "multi_input_combinational_cell": 360.957
+     },
+     "count_by_class": {
+      "fill_cell": 5451,
+      "tap_cell": 291,
+      "clock_buffer": 23,
+      "timing_repair_buffer": 541,
+      "inverter": 895,
+      "clock_inverter": 5,
+      "timing_repair_inverter": 1,
+      "sequential_cell": 273,
+      "multi_input_combinational_cell": 3081
+     },
+     "power_by_group_w": {
+      "sequential": 0.00030735,
+      "combinational": 0.000772748,
+      "clock": 0.000165715
+     },
+     "blocks_per_second": 617283950.6172839,
+     "worst_setup_path": {
+      "report": "reports/asap7/rel_p1620/base/6_finish.rpt",
+      "startpoint": "g_row[0].u_dp.first_q$_SDFFE_PP1P_",
+      "endpoint": "g_row[0].u_dp.inf_q$_DFFE_PP_",
+      "cells_on_path": 53,
+      "of_which_buffers_and_inverters": 9,
+      "launch_flip_flop_clock_pin_to_endpoint_ps": 1594.53,
+      "data_arrival_ps": 1690.4,
+      "slack_ps": 6.66,
+      "startpoint_stage": "S4 register",
+      "endpoint_stage": "S4 register"
+     },
+     "worst_setup_slack_by_stage_ps": {
+      "S0": 1313.092041,
+      "S1": 287.342712,
+      "S2": 723.034607,
+      "S3": 978.13623,
+      "S4": 6.660672
+     },
+     "flip_flops_by_stage": {
+      "S0": 146,
+      "S1": 30,
+      "S2": 28,
+      "S3": 31,
+      "S4": 38
+     }
+    },
+    "fx_at_common_clock": {
+     "design": "fx",
+     "top": "nvfp4_dot_fx",
+     "workload": "w13_row0",
+     "workload_description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+     "clock_period_ps": 1800.0,
+     "clock_mhz": 555.6,
+     "timing_closed": true,
+     "setup_wns_ps": 475.743,
+     "hold_wns_ps": 42.602,
+     "cell_area_um2": 575.02,
+     "cells": 4928,
+     "sequential_cells": 414,
+     "synth_cell_area_um2": 563.40036,
+     "core_area_um2": 1122.72,
+     "power_w": {
+      "internal": 0.000681948,
+      "switching": 0.000417629,
+      "dynamic": 0.001099577,
+      "leakage": 4.8521e-07,
+      "total": 0.00110006
+     },
+     "energy_per_block_pj": 1.9801079999999998,
+     "dynamic_energy_per_block_pj": 1.9792386,
+     "leakage_energy_per_block_pj": 0.000873378,
+     "energy_per_mac_pj": 0.12375674999999998,
+     "area_per_mac_lane_um2": 35.93875,
+     "weights_in_module": 16,
+     "area_per_weight_um2": 35.93875,
+     "post_route_netlist_bit_exact": true,
+     "source": "this section's runs",
+     "area_by_class_um2": {
+      "fill_cell": 538.629,
+      "tap_cell": 9.06876,
+      "clock_buffer": 9.37494,
+      "timing_repair_buffer": 17.7584,
+      "inverter": 41.7863,
+      "clock_inverter": 1.48716,
+      "sequential_cell": 120.722,
+      "multi_input_combinational_cell": 383.891
+     },
+     "count_by_class": {
+      "fill_cell": 6077,
+      "tap_cell": 311,
+      "clock_buffer": 35,
+      "timing_repair_buffer": 203,
+      "inverter": 955,
+      "clock_inverter": 10,
+      "sequential_cell": 414,
+      "multi_input_combinational_cell": 3311
+     },
+     "power_by_group_w": {
+      "sequential": 0.000367291,
+      "combinational": 0.000523366,
+      "clock": 0.000209404
+     },
+     "blocks_per_second": 555555555.5555556,
+     "worst_setup_path": {
+      "report": "reports/asap7/fx_p1800/base/6_finish.rpt",
+      "startpoint": "wc_q[5]$_DFF_P_",
+      "endpoint": "g_row[0].u_dp.d_q[12]$_DFF_P_",
+      "cells_on_path": 40,
+      "of_which_buffers_and_inverters": 10,
+      "launch_flip_flop_clock_pin_to_endpoint_ps": 1312.82,
+      "data_arrival_ps": 1410.88,
+      "slack_ps": 475.74,
+      "startpoint_stage": "S0 register",
+      "endpoint_stage": "S1 register"
+     },
+     "worst_setup_slack_by_stage_ps": {
+      "S0": 1460.776611,
+      "S1": 475.742676,
+      "S2": 931.112305,
+      "S3": 1314.723633,
+      "S4": 1062.575073,
+      "S5": 1166.445801,
+      "S6": 717.996887
+     },
+     "flip_flops_by_stage": {
+      "S0": 146,
+      "S1": 30,
+      "S2": 28,
+      "S3": 51,
+      "S4": 60,
+      "S5": 66,
+      "S6": 33
+     }
+    },
+    "fx_at_best_clock": {
+     "design": "fx",
+     "top": "nvfp4_dot_fx",
+     "workload": "w13_row0",
+     "workload_description": "w13 row 0 of layer 0 expert 0 x 8 tokens, 288 blocks each, no idle clocks",
+     "clock_period_ps": 1150.0,
+     "clock_mhz": 869.6,
+     "timing_closed": true,
+     "setup_wns_ps": 1.92668,
+     "hold_wns_ps": 37.5273,
+     "cell_area_um2": 586.378,
+     "cells": 5028,
+     "sequential_cells": 414,
+     "synth_cell_area_um2": 563.40036,
+     "core_area_um2": 1122.72,
+     "power_w": {
+      "internal": 0.00112257,
+      "switching": 0.000669604,
+      "dynamic": 0.0017921740000000001,
+      "leakage": 5.00074e-07,
+      "total": 0.00179268
+     },
+     "energy_per_block_pj": 2.061582,
+     "dynamic_energy_per_block_pj": 2.0610001000000002,
+     "leakage_energy_per_block_pj": 0.0005750851000000001,
+     "energy_per_mac_pj": 0.128848875,
+     "area_per_mac_lane_um2": 36.648625,
+     "weights_in_module": 16,
+     "area_per_weight_um2": 36.648625,
+     "post_route_netlist_bit_exact": true,
+     "source": "this section's runs",
+     "area_by_class_um2": {
+      "fill_cell": 527.271,
+      "tap_cell": 9.06876,
+      "clock_buffer": 10.5705,
+      "timing_repair_buffer": 26.6522,
+      "inverter": 41.8154,
+      "clock_inverter": 2.27448,
+      "sequential_cell": 120.722,
+      "multi_input_combinational_cell": 384.343
+     },
+     "count_by_class": {
+      "fill_cell": 6165,
+      "tap_cell": 311,
+      "clock_buffer": 35,
+      "timing_repair_buffer": 300,
+      "inverter": 955,
+      "clock_inverter": 13,
+      "sequential_cell": 414,
+      "multi_input_combinational_cell": 3311
+     },
+     "power_by_group_w": {
+      "sequential": 0.000574025,
+      "combinational": 0.000853562,
+      "clock": 0.000365092
+     },
+     "blocks_per_second": 869565217.3913044,
+     "worst_setup_path": {
+      "report": "reports/asap7/fx_p1150/base/6_finish.rpt",
+      "startpoint": "wc_q[9]$_DFF_P_",
+      "endpoint": "g_row[0].u_dp.d_q[12]$_DFF_P_",
+      "cells_on_path": 38,
+      "of_which_buffers_and_inverters": 12,
+      "launch_flip_flop_clock_pin_to_endpoint_ps": 1125.88,
+      "data_arrival_ps": 1229.59,
+      "slack_ps": 1.93,
+      "startpoint_stage": "S0 register",
+      "endpoint_stage": "S1 register"
+     },
+     "worst_setup_slack_by_stage_ps": {
+      "S0": 941.400269,
+      "S1": 1.926681,
+      "S2": 289.226318,
+      "S3": 661.663086,
+      "S4": 426.56839,
+      "S5": 516.374939,
+      "S6": 142.598938
+     },
+     "flip_flops_by_stage": {
+      "S0": 146,
+      "S1": 30,
+      "S2": 28,
+      "S3": 51,
+      "S4": 60,
+      "S5": 66,
+      "S6": 33
+     }
+    }
+   },
+   "ratios": {
+    "fx_over_rel_at_common_clock": {
+     "numerator": "fx_at_common_clock",
+     "denominator": "rel_at_common_clock",
+     "cell_area": 1.12512522697389,
+     "cells": 1.0835532102022867,
+     "flip_flops": 1.5164835164835164,
+     "dynamic_power": 1.0068077228052763,
+     "energy_per_block": 1.0068738272847924,
+     "clock_period": 1.0
+    },
+    "fx_at_best_over_rel_at_best": {
+     "numerator": "fx_at_best_clock",
+     "denominator": "rel_at_best_clock",
+     "cell_area": 1.092197683276865,
+     "cells": 1.0433699937746421,
+     "flip_flops": 1.5164835164835164,
+     "dynamic_power": 1.439085691159797,
+     "energy_per_block": 1.0214892170407057,
+     "clock_period": 0.7098765432098766
+    },
+    "fx_at_best_over_rel_at_common_clock": {
+     "numerator": "fx_at_best_clock",
+     "denominator": "rel_at_common_clock",
+     "cell_area": 1.1473491014964625,
+     "cells": 1.1055408970976253,
+     "flip_flops": 1.5164835164835164,
+     "dynamic_power": 1.6409715952687474,
+     "energy_per_block": 1.048302899943557,
+     "clock_period": 0.6388888888888888
+    }
+   },
+   "existing_run_measured_again": {
+    "what": "rel:1800 placed, routed and measured again in this work directory, compared with silicon.runs['rel:1800']",
+    "area_cells_and_timing_identical": true,
+    "power_on_w13_row0_identical": true,
+    "all_workloads_identical": true,
+    "post_route_netlist_bit_exact": true
+   },
+   "not_done": {}
+  },
+  "tools": {
+   "verilator": "Verilator 5.020 2024-01-01 rev (Debian 5.020-1)",
+   "iverilog": "Icarus Verilog version 12.0 (stable) ()",
+   "python": "3.13.18",
+   "numpy": "2.5.3",
+   "orfs_image": "openroad/orfs@sha256:19b2e6f2bbea0593b13fde65829e76d2ca28cc246d7a92d1a42365f8a3d891cc created 2026-11-24T19:59:42.260034884Z",
+   "orfs_yosys": "Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 15.2.0)",
+   "openroad": "OpenROAD binary of openroad/orfs@sha256:19b2e6f2bbea0593b13fde65829e76d2ca28cc246d7a92d1a42365f8a3d891cc (reports its version as 'unknown')",
+   "opensta": "OpenSTA 3.2.0 (inside OpenROAD)",
+   "klayout": "?",
+   "same_orfs_image_as_the_existing_runs": false,
+   "existing_runs": {
+    "orfs_image": "openroad/orfs@sha256:31c5fd29e541059e36ad87b197ece981c04d2ce3a1f2035976fe266ec0e521cb created 2026-11-13T19:37:02.256806917Z",
+    "orfs_yosys": "Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 15.2.0)",
+    "opensta": "OpenSTA 3.1.0 (inside OpenROAD)"
+   }
+  }
  }
 }

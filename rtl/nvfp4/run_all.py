@@ -279,10 +279,11 @@ def stage_of(point: str, design: str) -> str:
     return next((f"{s} register" for s, regs in STAGE_REGS.items() if base in regs), "port" if "$" not in point else "?")
 
 
-def build_exact_sum(existing: dict, skip_pnr: bool, skip_verify: bool, quick: bool) -> dict:
+def build_exact_sum(existing: dict, existing_tools: dict, skip_pnr: bool, skip_verify: bool, quick: bool) -> dict:
     """Everything about nvfp4_dot_fx: verification, the comparison of the two definitions, its
     place-and-route runs, the clock searches of both blocks and the worst setup paths. `existing`
-    is the "silicon" section already in results/silicon.json; its runs are read, never rerun."""
+    is the "silicon" section already in results/silicon.json; its runs are read, never rerun.
+    `existing_tools` is that file's "tools" section (which flow image the existing runs used)."""
     import verify_fx as F
     vpath = S.BUILD / ("verify_fx_quick.json" if quick else "verify_fx.json")
     if not (skip_verify and vpath.exists()):
@@ -378,6 +379,13 @@ def build_exact_sum(existing: dict, skip_pnr: bool, skip_verify: bool, quick: bo
             h["worst_setup_path"] = paths[f"{name}:{period}"]
         else:
             not_done[f"worst path of {name}:{period}"] = "the flow's final report is not in the work directory"
+        if have_docker or (orfs.WORK / tag / "power" / "register_slacks.json").exists():
+            rs = power.register_slacks(tag)
+            regs = {r: ("S4" if (name, r) == ("rel", "out_valid") else next((s for s, v in STAGE_REGS.items() if r in v), "?"))
+                    for r in rs["registers"]}
+            h["worst_setup_slack_by_stage_ps"] = {
+                s: min(rs["registers"][r]["worst_setup_slack_ps"] for r in regs if regs[r] == s) for s in sorted(set(regs.values()))}
+            h["flip_flops_by_stage"] = {s: sum(rs["registers"][r]["bits"] for r in regs if regs[r] == s) for s in sorted(set(regs.values()))}
         cols[label] = h
 
     def ratio(a, b):
@@ -392,6 +400,7 @@ def build_exact_sum(existing: dict, skip_pnr: bool, skip_verify: bool, quick: bo
                 "clock_period": x["clock_period_ps"] / y["clock_period_ps"]}
 
     cv = container_versions() if have_docker else {}
+    same_image = None if not cv else bool(cv.get("orfs_image") == existing_tools.get("orfs_image"))
     return {
         "generated_utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "generated_by": "rtl/nvfp4/run_all.py --exact-sum" + (" --quick" if quick else ""),
@@ -422,7 +431,9 @@ def build_exact_sum(existing: dict, skip_pnr: bool, skip_verify: bool, quick: bo
             "existing_run_measured_again": recheck,
             "not_done": not_done},
         "tools": {"verilator": S.tool_version(["verilator", "--version"]), "iverilog": S.tool_version(["iverilog", "-V"]),
-                  "python": sys.version.split()[0], "numpy": __import__("numpy").__version__, **cv},
+                  "python": sys.version.split()[0], "numpy": __import__("numpy").__version__, **cv,
+                  "same_orfs_image_as_the_existing_runs": same_image,
+                  "existing_runs": {k: existing_tools.get(k) for k in ("orfs_image", "orfs_yosys", "opensta")}},
     }
 
 
@@ -433,7 +444,7 @@ def exact_sum_only(a) -> None:
     text = path.read_text()
     d = json.loads(text)
     before = {k: json.dumps(v) for k, v in d.items() if k != FX_KEY}
-    d[FX_KEY] = build_exact_sum(d["silicon"], a.skip_pnr, a.skip_verify, a.quick)
+    d[FX_KEY] = build_exact_sum(d["silicon"], d["tools"], a.skip_pnr, a.skip_verify, a.quick)
     assert {k: json.dumps(v) for k, v in d.items() if k != FX_KEY} == before
     path.write_text(json.dumps(d, indent=1) + "\n")
     render_report.main()
@@ -488,7 +499,7 @@ def main() -> None:
     out["tools"] = {"verilator": S.tool_version(["verilator", "--version"]), "iverilog": S.tool_version(["iverilog", "-V"]),
                     "yosys": S.tool_version(["yosys", "-V"]) + " (host; lint only)", "python": sys.version.split()[0],
                     "numpy": __import__("numpy").__version__, "torch": ver["torch"]["torch"], **cv}
-    out[FX_KEY] = build_exact_sum(out["silicon"], a.skip_pnr, a.skip_verify, a.quick)
+    out[FX_KEY] = build_exact_sum(out["silicon"], out["tools"], a.skip_pnr, a.skip_verify, a.quick)
     path = ROOT / "results" / "silicon.json"
     path.write_text(json.dumps(out, indent=1) + "\n")
     s = out["silicon"]

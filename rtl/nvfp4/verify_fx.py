@@ -131,8 +131,8 @@ def directed_fx(rng) -> list:
     six, m6 = np.full(16, 7, np.uint8), np.full(16, 15, np.uint8)
     sat_p, sat_n = (six, 0x7E, six, 0x7E), (m6, 0x7E, six, 0x7E)
     for nb in (1, 2, 288, 512):
-        out.append((f"maximum magnitude row ({nb} blocks, all codes +-6, scales 448)", [sat_p] * nb))
-        out.append((f"maximum magnitude row ({nb} blocks, all codes +-6, scales 448)", [sat_n] * nb))
+        name = f"maximum magnitude row ({nb} block{'s' if nb > 1 else ''}, all codes +-6, scales 448)"
+        out += [(name, [sat_p] * nb), (name, [sat_n] * nb)]
     for nb in (2, 16, 512):                                   # largest terms, sum exactly zero
         out.append(("exact cancellation to +0", [sat_p, sat_n] * (nb // 2)))
         out.append(("exact cancellation to +0", [sat_n] * (nb // 2) + [sat_p] * (nb // 2)))
@@ -398,8 +398,8 @@ def compare_definitions() -> dict:
             ("real", "w2 of layer 0 expert 0 (4608 rows x 144 blocks) x 256 SwiGLU outputs of the real w13",
              V.blocks(z["w2"]), z["w2_scale"], V.blocks(xw_p), xw_s),
             ("random", "random codes and random finite scale bytes, 512 rows x 64 tokens, 288 blocks", rw, rws, rx, rxs),
-            ("random", "random codes, scale bytes in the range real weights use (100..126), 512 rows x 64 tokens, 288 blocks",
-             qw, qws, qx, qxs)]
+            ("random, scale bytes of real weights", "random codes, scale bytes in the range real weights use (100..126), "
+             "512 rows x 64 tokens, 288 blocks", qw, qws, qx, qxs)]
     out = {"what": ("per-block-rounded reference (ref.gemm_ref: one binary32 round-to-nearest-even addition per block) against the "
                     "exact-sum reference (ref.gemm_fx_ref: exact integer sum, one rounding per row); no RTL involved; relative "
                     "difference = |per-block - exact-sum| / |exact-sum| over outputs whose exact-sum result is not zero"),
@@ -425,7 +425,7 @@ def compare_definitions() -> dict:
         r = out["sets"][name]
         print(f"   {name}: {r['bit_identical_fraction'] * 100:.4f}% bit-identical of {r['outputs']:,}, worst relative "
               f"difference {r['worst_relative_difference']:.3g} ({time.time() - t0:.0f} s)", flush=True)
-    for kind in ("real", "random"):
+    for kind in ("real", "random"):                         # "random" = random codes and random finite scale bytes only
         ks = [v for v in out["sets"].values() if v["kind"] == kind]
         out[f"{kind}_rows"] = {"outputs": sum(v["outputs"] for v in ks), "bit_identical": sum(v["bit_identical"] for v in ks),
                                "bit_identical_fraction": sum(v["bit_identical"] for v in ks) / sum(v["outputs"] for v in ks),
@@ -466,7 +466,7 @@ def mutation_check() -> dict:
     mw = FXW["MW"]
     fmt = dict(g=mw - 25, l=mw - 24, s=mw - 26)
     clean_text = S.gen.fx_sv(P, TOP)
-    out = {"vector_set": "the --quick directed and stress groups in full, plus 1/64 of the real-row and random groups",
+    out = {"vector_set": "every directed case, 1/16 of the stress groups and 1/64 of the real-row and random groups",
            "mutants": {}}
     for name, (old, new) in MUTANTS.items():
         old, new = old.format(**fmt), new.format(**fmt)
