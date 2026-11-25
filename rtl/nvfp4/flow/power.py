@@ -99,6 +99,35 @@ def collect(tag: str) -> dict:
     }
 
 
+def worst_setup_path(tag: str) -> dict:
+    """Start point, end point and logic depth of the worst setup path, from the flow's final timing
+    report (6_finish.rpt, the section "finish report_checks -path_delay max"). The depth counts
+    cell instances between the launching flip-flop (or input port) and the capturing flip-flop:
+    every instance once, whatever the number of report lines it has; the two flip-flops are not counted."""
+    rpt = (orfs.WORK / tag / "out" / "reports" / "asap7" / tag / "base" / "6_finish.rpt").read_text()
+    sec = rpt.split("finish report_checks -path_delay max\n", 1)[1].split("\n====", 1)[0]
+    start = re.search(r"^Startpoint: (\S+)", sec, re.M).group(1)
+    end = re.search(r"^Endpoint: (\S+)", sec, re.M).group(1)
+    arrival = sec.split("data arrival time", 1)[0]                      # launch clock network and data path
+    pins = re.findall(r"^.*?([\d.]+)\s+[\^v]\s+(\S+)/(\w+)\s+\((\w+)\)\s*$", arrival, re.M)   # (time, instance, pin, cell)
+    names = [q[1] for q in pins]
+    assert names[-1] == end, (names[-1], end)
+    first = names.index(start) if start in names else -1               # an input port has no instance line
+    path = pins[first + 1:] if first >= 0 else pins
+    cells, seen = [], set()
+    for _, inst, _, cell in path:
+        if inst not in seen and inst not in (start, end):
+            seen.add(inst)
+            cells.append(cell)
+    launch = float(pins[first][0]) if first >= 0 else 0.0              # time at the launching flip-flop's clock pin
+    slack = float(re.search(r"([-\d.]+)\s+slack", sec).group(1))
+    return {"report": f"reports/asap7/{tag}/base/6_finish.rpt", "startpoint": start, "endpoint": end,
+            "cells_on_path": len(cells),
+            "of_which_buffers_and_inverters": sum(c.startswith(("BUF", "INV", "HB", "CKINV")) for c in cells),
+            "launch_flip_flop_clock_pin_to_endpoint_ps": round(float(pins[-1][0]) - launch, 2),
+            "data_arrival_ps": float(pins[-1][0]), "slack_ps": slack}
+
+
 def gate_sim(tag: str, top: str, rows: int, const: bool, words: list[int], period_ps: float, name: str):
     """Simulate the routed netlist; returns (results [n, rows], vcd path)."""
     work = orfs.WORK / tag

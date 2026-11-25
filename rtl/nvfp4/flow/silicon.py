@@ -60,12 +60,12 @@ def workloads(name: str) -> list:
     xt, xst = t["x"][TOKENS], t["xs"][TOKENS]
     flat_x, flat_xs = xt.reshape(-1, 8), xst.reshape(-1)          # 2304 real activation blocks
 
-    def row_wl(leaf, r, label):
+    def row_wl(leaf, r, label, gemm=ref.gemm_ref):
         w, ws_, xa, xas = (t["w13"], t["w13s"], xt, xst) if leaf == "w13" else (t["w2"], t["w2s"], t["sx"], t["sxs"])
         nb = ws_.shape[1]
         pairs = [(r, i) for i in range(xa.shape[0])]
         words = S.stream(nb, None if const else w, None if const else ws_, xa, xas, pairs)
-        exp = ref.gemm_ref(V.codes_of(w[[r]]), ws_[[r]], V.codes_of(xa), xas)
+        exp = gemm(V.codes_of(w[[r]]), ws_[[r]], V.codes_of(xa), xas)
         out.append((label, words, exp, f"{leaf} row {r} of layer 0 expert 0 x {xa.shape[0]} tokens, {nb} blocks each, no idle clocks"))
 
     def k_wl(k, b0, label):
@@ -95,6 +95,8 @@ def workloads(name: str) -> list:
             t_wl(label)
         for b in K1_BLOCKS:
             k_wl(1, b, f"k1_b{b}")
+    elif name == "fx":                                   # exact-sum variant: checked against its own reference
+        row_wl("w13", 0, "w13_row0", ref.gemm_fx_ref)
     elif name in ("rel_x8", "const_x8"):
         w, ws_ = t["w13"][pnr_jobs.WIDE_ROWS], t["w13s"][pnr_jobs.WIDE_ROWS]
         if const:

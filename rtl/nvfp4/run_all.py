@@ -5,6 +5,11 @@
     python rtl/nvfp4/run_all.py --skip-pnr      # reuse finished place-and-route runs, never start one
     python rtl/nvfp4/run_all.py --skip-verify   # reuse rtl/nvfp4/build/verify.json
     python rtl/nvfp4/run_all.py --quick         # small vector set; for a smoke test only
+    python rtl/nvfp4/run_all.py --exact-sum     # only the exact-sum variant nvfp4_dot_fx: its verification, its
+                                                # place-and-route runs, both clock searches; merged into the
+                                                # existing results/silicon.json under "exact_sum_variant", every
+                                                # other key left as it is; then REPORT.md is rendered again
+                                                # (--skip-verify and --skip-pnr apply; PyTorch is not needed)
 
 Steps: (1) rewrite rtl/nvfp4/generated/ from the config and the fixture; (2) verify.py: formats,
 bit-exact vectors, Icarus cross-check, batch invariance, PyTorch; (3) flow/: OpenROAD-flow-scripts
@@ -47,6 +52,19 @@ NOT_RUN = {"rel:1700": "a third clock point", "const_r0:1700": "a third clock po
            "const_t4:1800, const_t16:1800, const_t72:1800": "weight tables of 4, 16 and 72 distinct blocks",
            "rel_x8:1800, const_x8:1800 (place and route)": "8-row slices were synthesized only"}
 WIDE_SYNTH = ["rel_x8", "const_x8"]             # eight rows sharing activations: synthesis only
+# exact-sum variant (SPEC.md section 5): the bracket each clock search starts from (fails, closes), in ps.
+# rel: 1600 fails and 1800 closes in the existing runs. fx: 1800 is run first; 0 stands for "cannot close" and is not a run.
+FX_KEY = "exact_sum_variant"
+CLOCK_SEARCH = {"fx": (0, PSTAR), "rel": (1600, PSTAR)}
+SEARCH_STEP = 10
+# which stage's register a flip-flop is (SPEC.md sections 4 and 5.3); out_valid is an S4 register in nvfp4_dot
+STAGE_REGS = {"S0": ("wc_q", "ws_q", "xc_q", "xs_q", "v0_q", "last0_q"),
+              "S1": ("d_q", "mm_q", "es_q", "sg_q", "nan1_q", "v1_q", "last1_q"),
+              "S2": ("p_q", "es2_q", "sg2_q", "nan2_q", "v2_q", "last2_q"),
+              "S3": ("t_q", "t_s", "t_e", "t_m", "t_nan", "t_v", "t_last"),
+              "S4": ("acc_q", "acc_s_q", "acc_e_q", "acc_m_q", "first_q", "nan_q", "inf_q", "inf_s_q", "fin_q"),
+              "S5": ("m5_q", "lz5_q", "s5_q", "z5_q", "nan5_q", "v5_q"),
+              "S6": ("out_data", "out_valid")}
 PUBLISHED_28NM = {"source": "arXiv 2603.28765 (as quoted to us; not re-read here)", "node": "28 nm",
                   "energy_per_16_element_block_pj": 21.5, "clock_mhz": 524, "area_mm2": 0.024}
 
@@ -253,14 +271,190 @@ def build_silicon(skip_pnr: bool) -> dict:
     return out
 
 
+def stage_of(point: str, design: str) -> str:
+    """'S4 register' for a flip-flop named like g_row[0].u_dp.first_q$_SDFFE_PP1P_, 'port' for a port."""
+    base = point.split(".")[-1].split("$")[0].split("[")[0]
+    if design == "rel" and base == "out_valid":
+        return "S4 register"
+    return next((f"{s} register" for s, regs in STAGE_REGS.items() if base in regs), "port" if "$" not in point else "?")
+
+
+def build_exact_sum(existing: dict, skip_pnr: bool, skip_verify: bool, quick: bool) -> dict:
+    """Everything about nvfp4_dot_fx: verification, the comparison of the two definitions, its
+    place-and-route runs, the clock searches of both blocks and the worst setup paths. `existing`
+    is the "silicon" section already in results/silicon.json; its runs are read, never rerun."""
+    import verify_fx as F
+    vpath = S.BUILD / ("verify_fx_quick.json" if quick else "verify_fx.json")
+    if not (skip_verify and vpath.exists()):
+        subprocess.run([sys.executable, str(HERE / "verify_fx.py")] + (["--quick"] if quick else []), check=True)
+    ver = json.loads(vpath.read_text())
+    fxw = S.gen.derive_fx(S.P)
+    have_docker = orfs.docker_ok(start=False)                   # never starts a daemon
+    start = have_docker and not skip_pnr
+    old_runs = existing.get("runs", {})
+    not_done: dict = {}
+
+    def finished(name, period):
+        return pnr_jobs.final_timing(name, period) is not None
+
+    # (a) the equal-throughput point, then (b, c) the two clock searches
+    if not finished("fx", PSTAR) and start:
+        print(*pnr_jobs.run_one(f"fx:{PSTAR}")[:2], flush=True)             # two cores, as every run of the searches
+    searches = {}
+    for name, (lo, hi) in CLOCK_SEARCH.items():
+        top = pnr_jobs.design(name)[0]
+        if name == "fx":
+            ft = pnr_jobs.final_timing("fx", hi)
+            if ft is None or ft[0] < 0 or ft[1] < 0:
+                not_done[f"clock search of {top}"] = f"fx:{hi} did not finish or did not close timing; no search bracket"
+                continue
+            ends = {"fails": {"constraint_ps": lo, "note": "0 ps stands for 'cannot close'; it is not a run"},
+                    "closes": {"constraint_ps": hi, "setup_wns_ps": ft[0], "hold_wns_ps": ft[1], "cell_area_um2": ft[2]}}
+        else:                                                   # both ends are runs of the existing results
+            e = {q: old_runs[f"{name}:{q}"] for q in (lo, hi)}
+            assert not e[lo]["timing_closed"] and e[hi]["timing_closed"]
+            ends = {k: {"constraint_ps": q, "setup_wns_ps": e[q]["setup_wns_ps"], "hold_wns_ps": e[q]["hold_wns_ps"],
+                        "cell_area_um2": e[q]["cell_area_um2"], "note": f"silicon.runs['{name}:{q}'] of this file, not rerun"}
+                    for k, q in (("fails", lo), ("closes", hi))}
+        sr = pnr_jobs.clock_search(name, lo, hi, SEARCH_STEP, start=start)
+        if not sr["complete"]:
+            not_done[f"clock search of {top}"] = "a run the search needs is not in the work directory and no flow may be started"
+        every = [dict(ends["fails"], closed=False)] * (lo > 0) + sr["points"] + [dict(ends["closes"], closed=True)]
+        searches[name] = {"top": top, "start_bracket": ends, **sr,
+                          "all_points": sorted(every, key=lambda x: x["constraint_ps"])}
+
+    # measure every new routed netlist: area, timing, gate-level bit-exact check, power from the VCD
+    runs, jobs = {}, []
+    for name, sr in searches.items():
+        jobs += [(name, q["constraint_ps"]) for q in sr["points"] if q["setup_wns_ps"] is not None]
+    jobs = [("fx", PSTAR)] * finished("fx", PSTAR) + sorted(set(jobs))
+    for name, period in jobs:
+        tag = pnr_jobs.tag_of(name, period)
+        if (orfs.WORK / tag / "power" / "measure.json").exists() or have_docker:
+            try:
+                runs[f"{name}:{period}"] = slim({**silicon.measure(name, float(period)), **power.collect(tag)})
+            except Exception as e:  # noqa: BLE001
+                not_done[f"{name}:{period}"] = f"measurement failed: {str(e)[:300]}"
+        else:
+            not_done[f"{name}:{period}"] = "routed, not measured (no Docker for OpenSTA)"
+    # the run of the existing block that is still in the work directory: does measuring it again give the stored numbers?
+    recheck = None
+    tag = pnr_jobs.tag_of("rel", PSTAR)
+    if finished("rel", PSTAR) and ((orfs.WORK / tag / "power" / "measure.json").exists() or have_docker):
+        again = json.loads(json.dumps(slim({**silicon.measure("rel", float(PSTAR)), **power.collect(tag)})))
+        old = old_runs[f"rel:{PSTAR}"]
+        keys = ("cell_area_um2", "cells", "sequential_cells", "setup_wns_ps", "hold_wns_ps", "area_by_class_um2")
+        recheck = {"what": f"rel:{PSTAR} placed, routed and measured again in this work directory, compared with silicon.runs['rel:{PSTAR}']",
+                   "area_cells_and_timing_identical": all(again[k] == old[k] for k in keys),
+                   "power_on_w13_row0_identical": again["workloads"]["w13_row0"]["power_w"] == old["workloads"]["w13_row0"]["power_w"],
+                   "all_workloads_identical": again["workloads"] == old["workloads"],
+                   "post_route_netlist_bit_exact": again["post_route_netlist_bit_exact"]}
+
+    def run_of(name, period):
+        return runs.get(f"{name}:{period}") or (old_runs.get(f"{name}:{period}") if name != "fx" else None)
+
+    def best(name):
+        sr = searches.get(name)
+        return sr["smallest_closing_constraint_ps"] if sr and sr["complete"] else None
+
+    # (d) worst setup paths, and the four columns of the comparison
+    cols, paths = {}, {}
+    for label, name, period in (("rel_at_common_clock", "rel", PSTAR), ("rel_at_best_clock", "rel", best("rel")),
+                                ("fx_at_common_clock", "fx", PSTAR), ("fx_at_best_clock", "fx", best("fx"))):
+        m = run_of(name, period) if period else None
+        if not m or "w13_row0" not in m.get("workloads", {}):
+            not_done[label] = "no measured run"
+            continue
+        tag = pnr_jobs.tag_of(name, period)
+        h = headline(m, "w13_row0")
+        h.update(source=("this section's runs" if f"{name}:{period}" in runs else f"silicon.runs['{name}:{period}'] of this file"),
+                 area_by_class_um2=m["area_by_class_um2"], count_by_class=m["count_by_class"],
+                 power_by_group_w=m["workloads"]["w13_row0"]["power_by_group_w"],
+                 blocks_per_second=1e12 / m["clock_period_constraint_ps"])
+        if (orfs.WORK / tag / "out" / "reports" / "asap7" / tag / "base" / "6_finish.rpt").exists():
+            wp = power.worst_setup_path(tag)
+            paths[f"{name}:{period}"] = {**wp, "startpoint_stage": stage_of(wp["startpoint"], name),
+                                         "endpoint_stage": stage_of(wp["endpoint"], name)}
+            h["worst_setup_path"] = paths[f"{name}:{period}"]
+        else:
+            not_done[f"worst path of {name}:{period}"] = "the flow's final report is not in the work directory"
+        cols[label] = h
+
+    def ratio(a, b):
+        x, y = cols.get(a), cols.get(b)
+        if not x or not y:
+            return None
+        return {"numerator": a, "denominator": b,
+                "cell_area": x["cell_area_um2"] / y["cell_area_um2"], "cells": x["cells"] / y["cells"],
+                "flip_flops": x["sequential_cells"] / y["sequential_cells"],
+                "dynamic_power": x["power_w"]["dynamic"] / y["power_w"]["dynamic"],
+                "energy_per_block": x["energy_per_block_pj"] / y["energy_per_block_pj"],
+                "clock_period": x["clock_period_ps"] / y["clock_period_ps"]}
+
+    cv = container_versions() if have_docker else {}
+    return {
+        "generated_utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "generated_by": "rtl/nvfp4/run_all.py --exact-sum" + (" --quick" if quick else ""),
+        "what": ("nvfp4_dot_fx: the block terms of nvfp4_dot summed exactly in a 57-bit two's complement accumulator (unit 2^-20) "
+                 "and rounded to binary32 once per row, built as the baseline for the binary32 accumulator of nvfp4_dot. Same "
+                 "ports and protocol, same flow, constraints and corner. Everything else in this file is as it was."),
+        "design": {"top": "nvfp4_dot_fx", "rows": 1, "block_size": S.P["B"], "aligned_term_bits": fxw["TW"] + 1,
+                   "accumulator_bits": fxw["ACCW"], "accumulator_unit": "2^-20", "largest_alignment_shift": fxw["SHMAX"],
+                   "max_blocks_per_row": fxw["MAX_BLOCKS"], "register_stages": 7, "feed_forward_stages_after_the_loop": 2,
+                   "latency_clocks_last_block_to_out_valid": fxw["LATENCY"], "latency_clocks_nvfp4_dot": 5,
+                   "stages": {"S0": "input registers (the text of nvfp4_dot)", "S1": "as nvfp4_dot", "S2": "as nvfp4_dot",
+                              "S3": "sign, then alignment shift by Ew + Ex - 2 (0..28): 48-bit two's complement term",
+                              "S4": "57-bit add (the only loop); NaN flag",
+                              "S5": "sign and 56-bit magnitude of the row sum, leading-zero count (registers load once per row)",
+                              "S6": "normalising shift, round to nearest even, exponent, pack; output register"}},
+        "verification": {"vectors": ver["vectors"], "icarus": ver["icarus"], "mutation": ver["mutation"]},
+        "definitions_compared": ver["definitions"],
+        "silicon": {
+            "flow": "as silicon.flow, silicon.library and silicon.constraints of this file; work files in scratch",
+            "clock_search_rule": ("bracket = (largest constraint that failed, smallest that closed); each round runs the two "
+                                  f"constraints that cut the bracket in three, on a {SEARCH_STEP} ps grid, two flows at a time; "
+                                  "closed = setup and hold slack both >= 0 in the flow's final report after routing; stops when "
+                                  f"the bracket is {SEARCH_STEP} ps wide. One placement seed per constraint."),
+            "runs": runs, "clock_search": searches, "worst_setup_paths": paths, "comparison": cols,
+            "ratios": {"fx_over_rel_at_common_clock": ratio("fx_at_common_clock", "rel_at_common_clock"),
+                       "fx_at_best_over_rel_at_best": ratio("fx_at_best_clock", "rel_at_best_clock"),
+                       "fx_at_best_over_rel_at_common_clock": ratio("fx_at_best_clock", "rel_at_common_clock")},
+            "existing_run_measured_again": recheck,
+            "not_done": not_done},
+        "tools": {"verilator": S.tool_version(["verilator", "--version"]), "iverilog": S.tool_version(["iverilog", "-V"]),
+                  "python": sys.version.split()[0], "numpy": __import__("numpy").__version__, **cv},
+    }
+
+
+def exact_sum_only(a) -> None:
+    """Merge the exact-sum section into the existing results/silicon.json; nothing else changes."""
+    import render_report
+    path = ROOT / "results" / "silicon.json"
+    text = path.read_text()
+    d = json.loads(text)
+    before = {k: json.dumps(v) for k, v in d.items() if k != FX_KEY}
+    d[FX_KEY] = build_exact_sum(d["silicon"], a.skip_pnr, a.skip_verify, a.quick)
+    assert {k: json.dumps(v) for k, v in d.items() if k != FX_KEY} == before
+    path.write_text(json.dumps(d, indent=1) + "\n")
+    render_report.main()
+    s = d[FX_KEY]
+    print(f"merged '{FX_KEY}' into {path}: {s['verification']['vectors']['vectors_total']:,} vectors, "
+          f"{s['verification']['vectors']['mismatches_total']} mismatches; {len(s['silicon']['runs'])} new placed-and-routed "
+          f"runs measured, {len(s['silicon']['not_done'])} not done")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--quick", action="store_true")
     ap.add_argument("--skip-verify", action="store_true")
     ap.add_argument("--skip-pnr", action="store_true")
+    ap.add_argument("--exact-sum", action="store_true", help="only the exact-sum variant; merge into the existing JSON")
     a = ap.parse_args()
     S.BUILD.mkdir(parents=True, exist_ok=True)
     S.gen.write_committed()
+    if a.exact_sum:
+        exact_sum_only(a)
+        return
     vpath = S.BUILD / ("verify_quick.json" if a.quick else "verify.json")
     if not (a.skip_verify and vpath.exists()):
         subprocess.run([sys.executable, str(HERE / "verify.py")] + (["--quick"] if a.quick else []), check=True)
@@ -294,6 +488,7 @@ def main() -> None:
     out["tools"] = {"verilator": S.tool_version(["verilator", "--version"]), "iverilog": S.tool_version(["iverilog", "-V"]),
                     "yosys": S.tool_version(["yosys", "-V"]) + " (host; lint only)", "python": sys.version.split()[0],
                     "numpy": __import__("numpy").__version__, "torch": ver["torch"]["torch"], **cv}
+    out[FX_KEY] = build_exact_sum(out["silicon"], a.skip_pnr, a.skip_verify, a.quick)
     path = ROOT / "results" / "silicon.json"
     path.write_text(json.dumps(out, indent=1) + "\n")
     s = out["silicon"]
