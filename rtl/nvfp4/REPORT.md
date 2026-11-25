@@ -408,7 +408,7 @@ python -m pytest -q tests/test_rtl_nvfp4.py     # the 2-second subset
 
 ## 12. Exact-sum baseline: `nvfp4_dot_fx`
 
-Added after sections 1 to 11 (2026-11-25T23:50:06Z, `rtl/nvfp4/run_all.py --exact-sum`). Those sections put an IEEE binary32
+Added after sections 1 to 11 (2026-11-25T23:53:16Z, `rtl/nvfp4/run_all.py --exact-sum`). Those sections put an IEEE binary32
 addition in the loop, and it sets the clock (8.2). This section builds the alternative in the
 same flow, with the same constraints and corner: block terms are multiples of 2^-20 and smaller
 than 2^27, so a row can be summed exactly in fixed point and rounded once. Every number is in
@@ -443,7 +443,7 @@ Files: `gen_nvfp4_dot.py` (`fx_sv`), `generated/nvfp4_dot_fx.sv`, `ref/nvfp4_ref
 ### 12.2 Verification
 
 **1,181,020 dot products, 0 mismatches** between the RTL (Verilator) and the exact-sum reference,
-252,716,333 simulated clocks, 76 s. The reference sums Python integers and rounds with
+252,716,333 simulated clocks, 77 s. The reference sums Python integers and rounds with
 `divmod`; a NumPy int64 version of it produces the expected values in volume and is checked
 against the integer one on a sample of every group. Both assert the accumulator bound and that
 binary32 overflow does not occur.

@@ -3933,7 +3933,7 @@
   "klayout": "KLayout 0.30.12"
  },
  "exact_sum_variant": {
-  "generated_utc": "2026-11-25T23:50:06Z",
+  "generated_utc": "2026-11-25T23:53:16Z",
   "generated_by": "rtl/nvfp4/run_all.py --exact-sum",
   "what": "nvfp4_dot_fx: the block terms of nvfp4_dot summed exactly in a 57-bit two's complement accumulator (unit 2^-20) and rounded to binary32 once per row, built as the baseline for the binary32 accumulator of nvfp4_dot. Same ports and protocol, same flow, constraints and corner. Everything else in this file is as it was.",
   "design": {
@@ -4488,7 +4488,7 @@
      "tie, rounded up to even": 6271,
      "zero": 80
     },
-    "seconds": 75.9
+    "seconds": 76.6
    },
    "icarus": {
     "simulator": "Icarus Verilog version 12.0 (stable) ()",
