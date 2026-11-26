@@ -1,6 +1,6 @@
 # Fact sheet of the technical note on the NVFP4 block
 
-One row per number in the note, generated from the files of `Aercrist/inkling2-core-study` at `a425f8b`.
+One row per number in the note, generated from the files of `Aercrist/inkling2-core-study` at `4cd0257`.
 Evidence classes: laid out (report of the place-and-route tools on the routed design), simulated (RTL or
 gate-level simulation, including power from simulated activity), counted (arithmetic on the headers of the
 published checkpoint), spec (the definition of the block), arithmetic (computed from other rows, formula in
@@ -89,7 +89,6 @@ withdrawn).
 | termExpLow | −20 | smallest exponent of a block term |  | spec | rtl/nvfp4/SPEC.md |
 | termBoundExp | 27 | block terms are smaller than 2 to this power | 2,304 x 15 x 15 x 2^8 = 132,710,400 < 2^27 | arithmetic | rtl/nvfp4/SPEC.md section 2 |
 | termMax | 1.33e8 | largest magnitude of a block term |  | spec | rtl/nvfp4/SPEC.md |
-| fixedPointBits | 57 bits | width of a fixed-point accumulator that holds every partial sum of a 288-block row exactly | terms are multiples of 2^-20 and below 2^27; 288 terms stay below 2^36; one sign bit. Not built | arithmetic | rtl/nvfp4/SPEC.md section 2 |
 | vectors | 1,589,011 rows | dot products compared with the NumPy reference, no mismatch | Verilator, RTL; a vector is one row streamed in and one binary32 compared | simulated | results/silicon.json verification.vectors.vectors_total |
 | vectorsRel | 1,165,348 rows | of which on the reloadable block |  | simulated | verification.vectors.vectors_reloadable |
 | vecReal0 | 655,360 rows | real weight rows of layer 0 expert 0 against its token rows | both projections | simulated | results/silicon.json verification.vectors.sections |
@@ -104,6 +103,8 @@ withdrawn).
 | covExpCarry | 304 additions | roundings that carried into the exponent | same sample | simulated | results/silicon.json verification.vectors.adder_case_coverage_* |
 | covCancel | 1,120 additions | cancellations with a left shift of 2 or more | same sample | simulated | results/silicon.json verification.vectors.adder_case_coverage_* |
 | covRealAdds | 12,006 additions | additions in a sample of the real rows, none of them inexact | counted by the same model | simulated | results/silicon.json verification.vectors.adder_case_coverage_* |
+| icarusRel | 96 rows | rows of the float block repeated in Icarus |  | simulated | verification.icarus |
+| icarusFixed | 8 rows | rows of a fixed-weight module repeated in Icarus |  | simulated | verification.icarus |
 | icarusVectors | 104 rows | rows repeated in a second simulator | Icarus Verilog, RTL | simulated | verification.icarus |
 | torchOutputs | 2,359,296 outputs | outputs of one real expert projection where the reference equals torch.nn.functional.linear bit for bit | 4,608 x 4,608 weights of layer 0 expert 0 against 512 token rows; CPU, float32 | simulated | verification.torch.sets[w13 x 512 tokens] |
 | torchTokens | 512 token rows | token rows in that comparison |  | simulated | verification.torch.sets (name of the set) |
@@ -200,6 +201,7 @@ withdrawn).
 | calBounds | 2 machines | machines for which the simulator's figure is an upper bound by construction | Cerebras and Groq: nothing but the pass over the weights is on the clock | modelled | results/calibration_llama.json rows.*.how |
 | calN | 4 machines | machines in that check |  | modelled | results/calibration_llama.json n |
 | calTol | 30 % | tolerance of that check |  | modelled | results/calibration_llama.json tolerance |
+| calOps | 129 products | matrix-vector products per token of Llama 3.1 8B in that simulator |  | modelled | results/calibration_llama.json weight_ops_per_token |
 | borrowedUs | 3.91 µs | time per weight operation the machine model took from a published wafer-scale machine | Llama 3.1 8B | modelled | results/calibration_llama.json op_total_s_us; docs/04_results.md |
 | oldSpeedLow | 3 x | speed for one user against a GPU system, low end, as the earlier post gave it | simulator output | modelled | src/app/blog/inkling-2-small-on-purpose-built-silicon/data.ts (the earlier post) |
 | oldSpeedHigh | 4 x | the same, high end | simulator output | modelled | src/app/blog/inkling-2-small-on-purpose-built-silicon/data.ts (the earlier post) |
@@ -237,6 +239,7 @@ withdrawn).
 | relFailBy | 0.8 ps | setup violation at that constraint | after routing | laid out | same |
 | fxFailPs | 1,140 ps | largest constraint the exact-sum block failed | 10 ps below its smallest closing constraint | laid out | exact_sum_variant.silicon.clock_search.fx |
 | fxFailBy | 8.4 ps | setup violation at that constraint | after routing | laid out | same |
+| searchRows | (table) | constraint, setup slack and cell area of every run of the two clock searches | one placement seed each | laid out | exact_sum_variant.silicon.clock_search.{rel,fx}.all_points |
 | relSearchRuns | 7 runs | clock constraints tried for the float block | one placement seed each | laid out | exact_sum_variant.silicon.clock_search.rel.all_points |
 | fxSearchRuns | 10 runs | clock constraints tried for the exact-sum block | one placement seed each | laid out | exact_sum_variant.silicon.clock_search.fx.all_points |
 | relSlack1730 | 29.8 ps | setup slack of the float block at a 1,730 ps constraint | larger than at 1,800 ps: the slack is not monotonic | laid out | same |
@@ -244,7 +247,7 @@ withdrawn).
 | fxPeriodCutPct | 29 % | shorter clock period of the exact-sum block, each at its smallest closing clock | 1 - fbPs / rbPs | arithmetic | exact_sum_variant.silicon.ratios |
 | fxRatePct | 41 % | more blocks per second, each at its smallest closing clock | rbPs / fbPs - 1 | arithmetic | same |
 | fxAreaBestPct | 9 % | more cell area, each at its smallest closing clock | fbArea / rbArea - 1 | arithmetic | same |
-| fxArea18Pct | 13 % | more cell area at the same 1,800 ps constraint | f18Area / cellArea - 1 | arithmetic | same |
+| fxArea18Pct | 12.5 % | more cell area at the same 1,800 ps constraint | f18Area / cellArea - 1 | arithmetic | same |
 | fxAreaTimePct | 22 % | less cell area for the same number of blocks per second | 1 - (fbArea x fbPs) / (rbArea x rbPs) | arithmetic | same |
 | fxAccBits | 57 bits | width of the exact-sum accumulator | two's complement, unit 2^-20 | spec | exact_sum_variant.design; rtl/nvfp4/SPEC.md section 5 |
 | fxTermBits | 48 bits | width of an aligned block term | 19 bits and sign, shifted by 0 to 28 | spec | same |
@@ -266,7 +269,7 @@ withdrawn).
 | fxKAreaMm2 | 0.43 mm² | their cell area | fxKBlocks x fbArea | arithmetic |  |
 | fxKPowerW | 1.31 W | their power | kTok x fxEnergyToken | arithmetic |  |
 | picUmPerPx | 0.02 µm per pixel | resolution the layout picture was saved at | OpenROAD save_image | laid out | rerun of rel:1800 on 2026-11-25 |
-| picSlack | 23.3 ps | setup slack of the rerun | equals the committed run | laid out | rerun: finish__timing__setup__ws 23.3443 |
+| picSlack | 23.3 ps | setup slack of the rerun | equals the committed run | laid out | results/silicon.json exact_sum_variant.silicon.existing_run_measured_again; flow report finish__timing__setup__ws 23.3443 |
 | picCells | 4,548 cells | cells of the rerun without tap cells | the flow reports 4,839 with the 291 tap cells; equals the committed run | laid out | rerun: finish__design__instance__count__stdcell |
 | picFrameUm | 36.76 µm | side of the layout picture | 1,838 pixels at 0.02 µm | laid out | rerun: save_image |
 | strapM6 | 0.288 µm | width of the horizontal power straps, on M6 | pitch 5.4 µm | laid out | rerun: 6_final.def SPECIALNETS |
