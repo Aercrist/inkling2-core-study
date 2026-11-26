@@ -186,7 +186,7 @@
   "S lifetime (years)": {
    "low": 2.0,
    "high": 5.0,
-   "why": "a chip laid out for one architecture may be retired before a GPU is, or serve its successors longer",
+   "why": "a chip laid out for one architecture can be retired before a GPU, or can serve its successors longer",
    "kind": "abs",
    "field": "cost.lifetime_years"
   },
@@ -693,7 +693,7 @@
     "parameter": "S lifetime (years)",
     "low": 2.0,
     "high": 5.0,
-    "why": "a chip laid out for one architecture may be retired before a GPU is, or serve its successors longer",
+    "why": "a chip laid out for one architecture can be retired before a GPU, or can serve its successors longer",
     "speed_batch1_low": 4.10951,
     "tokens_per_joule_batch1_low": 2.67781,
     "tokens_per_joule_best_low": 4.40473,

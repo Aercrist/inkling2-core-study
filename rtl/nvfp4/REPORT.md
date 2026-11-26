@@ -6,7 +6,9 @@ both the weights and the activations are NVFP4. Two variants were generated, ver
 and taken through place and route: `nvfp4_dot` (weights arrive on ports) and `nvfp4_dot_const`
 (the weights of a real expert row are constants). Every number below is in
 [`results/silicon.json`](../../results/silicon.json), written by `rtl/nvfp4/run_all.py`.
-ASAP7 only; nothing is scaled to another node.
+ASAP7 only; nothing is scaled to another node. A third block, `nvfp4_dot_fx`, was added later as a baseline for the
+accumulator: the same block terms summed exactly in fixed point and rounded once per row. It is in section 12
+and nowhere else; sections 1 to 11 are about the two variants above.
 
 ## 1. Result
 
@@ -364,7 +366,7 @@ function boundary and method, so this is context, not a comparison; that paper w
   per design; a spread from the tools themselves was not measured.
 * **Clock.** The accumulate was left in one clock on purpose (it is a recurrence). It was not
   hand-optimised (single-path adder, no leading-zero anticipation); a faster adder would raise
-  both variants' clock equally. Fmax is bracketed by the constraints tried, not searched finely.
+  both variants' clock equally. Fmax is bracketed by the constraints tried, not searched finely (the reloadable block's limit was searched to 10 ps afterwards, section 12.5).
 * **The fixed variant is one micro-architecture**: a per-row table selected by a block counter in
   front of the shared datapath. Mask ROM or a fully spatial layout are different designs; the
   1-block table (8.4) is the closest measured point to the spatial one, without the activation
@@ -380,7 +382,7 @@ function boundary and method, so this is context, not a comparison; that paper w
   design, tables of 4, 16 and 72 blocks, place and route of the 8-row slices.
 * The Verilator harness and the file-driven testbench assume 16-value blocks (64-bit code words);
   the generator itself is generic in the block size.
-* Not committed, not pushed. Place-and-route work files are in scratch, not in the repo.
+* Place-and-route work files are in scratch, not in the repo.
 
 ## 10. Assumptions
 
@@ -399,5 +401,247 @@ function boundary and method, so this is context, not a comparison; that paper w
 python tools/fetch_expert_fixture.py            # network; rewrites data/fixtures/ (SHA-256 in manifest.json)
 python rtl/nvfp4/run_all.py                     # RTL, verification, place and route (Docker + openroad/orfs), power, this page
 python rtl/nvfp4/run_all.py --skip-pnr          # reuse finished place-and-route runs
+python rtl/nvfp4/run_all.py --exact-sum         # section 12 only: verification, runs and clock searches of nvfp4_dot_fx;
+                                                # merges "exact_sum_variant" into the JSON, leaves the rest as it is
 python -m pytest -q tests/test_rtl_nvfp4.py     # the 2-second subset
 ```
+
+## 12. Exact-sum baseline: `nvfp4_dot_fx`
+
+Added after sections 1 to 11 (2026-11-25T23:53:16Z, `rtl/nvfp4/run_all.py --exact-sum`). Those sections put an IEEE binary32
+addition in the loop, and it sets the clock (8.2). This section builds the alternative in the
+same flow, with the same constraints and corner: block terms are multiples of 2^-20 and smaller
+than 2^27, so a row can be summed exactly in fixed point and rounded once. Every number is in
+`results/silicon.json` under `exact_sum_variant`. Neither block was tuned for the comparison; the
+existing block's RTL and its results in sections 1 to 11 are unchanged.
+
+**Result.** At the common 1,800 ps constraint `nvfp4_dot_fx` is 575.0 um2 against 511.1 um2
+for `nvfp4_dot` (x 1.13), with 414 flip-flops against 273, and uses 1.980 pJ per block
+against 1.967 pJ (x 1.01). Its smallest closing constraint is 1,150 ps against 1,620 ps
+for `nvfp4_dot` (x 0.71); there it is 586.4 um2 and 2.062 pJ per block, against 536.9 um2
+and 2.018 pJ. The worst path of `nvfp4_dot_fx` runs from `wc_q[9]` to `d_q[12]` (S1 register),
+38 cells; that of `nvfp4_dot` stays in its accumulator (53 cells). On the real expert rows the two
+definitions give the same bits in 100.00% of 3,538,944 outputs; on random codes with random finite scale
+bytes in 13.20% of 32,768.
+
+### 12.1 What was built
+
+`nvfp4_dot_fx` ([SPEC.md](SPEC.md), section 5): the ports and the protocol of `nvfp4_dot` with one
+row. Stages S0 to S2 are the generated text of `nvfp4_dot`. S3 forms the aligned term
+(48 bits, two's complement, unit 2^-20); S4 is one 57-bit addition per block, the only
+loop; 2 feed-forward stages after the loop convert the row sum to sign and magnitude, count
+leading zeros, normalise and round to nearest even. A row of up to 512 blocks cannot overflow
+the accumulator. `out_valid` comes 7 clocks after the last block (5 for `nvfp4_dot`); throughput is
+the same, one block per clock. A third stage after the loop was not needed (12.6).
+
+It is a different function in general: one rounding per row instead of one per block (12.3).
+
+Files: `gen_nvfp4_dot.py` (`fx_sv`), `generated/nvfp4_dot_fx.sv`, `ref/nvfp4_ref.py` (`dot_fx_ref_int`,
+`dot_fx_ref`, `gemm_fx_ref`), `verify_fx.py`, `flow/pnr_jobs.py` (`clock_search`), `flow/power.py`
+(`worst_setup_path`), `run_all.py --exact-sum`.
+
+### 12.2 Verification
+
+**1,181,020 dot products, 0 mismatches** between the RTL (Verilator) and the exact-sum reference,
+252,716,333 simulated clocks, 77 s. The reference sums Python integers and rounds with
+`divmod`; a NumPy int64 version of it produces the expected values in volume and is checked
+against the integer one on a sample of every group. Both assert the accumulator bound and that
+binary32 overflow does not occur.
+
+| group | vectors | mismatches |
+|---|---|---|
+| real expert rows x real-looking tokens | 853,504 | 0 |
+| random codes and scale bytes, rows of 1 to 512 blocks | 232,000 | 0 |
+| directed edge cases of verify.py | 1,076 | 0 |
+| directed cases for the exact sum and the final rounding | 440 | 0 |
+| rounding stress (per-term patterns of verify.py) | 50,000 | 0 |
+| final-rounding stress | 44,000 | 0 |
+
+The real-row, random, directed and per-term stress groups are the ones `verify.py` uses for the
+reloadable block (same generators and sizes; 10-20% of vectors with random idle clocks; directed
+cases back to back and again with idle gaps), compared here with the exact-sum reference, plus
+random rows of 512 blocks. The overflow cases of section 5 do not apply. Added for this block:
+
+| directed case for the exact sum and the final rounding | vectors | mismatches |
+|---|---|---|
+| maximum magnitude row (1 block, all codes +-6, scales 448) | 4 | 0 |
+| row of 1 block, largest product at each of the 29 alignment shifts | 116 | 0 |
+| row of 1 block, smallest non-zero term (2^-20) | 4 | 0 |
+| maximum magnitude row (2 blocks, all codes +-6, scales 448) | 4 | 0 |
+| exact cancellation to +0 | 34 | 0 |
+| cancellation of large terms down to a small sum | 30 | 0 |
+| final rounding: tie, rounded down to even | 28 | 0 |
+| final rounding: tie, rounded up to even | 28 | 0 |
+| final rounding: tie at an all-ones significand, carries into the exponent | 28 | 0 |
+| final rounding: tie at significand 2^24 - 2, rounded down, no carry | 28 | 0 |
+| final rounding: all ones (2^k - 1), rounded up into the next power of two | 28 | 0 |
+| final rounding: exact: low bits zero | 28 | 0 |
+| final rounding: one unit below a tie, rounded down | 24 | 0 |
+| final rounding: one unit above a tie on an even significand, rounded up (sticky far below) | 24 | 0 |
+| final rounding: only the lowest unit set below the significand, rounded down (sticky far below) | 24 | 0 |
+| maximum magnitude row (288 blocks, all codes +-6, scales 448) | 4 | 0 |
+| maximum magnitude row (512 blocks, all codes +-6, scales 448) | 4 | 0 |
+
+Final-rounding stress: rows whose exact sum is built bit by bit, leading bit anywhere from 24 to
+55, with a tie, one unit either side of a tie, all ones, a single unit far below, or nothing below
+the 24-bit significand. Which rounding cases the directed and stress vectors reached (every
+vector of those groups, classified from its exact sum):
+
+| case | rows |
+|---|---|
+| NaN scale in the row | 3,442 |
+| above half, rounded up | 17,841 |
+| below half, only bits 20 or more places below the guard bit set | 715 |
+| below half, rounded down | 17,758 |
+| exact cancellation to +0 | 62 |
+| exact: no bit below the 24-bit significand | 43,694 |
+| rounding carried into the exponent | 3,198 |
+| tie, rounded down to even | 6,368 |
+| tie, rounded up to even | 6,271 |
+| zero | 80 |
+
+* **Second simulator.** Icarus Verilog: 96 real vectors (0 mismatches), 192 random
+  (0), 190 directed final-rounding cases (0).
+* **After place and route.** Every routed netlist of `nvfp4_dot_fx` (10 runs) was simulated at gate level
+  (Icarus, ASAP7 cell models) on its power workload `w13_row0` and compared with the exact-sum
+  reference: all bit-exact (True). The 5 new runs of `nvfp4_dot` were checked on that block's
+  workloads as in section 5 (True).
+* **Mutation check.** Each fault was written into a copy of the generated RTL in the build
+  directory and the checker run on every directed case, 1/16 of the stress groups and 1/64 of the real-row and random groups; then the unmodified RTL on the same vectors
+  (generator output equal to the committed file: True).
+
+| fault | change | vectors | mismatches |
+|---|---|---|---|
+| final rounding: round half up instead of ties to even | `wire inc_c = n_c[31] & (n_c[32] \| (\|n_c[30:0]));` -> `wire inc_c = n_c[31];` | 11,651 | 484 |
+| S3: alignment shift off by one (Ew + Ex - 1) | `wire [4:0] sh_c = es2_q - 5'd2;` -> `wire [4:0] sh_c = es2_q - 5'd1;` | 11,651 | 11,024 |
+| unmodified RTL, same vectors | | 11,651 | 0 |
+
+### 12.3 The two definitions compared
+
+In the references, no RTL: one binary32 rounding per block (sections 1 to 11) against one
+rounding per row (this section).
+
+| set | outputs | bit-identical | share | worst relative difference | exact sum is a binary32 number |
+|---|---|---|---|---|---|
+| w13 of layer 0 expert 0 (4608 rows x 288 blocks) x 512 embedding-derived tokens | 2,359,296 | 2,359,296 | 100.00% | 0 | 100.00% |
+| w2 of layer 0 expert 0 (4608 rows x 144 blocks) x 256 SwiGLU outputs of the real w13 | 1,179,648 | 1,179,648 | 100.00% | 0 | 100.00% |
+| random codes and random finite scale bytes, 512 rows x 64 tokens, 288 blocks | 32,768 | 4,325 | 13.20% | 0.00156 | 0.00% |
+| random codes, scale bytes in the range real weights use (100..126), 512 rows x 64 tokens, 288 blocks | 32,768 | 32,618 | 99.54% | 1.88e-07 | 99.55% |
+
+* **Real rows** (the whole expert of the fixture, the token sets of `verify.py`): 3,538,944 of
+  3,538,944 outputs bit-identical (100.00%), worst relative difference 0.
+* **Random codes and random finite scale bytes**: 4,325 of 32,768 (13.20%), worst relative
+  difference 0.00156. The relative difference is taken against the exact-sum result; it is large
+  where a sum nearly cancels, which is where the per-block rounding errors are large against the result.
+  With random codes but scale bytes restricted to the range real weights use, the share is the
+  last row of the table.
+* On 1,500 random rows of 2 to 40 blocks, 572 had no inexact addition in the per-block
+  accumulator; 572 of those are bit-identical in the two definitions.
+
+### 12.4 The two blocks side by side
+
+ASAP7 RVT, TT 0.70 V 25 C, the flow, constraints and power method of 8.1; power on `w13_row0`
+(w13 row 0 of layer 0 expert 0 against 8 embedding-derived tokens, 288 blocks each, no idle
+clocks); energy per block = total power x clock constraint.
+
+| | `nvfp4_dot` | `nvfp4_dot`, best clock | `nvfp4_dot_fx` | `nvfp4_dot_fx`, best clock |
+|---|---|---|---|---|
+| clock constraint (ps) | 1,800 | 1,620 | 1,800 | 1,150 |
+| blocks per second (millions) | 555.6 | 617.3 | 555.6 | 869.6 |
+| setup slack / hold slack (ps) | 23.3 / 38.1 | 6.7 / 38.7 | 475.7 / 42.6 | 1.9 / 37.5 |
+| cell area (um2), without fill and tap cells | 511.1 | 536.9 | 575.0 | 586.4 |
+| of which combinational / flip-flops / inverters / timing-repair buffers / clock tree (um2) | 359.9 / 79.6 / 39.2 / 23.9 / 8.5 | 361.0 / 79.6 / 39.3 / 48.9 / 8.0 | 383.9 / 120.7 / 41.8 / 17.8 / 10.9 | 384.3 / 120.7 / 41.8 / 26.7 / 12.8 |
+| cell area after synthesis (um2) | 493.8 | 493.8 | 563.4 | 563.4 |
+| cells | 4,548 | 4,819 | 4,928 | 5,028 |
+| flip-flops | 273 | 273 | 414 | 414 |
+| dynamic power on `w13_row0` (mW) | 1.092 | 1.245 | 1.100 | 1.792 |
+| of which combinational / flip-flops / clock tree (mW) | 0.666 / 0.276 / 0.150 | 0.773 / 0.307 / 0.166 | 0.523 / 0.367 / 0.209 | 0.854 / 0.574 / 0.365 |
+| leakage power (uW) | 0.411 | 0.457 | 0.485 | 0.500 |
+| energy per 16-value block (pJ) | 1.967 | 2.018 | 1.980 | 2.062 |
+| worst setup path: cells between the two flip-flops | 56 | 53 | 40 | 38 |
+| worst setup path: from | `first_q` (S4 register) | `first_q` (S4 register) | `wc_q[5]` (S0 register) | `wc_q[9]` (S0 register) |
+| worst setup path: to | `inf_q` (S4 register) | `inf_q` (S4 register) | `d_q[12]` (S1 register) | `d_q[12]` (S1 register) |
+| routed netlist bit-exact at gate level | True | True | True | True |
+| numbers from | section 8 (not rerun) | new run | new run | new run |
+
+* `nvfp4_dot_fx` / `nvfp4_dot`, both at the common constraint: cell area x 1.13, cells x 1.08, flip-flops x 1.52, dynamic power x 1.01, energy per block x 1.01, clock period x 1.00.
+* `nvfp4_dot_fx` / `nvfp4_dot`, each at its best closing constraint: cell area x 1.09, cells x 1.04, flip-flops x 1.52, dynamic power x 1.44, energy per block x 1.02, clock period x 0.71.
+* `nvfp4_dot_fx` at its best closing constraint / `nvfp4_dot` at the common constraint: cell area x 1.15, cells x 1.11, flip-flops x 1.52, dynamic power x 1.64, energy per block x 1.05, clock period x 0.64.
+
+### 12.5 Clock search
+
+bracket = (largest constraint that failed, smallest that closed); each round runs the two constraints that cut the bracket in three, on a 10 ps grid, two flows at a time; closed = setup and hold slack both >= 0 in the flow's final report after routing; stops when the bracket is 10 ps wide. One placement seed per constraint.
+
+* `nvfp4_dot`: smallest closing constraint **1,620 ps** (617.3 MHz); 1,610 ps fails; 5 new runs in 3 rounds; closing is monotonic in the constraint over the points tried.
+* `nvfp4_dot_fx`: smallest closing constraint **1,150 ps** (869.6 MHz); 1,140 ps fails; 9 new runs in 5 rounds; closing is monotonic in the constraint over the points tried.
+
+| block | constraint (ps) | setup slack (ps) | hold slack (ps) | closed | cell area (um2) | |
+|---|---|---|---|---|---|---|
+| `nvfp4_dot` | 1600 | -16.6 | 38.7 | no | 546.8 | section 8 run, not rerun |
+| `nvfp4_dot` | 1610 | -0.8 | 37.3 | no | 544.4 | new run |
+| `nvfp4_dot` | 1620 | 6.7 | 38.7 | yes | 536.9 | new run |
+| `nvfp4_dot` | 1650 | 11.4 | 38.7 | yes | 525.5 | new run |
+| `nvfp4_dot` | 1670 | 21.7 | 38.5 | yes | 524.4 | new run |
+| `nvfp4_dot` | 1730 | 29.8 | 37.3 | yes | 516.1 | new run |
+| `nvfp4_dot` | 1800 | 23.3 | 38.1 | yes | 511.1 | section 8 run, not rerun |
+| `nvfp4_dot_fx` | 600 | -543.8 | 11.5 | no | 637.1 | new run |
+| `nvfp4_dot_fx` | 800 | -354.5 | 38.3 | no | 616.7 | new run |
+| `nvfp4_dot_fx` | 1000 | -145.8 | 40.3 | no | 593.7 | new run |
+| `nvfp4_dot_fx` | 1070 | -74.9 | 42.2 | no | 590.3 | new run |
+| `nvfp4_dot_fx` | 1130 | -18.9 | 42.3 | no | 587.5 | new run |
+| `nvfp4_dot_fx` | 1140 | -8.4 | 40.8 | no | 585.7 | new run |
+| `nvfp4_dot_fx` | 1150 | 1.9 | 37.5 | yes | 586.4 | new run |
+| `nvfp4_dot_fx` | 1180 | 19.9 | 42.4 | yes | 582.6 | new run |
+| `nvfp4_dot_fx` | 1200 | 29.9 | 41.7 | yes | 581.9 | new run |
+| `nvfp4_dot_fx` | 1800 | 475.7 | 42.6 | yes | 575.0 | new run |
+
+### 12.6 Worst setup paths
+
+From each run's final timing report (`6_finish.rpt`, `report_checks -path_delay max`). "Cells"
+counts every instance between the launching and the capturing flip-flop once, buffers and
+inverters included; the stage is that of the logic in front of the end point.
+
+| block | constraint (ps) | from | to | cells | of which buffers and inverters | delay from the launch clock pin (ps) | slack (ps) |
+|---|---|---|---|---|---|---|---|
+| `nvfp4_dot` | 1,800 | `first_q` (S4 register) | `inf_q` (S4 register) | 56 | 9 | 1,761.2 | 23.34 |
+| `nvfp4_dot`, best clock | 1,620 | `first_q` (S4 register) | `inf_q` (S4 register) | 53 | 9 | 1,594.5 | 6.66 |
+| `nvfp4_dot_fx` | 1,800 | `wc_q[5]` (S0 register) | `d_q[12]` (S1 register) | 40 | 10 | 1,312.8 | 475.74 |
+| `nvfp4_dot_fx`, best clock | 1,150 | `wc_q[9]` (S0 register) | `d_q[12]` (S1 register) | 38 | 12 | 1,125.9 | 1.93 |
+
+Worst setup slack (ps) at the registers of each stage, from OpenSTA on the routed design with
+extracted parasitics. A stage's logic is in front of its registers (SPEC.md, sections 4 and 5.3);
+the S0 registers are fed by the input ports, which carry an input delay of 20% of the period. The
+smallest entry of a column is that run's setup slack.
+
+| registers of stage | `nvfp4_dot`, 1,800 ps | `nvfp4_dot`, best clock, 1,620 ps | `nvfp4_dot_fx`, 1,800 ps | `nvfp4_dot_fx`, best clock, 1,150 ps |
+|---|---|---|---|---|
+| S0 | 1,455.7 | 1,313.1 | 1,460.8 | 941.4 |
+| S1 | 449.0 | 287.3 | 475.7 | 1.9 |
+| S2 | 898.4 | 723.0 | 931.1 | 289.2 |
+| S3 | 1,156.7 | 978.1 | 1,314.7 | 661.7 |
+| S4 | 23.3 | 6.7 | 1,062.6 | 426.6 |
+| S5 | - | - | 1,166.4 | 516.4 |
+| S6 | - | - | 718.0 | 142.6 |
+
+In `nvfp4_dot_fx` at 1,150 ps the loop (S4) has 427 ps of slack and the two stages after it 516 and 143 ps, so a third stage after the loop was not needed. The smallest slack is at the S1 registers: the clock of this block is set by a feed-forward stage that it shares, unchanged, with `nvfp4_dot`, not by its accumulator.
+
+### 12.7 What was not done, and what to keep in mind
+
+* One placement seed per constraint. Whether a constraint closes is a property of that one run;
+  the spread over seeds was not measured and the slack does not rise evenly with the constraint (12.5). The
+  smallest closing constraints are those of these runs, not bounds.
+* The clock constraint also sets the input and output delays (20% of the period each), as in 8.1.
+* Power is from zero-delay gate-level activity, as in section 9: no glitches.
+* `nvfp4_dot_fx` was built once, as specified: no retiming, no carry-save accumulator, no
+  leading-zero anticipation, no operand isolation in front of S5. `nvfp4_dot` was not changed.
+* Only the reloadable, one-row block has an exact-sum variant; no fixed-weight or 8-row version.
+* One run of section 8 is on disk, `rel:1800`, placed and routed again in this work directory: it has the stored area, cells and slacks (True) and, measured again, the stored power on every workload (True).
+  The other 12 runs of section 8 are not on disk and were not rerun; PyTorch is not installed
+  here, so section 6 was not recomputed.
+* Tools for this section: Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 15.2.0); OpenSTA 3.2.0 (inside OpenROAD);
+  openroad/orfs@sha256:19b2e6f2bbea0593b13fde65829e76d2ca28cc246d7a92d1a42365f8a3d891cc created 2026-11-24T19:59:42.260034884Z;
+  Verilator 5.020 2024-01-01 rev (Debian 5.020-1); Icarus Verilog version 12.0 (stable) (); Python 3.13.18, NumPy 2.5.3.
+  This is a later build of `openroad/orfs` than the one sections 1 to 11 were run with (OpenSTA 3.1.0 (inside OpenROAD);
+  openroad/orfs@sha256:31c5fd29e541059e36ad87b197ece981c04d2ce3a1f2035976fe266ec0e521cb created 2026-11-13T19:37:02.256806917Z). The runs of section 8 were not repeated with it,
+  except `rel:1800` (previous bullet), which came out identical.
+

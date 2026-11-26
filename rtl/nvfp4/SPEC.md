@@ -99,3 +99,80 @@ the module, whatever the variant; a 4,608-input row takes 288 clocks.
 The generator derives every width from the block size (`gen_nvfp4_dot.py params`): for `B = 16`
 the block sum is 13 bits and the block term 19 bits. It refuses a block size whose term would not
 fit the 24-bit significand, because the term would stop being exact.
+
+## 5. Exact-sum variant: `nvfp4_dot_fx`
+
+The same block terms as section 2, kept exactly in fixed point and rounded to binary32 once per
+row. It exists as a baseline: the same flow and constraints, without a floating-point addition in
+the loop. Reloadable weights, one row. Sections 1 and 3 apply except where stated here.
+
+### 5.1 Result
+
+Every block term of section 2 is a multiple of 2^-20. In that unit it is an integer:
+
+```
+tau_b = (-1)^(sw_b xor sx_b) * D_b * Mw_b * Mx_b * 2^(Ew_b + Ex_b - 2)     exact integer; T_b = tau_b * 2^-20
+S_0 = 0
+S_(b+1) = S_b + tau_b                     exact; 57-bit two's complement
+out = RN_even( S_NB * 2^-20 )             IEEE-754 binary32, round to nearest, ties to even, once per row
+```
+
+* **Term.** `P_b = |D_b| * Mw_b * Mx_b <= 2304 * 15 * 15 < 2^19` and the shift `Ew_b + Ex_b - 2` lies
+  in 0..28, so `|tau_b| < 2^47`.
+* **Accumulator.** 57 bits, two's complement, unit 2^-20, starting from 0 for every row. For a row
+  of up to 512 blocks every partial sum has magnitude below `512 * 2^47 = 2^56`, in any order of
+  the blocks, so the accumulator cannot overflow. The model's rows are 288 and 144 blocks. A row of
+  more than 512 blocks is outside this specification (the sum could wrap; nothing detects it).
+* **Rounding.** One, after the last block. A sum below 2^24 units in magnitude is returned exactly.
+  The result is the correctly rounded value of the exact dot product and does not depend on the
+  order of the blocks.
+* **Zero.** A sum of exactly zero gives `+0` (`0x00000000`). The result is never `-0`.
+* **Overflow** cannot occur: `|S| * 2^-20 < 2^36`. It is not implemented; there is no infinity
+  result. **binary32 subnormals** cannot occur: a non-zero sum is at least 2^-20 in magnitude.
+* **NaN.** As in section 2: a NaN scale (`0x7F` or `0xFF`, weight or activation) anywhere in the
+  row gives `0x7FC00000`, whatever the codes are.
+* **Zero, subnormal and negative scales** are exact, as in section 2.
+* **Relation to section 2.** A different function in general: one rounding per row instead of one
+  per block. The two give the same bits whenever no addition of section 2 rounds, because the
+  accumulator of section 2 then holds the exact sum, which is therefore a binary32 number. How
+  often that is the case on real and on random operands is measured in REPORT.md, section 12.
+
+Equivalent C: `int64_t s = 0; for (b...) s += tau[b]; out = ldexpf((float)s, -20);` (the
+conversion of a 64-bit integer to `float` rounds once, to nearest even; the scaling is exact).
+
+### 5.2 Interface and timing
+
+```
+nvfp4_dot_fx     (clk, rst, in_valid, in_last, w_codes[64], w_scale[8], x_codes[64], x_scale[8],
+                  out_valid, out_data[32])
+```
+
+The ports and the protocol of `nvfp4_dot` with `R = 1` (section 3): one block per clock while
+`in_valid` is high, idle clocks anywhere, `in_last` on the last block of a row, rows of 1 to 512
+blocks, the next row may start on the next clock. The one difference: `out_valid` is high for one
+clock **7 clocks** after the last block was on the pins (5 for `nvfp4_dot`); `out_data` is valid
+in that clock. Reset as in section 3.
+
+### 5.3 Micro-architecture
+
+Seven register stages, one block per clock. S0, S1 and S2 are the generated text of `nvfp4_dot`.
+
+| stage | work | registers |
+|---|---|---|
+| S0 | input registers, as section 4 | 146 |
+| S1 | as section 4 | 30 |
+| S2 | as section 4 | 28 |
+| S3 | two's complement of `P` when the term is negative (20 bits), left shift by `Ew + Ex - 2`: the aligned term, 48 bits signed | 51 |
+| S4 | accumulator: one 57-bit addition per block; a "first block" flag selects 0 in place of the previous sum; NaN flag; "row finished" flag | 60 |
+| S5 | once per row: sign and 56-bit magnitude of the sum, leading-zero count (two 32-bit counters) | 66 |
+| S6 | once per row: left shift by the count, round to nearest even to 24 bits (guard bit, sticky OR of the 31 bits below it), exponent `162 - count` plus the rounding carry, zero and NaN select; output register | 33 |
+
+The only recurrence is S4, a 57-bit addition behind one AND gate per bit. S3 and the two stages
+after the loop are feed-forward. The S5 registers load only when a row has finished, so S6
+switches once per row; the logic in front of S5 sees the running sum on every clock, and its
+switching is part of the measured power. Throughput is one block per clock, as in section 4; a
+4,608-input row takes 288 clocks and its result appears 2 clocks later than from `nvfp4_dot`.
+
+The generator derives the widths (`derive_fx`): term = block term + 28 bits, magnitude = term + 9
+bits for 512 blocks. It refuses a block size whose magnitude would not fit the two 32-bit
+leading-zero counters.

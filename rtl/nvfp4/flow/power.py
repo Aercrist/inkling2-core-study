@@ -99,6 +99,74 @@ def collect(tag: str) -> dict:
     }
 
 
+SLACK_TCL = """
+set libdir /OpenROAD-flow-scripts/flow/platforms/asap7/lib/NLDM
+foreach lib [list asap7sc7p5t_AO_RVT_TT_nldm_211120.lib.gz asap7sc7p5t_INVBUF_RVT_TT_nldm_220122.lib.gz \
+                  asap7sc7p5t_OA_RVT_TT_nldm_211120.lib.gz asap7sc7p5t_SIMPLE_RVT_TT_nldm_211120.lib.gz \
+                  asap7sc7p5t_SEQ_RVT_TT_nldm_220123.lib] {{ read_liberty $libdir/$lib }}
+read_db /work/out/results/asap7/{tag}/base/6_final.odb
+read_sdc /work/out/results/asap7/{tag}/base/6_final.sdc
+read_spef /work/out/results/asap7/{tag}/base/6_final.spef
+puts "@@wns [sta::worst_slack -max]"
+foreach p [all_registers -data_pins] {{ puts "@@pin [get_full_name $p] [get_property $p slack_max]" }}
+puts "@@done"
+"""
+
+
+def register_slacks(tag: str) -> dict:
+    """Worst setup slack at the data pin of every flip-flop of a routed design, grouped by register
+    name (g_row[0].u_dp.acc_q[5]$_DFF_P_/D -> acc_q), from OpenSTA with the extracted parasitics.
+    Cached in the work directory."""
+    work = orfs.WORK / tag
+    cache = work / "power" / "register_slacks.json"
+    if cache.exists():
+        return json.loads(cache.read_text())
+    (work / "power").mkdir(exist_ok=True)
+    (work / "power" / "slack.tcl").write_text(SLACK_TCL.format(tag=tag))
+    orfs.in_container(work, "openroad -no_init -exit /work/power/slack.tcl > /work/power/slack.log 2>&1; chmod -R a+rwX /work/power")
+    log = (work / "power" / "slack.log").read_text()
+    if "@@done" not in log:
+        raise RuntimeError(f"OpenSTA failed for {tag}: {work}/power/slack.log\n{log[-1500:]}")
+    out = {"setup_wns_ps": float(re.search(r"@@wns (\S+)", log).group(1)), "flip_flops": 0, "registers": {}}
+    for name, slack in re.findall(r"^@@pin (\S+)/\w+ (\S+)$", log, re.M):
+        base = name.split(".")[-1].split("$")[0].split("[")[0]
+        r = out["registers"].setdefault(base, {"bits": 0, "worst_setup_slack_ps": float("inf")})
+        r["bits"] += 1
+        r["worst_setup_slack_ps"] = min(r["worst_setup_slack_ps"], float(slack))
+        out["flip_flops"] += 1
+    cache.write_text(json.dumps(out, indent=1) + "\n")
+    return out
+
+
+def worst_setup_path(tag: str) -> dict:
+    """Start point, end point and logic depth of the worst setup path, from the flow's final timing
+    report (6_finish.rpt, the section "finish report_checks -path_delay max"). The depth counts
+    cell instances between the launching flip-flop (or input port) and the capturing flip-flop:
+    every instance once, whatever the number of report lines it has; the two flip-flops are not counted."""
+    rpt = (orfs.WORK / tag / "out" / "reports" / "asap7" / tag / "base" / "6_finish.rpt").read_text()
+    sec = rpt.split("finish report_checks -path_delay max\n", 1)[1].split("\n====", 1)[0]
+    start = re.search(r"^Startpoint: (\S+)", sec, re.M).group(1)
+    end = re.search(r"^Endpoint: (\S+)", sec, re.M).group(1)
+    arrival = sec.split("data arrival time", 1)[0]                      # launch clock network and data path
+    pins = re.findall(r"^.*?([\d.]+)\s+[\^v]\s+(\S+)/(\w+)\s+\((\w+)\)\s*$", arrival, re.M)   # (time, instance, pin, cell)
+    names = [q[1] for q in pins]
+    assert names[-1] == end, (names[-1], end)
+    first = names.index(start) if start in names else -1               # an input port has no instance line
+    path = pins[first + 1:] if first >= 0 else pins
+    cells, seen = [], set()
+    for _, inst, _, cell in path:
+        if inst not in seen and inst not in (start, end):
+            seen.add(inst)
+            cells.append(cell)
+    launch = float(pins[first][0]) if first >= 0 else 0.0              # time at the launching flip-flop's clock pin
+    slack = float(re.search(r"([-\d.]+)\s+slack", sec).group(1))
+    return {"report": f"reports/asap7/{tag}/base/6_finish.rpt", "startpoint": start, "endpoint": end,
+            "cells_on_path": len(cells),
+            "of_which_buffers_and_inverters": sum(c.startswith(("BUF", "INV", "HB", "CKINV")) for c in cells),
+            "launch_flip_flop_clock_pin_to_endpoint_ps": round(float(pins[-1][0]) - launch, 2),
+            "data_arrival_ps": float(pins[-1][0]), "slack_ps": slack}
+
+
 def gate_sim(tag: str, top: str, rows: int, const: bool, words: list[int], period_ps: float, name: str):
     """Simulate the routed netlist; returns (results [n, rows], vcd path)."""
     work = orfs.WORK / tag

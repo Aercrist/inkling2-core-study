@@ -1,8 +1,8 @@
 # Napkin checks
 
-One page of hand arithmetic per headline, from a few inputs, set beside the simulator. If a napkin
-and the simulator disagree by more than about 20%, one of them is wrong or the reason is stated.
-The arithmetic is done by `experiments/napkin.py` so that no figure here is typed by hand.
+Each headline has one page of hand arithmetic from a few inputs, set beside the simulator. If a napkin
+and the simulator disagree by more than about 20%, one of them is wrong or we give the reason.
+`experiments/napkin.py` does the arithmetic, so that no person types a figure here by hand.
 
 | headline | napkin | simulator | gap |
 |---|---|---|---|
@@ -31,10 +31,10 @@ Why they differ: {{ v.gap_reason }}
 {% endfor %}
 ## What the napkins show
 
-- The GPU's batch-1 step is two terms of about equal size: streaming weights and waiting on launches.
-  Neither is arithmetic.
-- S's batch-1 step is the number of operations in series times a time per operation taken from a
-  published machine. S's own bank pass is {{ pct(I.designs.s.t_scan_us * 1e-6 / NK.s_op_time) }} of that time.
-- At the best interactive point the GPUs stream the whole checkpoint every step and S does not. S's
-  throughput is set by its attention tile, and its cost by how many systems share the design cost.
-- The die ratio is the ratio of two storage densities, plus the multiplier lanes and the window cache both designs carry.
+- The batch-1 step of the GPU is two terms of about equal size: weight streaming and waits on launches.
+  The two terms are not arithmetic.
+- The batch-1 step of S is the number of operations in series times a time per operation. That time is from a
+  published machine. The bank pass of S is {{ pct(I.designs.s.t_scan_us * 1e-6 / NK.s_op_time) }} of that time.
+- At the best interactive point, the GPUs stream the whole checkpoint every step and S does not. The
+  attention tile of S sets its throughput. The number of systems that share the design cost sets its cost.
+- The die ratio is the ratio of two storage densities, plus the multiplier lanes and the window cache that the two designs have.
